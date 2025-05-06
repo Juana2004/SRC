@@ -1,15 +1,13 @@
-from persona import Persona
+class Paciente():
 
 
-
-class Paciente(Persona):
-
-
-    def __init__(self, nombre, dni, fecha_nac, sexo, tel, t_sangre, centro):
-        super().__init__(nombre, dni, fecha_nac, t_sangre)
+    def __init__(self, nombre, dni, fecha_nac, sexo, tel, t_sangre, centro, incucai):
+        self.nombre = nombre
+        self.dni = dni
+        self.fecha_nac = fecha_nac
         self.sexo = sexo
         self.tel = tel
+        self.t_sangre = t_sangre
         self.centro = centro  # clase CentroSalud
 
-    def __str__(self):
-        return f"{self.nombre} (DNI: {self.dni}) - Centro: {self.centro}"
+  

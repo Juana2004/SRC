@@ -1,21 +1,44 @@
+from geopy.geocoders import Nominatim
+import time
+
 class CentroDeSalud:
+    geolocator = Nominatim(user_agent="incucai_app")  # Clase compartida, evita múltiples instancias
 
-
-    def __init__(self, nombre, direccion, partido, provincia):
+    def __init__(self, nombre, direccion, partido, provincia, pais, incucai):
         self.nombre = nombre
         self.direccion = direccion
         self.partido = partido
         self.provincia = provincia
-        self.pacientes = [] 
-        self.medicos = []    
+        self.pais = pais
+        self.pacientes = []
+        self.medicos = []
 
-    def agregar_paciente(self, paciente):
-        self.pacientes.append(paciente)
+        # Obtener latitud y longitud con manejo de excepciones
+        full_address = f"{direccion}, {partido}, {provincia}, {pais}"
+        location = self.obtener_ubicacion(full_address)
+        if location:
+            self.latitud = location.latitude
+            self.longitud = location.longitude
+        else:
+            raise ValueError(f"No se pudo geolocalizar la dirección: {full_address}")
+        
+        print(f"\n✔ Centro de salud '{self.nombre}' registrado en: {full_address}")
+        incucai.registrar_centro(self)
 
-    def listar_pacientes(self):
-        print(f"\nPacientes en {self.nombre}:")
-        for p in self.pacientes:
-            print(f"- {p.nombre} ({type(p).__name__})")
+    def obtener_ubicacion(self, direccion, intentos_max=3, espera=2):
+        """ Intenta obtener la geolocalización con reintentos en caso de error. """
+        for intento in range(intentos_max):
+            try:
+                location = self.geolocator.geocode(direccion)
+                if location:
+                    return location
+                else:
+                    raise ValueError("Geolocalización fallida")
+            except Exception as e:
+                print(f"Error al obtener geolocalización: {e}. Intento {intento+1} de {intentos_max}")
+                if intento < intentos_max - 1:
+                    time.sleep(espera)  # Esperar antes de reintentar
+        return None
 
-    def __str__(self):
-        return f"{self.nombre} - {self.direccion} - {len(self.pacientes)} pacientes"
+
+

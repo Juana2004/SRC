@@ -1,6 +1,8 @@
-from cirujano import Cirujano
+from cirujano import Cirujano   
 
 class Cirujano_especial(Cirujano):
-    def __init__(self, nombre, dni, fecha_nac, sexo, tel, especialidad, centro):
-        super().__init__(nombre, dni, fecha_nac, sexo, tel, especialidad, centro)
+    def __init__(self, nombre, dni, especialidad, centro, incucai):
+        super().__init__(nombre, dni, centro, incucai)
+        self.especialidad = especialidad
         
+        incucai.registrar_cirujano_esp(self)
