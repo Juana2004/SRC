@@ -10,13 +10,13 @@ class INCUCAI:
         self.donantes = []
         self.receptores = []
         self.centros_salud = []
-        self.organismos = []
         self.cirujanos_esp = []
         self.cirujanos_gen = []
         self.vehiculos_terr = []
         self.aviones = []
         self.helic = []
         self.distancias_centros = {}
+        self.organos = []
 
 
     def registrar_donante(self, donante):
@@ -33,6 +33,9 @@ class INCUCAI:
         
         self.donantes.append(donante)
         print(f"\nDonante {donante.nombre} registrado.")
+
+    def registrar_organo(self, organo):
+        self.organos.append(organo)
 
 
     def registrar_receptor(self, receptor):
@@ -140,49 +143,25 @@ class INCUCAI:
     def realizar_transplante(self, donante, receptor):
         print(f"\n🩺 Transplante realizado entre Donante {donante.nombre} y Receptor {receptor.nombre}")
         self.receptores.remove(receptor)
-        donante.organos_d.remove(receptor.organo_r)
+        donante.organos_d = [o for o in donante.organos_d if o.nombre != receptor.organo_r]
         if not donante.organos_d:
             self.donantes.remove(donante)
 
-    def match(self):
-        self.cambiar_especialidad()
-        matches_realizados = False
-        receptores_a_evaluar = self.receptores[:]
-
-        for receptor in receptores_a_evaluar:
-            # Verificar si hay un cirujano en el centro de salud del receptor
-            cirujanos_en_centro = [cirujano for cirujano in self.cirujanos_gen if cirujano.centro == receptor.centro]
-            cirujanosesp_en_centro = [cirujano for cirujano in self.cirujanos_esp if cirujano.centro == receptor.centro]
-            if not cirujanos_en_centro and not cirujanosesp_en_centro:
-                print(f"❌ No hay cirujanos disponibles en el centro de salud de {receptor.nombre}. Operación cancelada.")
-                continue  # Saltar al siguiente receptor si no hay cirujanos disponibles
-
-            for donante in self.donantes:
-                if receptor.organo_r in donante.organos_d and receptor.t_sangre == donante.t_sangre:
-                    print(f"\n✔️ Match entre Receptor {receptor.nombre} y Donante {donante.nombre}")
-                    centro_receptor = receptor.centro
-                    centro_donante = donante.centro
-                    organo = receptor.organo_r
-
-                    if centro_receptor != centro_donante:
-                        if not self.transportar_organo(donante, receptor):
-                            print("🚫 No se pudo transportar el órgano. Match cancelado.")
-                            continue  # Pasar al siguiente donante
-
-                    if self.evaluar_operacion(centro_receptor, organo):
-                        print("✅ Operación exitosa")
-                        self.realizar_transplante(donante, receptor)
-                        matches_realizados = True
-                    else:
-                        print("⚠️ Falló la operación")
-                        self.donantes.remove(donante)
-
-                    break  # Solo un donante por receptor
-
-        if not matches_realizados:
-            print("\n❌ No hubo match disponible.")
+    def centro_con_cirujanos(self, centro):
+        hay_gen = any(c.centro == centro for c in self.cirujanos_gen)
+        hay_esp = any(c.centro == centro for c in self.cirujanos_esp)
+        return hay_gen or hay_esp
 
 
+    def encontrar_donante_compatible(self, receptor):
+
+
+        for donante in self.donantes:
+             for organo_d in donante.organos_d:
+                if organo_d.nombre == receptor.organo_r and receptor.t_sangre == donante.t_sangre:
+                    return donante
+        return None
+    
     def evaluar_operacion(self, centro, organo):
         # Intentar primero con cirujano especialista
         for cirujano in self.cirujanos_esp:
@@ -242,5 +221,34 @@ class INCUCAI:
                 print("❌ No hay vehículos terrestres disponibles.")
                 return False
 
+    def match(self):
+        self.cambiar_especialidad()
+        matches_realizados = False
+        receptores_a_evaluar = self.receptores[:]
 
-   
+        for receptor in receptores_a_evaluar:
+            if not self.centro_con_cirujanos(receptor.centro):
+                print(f"❌ No hay cirujanos disponibles en el centro de salud de {receptor.nombre}. Operación cancelada.")
+                continue
+
+            donante = self.encontrar_donante_compatible(receptor)
+            if not donante:
+                continue
+
+            print(f"\n✔️ Match entre Receptor {receptor.nombre} y Donante {donante.nombre}")
+
+            if donante.centro != receptor.centro and not self.transportar_organo(donante, receptor):
+                print("🚫 No se pudo transportar el órgano. Match cancelado.")
+                continue
+
+            if self.evaluar_operacion(receptor.centro, receptor.organo_r):
+                print("✅ Operación exitosa")
+                self.realizar_transplante(donante, receptor)
+                matches_realizados = True
+            else:
+                print("⚠️ Falló la operación")
+                self.donantes.remove(donante)
+
+        if not matches_realizados:
+            print("\n❌ No hubo match disponible.")
+

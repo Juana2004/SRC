@@ -1,5 +1,7 @@
+from registros import Registros
 def main():
-    j=j
+    registro =Registros()
+    registro.Registrar()
 
 if __name__ == "__main__":
     main()

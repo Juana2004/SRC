@@ -10,8 +10,6 @@ class CentroDeSalud:
         self.partido = partido
         self.provincia = provincia
         self.pais = pais
-        self.pacientes = []
-        self.medicos = []
 
         # Obtener latitud y longitud con manejo de excepciones
         full_address = f"{direccion}, {partido}, {provincia}, {pais}"
