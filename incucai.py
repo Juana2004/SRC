@@ -162,52 +162,36 @@ class INCUCAI:
                     return donante
         return None
     
-    def evaluar_operacion(self, centro, organo):
-        # Intentar primero con cirujano especialista
-        for cirujano in self.cirujanos_esp:
-            if cirujano.centro == centro and organo in cirujano.especialidad:
-                if self.obtener_numero_aleatorio() >= 3:
-                    return True
-
-        # Si no fue posible con especialista, intentar con cualquier cirujano del centro
-        for cirujano in self.cirujanos_gen:
-            if cirujano.centro == centro:
-                if self.obtener_numero_aleatorio() > 5:
-                    return True
-
-        return False
-      
-    
+  
     def transportar_organo(self, donante, receptor):
-        # Obtener la distancia pre-calculada entre los centros de donante y receptor
         centro_donante = donante.centro
         centro_receptor = receptor.centro
         clave = (centro_donante.nombre, centro_receptor.nombre)
-        
-        # Verificar si la distancia entre los centros ya está calculada
+
+        # Calcular distancia si aún no se había hecho
         if clave not in self.distancias_centros:
             distancia = self.calcular_distancia_centros(centro_donante, centro_receptor)
             self.distancias_centros[clave] = distancia
             self.distancias_centros[(centro_receptor.nombre, centro_donante.nombre)] = distancia
 
         distancia = self.distancias_centros[clave]
-        print(f"Distancia AEREA entre centros: {distancia:.2f} km")
+        print(f"📍 Distancia entre centros: {distancia:.2f} km")
 
-        # Proceso de transporte (avión, helicóptero o vehículo terrestre)
-        if receptor.centro.provincia != donante.centro.provincia:
+        # 🔹 Transporte asignado por el centro del donante
+        if centro_donante.provincia != centro_receptor.provincia:
             print("✈️ Transporte requerido: AVIÓN")
             if self.aviones:
+                avion = self.aviones.pop(0)
                 print("Avión asignado con éxito.")
-                return True
             else:
                 print("❌ No hay aviones disponibles.")
                 return False
 
-        elif receptor.centro.partido != donante.centro.partido:
+        elif centro_donante.partido != centro_receptor.partido:
             print("🚁 Transporte requerido: HELICÓPTERO")
             if self.helic:
+                helicoptero = self.helic.pop(0)
                 print("Helicóptero asignado con éxito.")
-                return True
             else:
                 print("❌ No hay helicópteros disponibles.")
                 return False
@@ -215,11 +199,32 @@ class INCUCAI:
         else:
             print("🚑 Transporte requerido: VEHÍCULO TERRESTRE")
             if self.vehiculos_terr:
-                print("Vehículo terrestre asignado con éxito.")
-                return True
+                self.vehiculos_terr.sort(key=lambda v: v.velocidad, reverse=True)
+                vehiculo = self.vehiculos_terr.pop(0)
+                print(f"Vehículo terrestre asignado: {vehiculo.__class__.__name__} ({vehiculo.velocidad} km/h)")
             else:
                 print("❌ No hay vehículos terrestres disponibles.")
                 return False
+
+        print("🔍 Evaluando disponibilidad de cirujano en el centro donante...")  #Cirujano asignado por el centro del donante
+
+        for cirujano in self.cirujanos_esp:
+            if cirujano.centro == centro_donante and receptor.organo_r in cirujano.especialidad:
+                if self.obtener_numero_aleatorio() >= 3:
+                    print(f"🧑‍⚕️ Cirujano especialista {cirujano.nombre} asignado con éxito.")
+                    cirujano.disponible = False  # Marcar como ocupado
+                    return True
+
+        for cirujano in self.cirujanos_gen:
+            if cirujano.centro == centro_donante:
+                if self.obtener_numero_aleatorio() > 5:
+                    cirujano.disponible = False
+                    print(f"🧑‍⚕️ Cirujano general {cirujano.nombre} asignado con éxito.")
+                    return True
+
+        print("❌ No se pudo asignar un cirujano en el centro donante.")
+        return False
+
 
     def match(self):
         self.cambiar_especialidad()
@@ -241,14 +246,11 @@ class INCUCAI:
                 print("🚫 No se pudo transportar el órgano. Match cancelado.")
                 continue
 
-            if self.evaluar_operacion(receptor.centro, receptor.organo_r):
+            if True: #
                 print("✅ Operación exitosa")
                 self.realizar_transplante(donante, receptor)
                 matches_realizados = True
-            else:
-                print("⚠️ Falló la operación")
-                self.donantes.remove(donante)
-
+        
         if not matches_realizados:
             print("\n❌ No hubo match disponible.")
 
