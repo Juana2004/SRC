@@ -154,8 +154,6 @@ class INCUCAI:
 
 
     def encontrar_donante_compatible(self, receptor):
-
-
         for donante in self.donantes:
              for organo_d in donante.organos_d:
                 if organo_d.nombre == receptor.organo_r and receptor.t_sangre == donante.t_sangre:

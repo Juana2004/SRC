@@ -36,8 +36,8 @@ class Registros():
         Helicoptero1 = Helicoptero(300, "Roma 550", "General paz", "Cordoba", "Argentina", incucai)
 
         #crear organo
-        Higado1=Organo("higado1", hora_ablacion, incucai)
-        Higado2=Organo("higado2", hora_ablacion, incucai)
+        Higado1=Organo("higado", hora_ablacion, incucai)
+        Higado2=Organo("higado", hora_ablacion, incucai)
         
 
         #crear receptores
