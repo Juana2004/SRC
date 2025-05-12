@@ -3,5 +3,5 @@ class Cirujano:
         self.nombre = nombre
         self.dni = dni
         self.centro = centro
-
+ 
 

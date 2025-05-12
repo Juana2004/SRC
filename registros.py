@@ -21,7 +21,7 @@ class Registros():
         fecha_ingreso = datetime.strptime("11/10/2006", "%d/%m/%Y").date()
         fecha_ingreso2 = datetime.strptime("10/10/2008", "%d/%m/%Y").date()
         fecha_fallecimiento = datetime.strptime("20/5/2006", "%d/%m/%Y").date()
-        hora_ablacion = datetime(2025, 5, 6, 14, 30)  # 6 de mayo de 2025 a las 14:30
+        hora_ablacion = datetime(2025, 5, 12, 14, 30)  # 6 de mayo de 2025 a las 14:30
 
 
         # Crear centros de salud
@@ -31,7 +31,7 @@ class Registros():
 
         # Crear vehiculos
         Ambulancia = VehiculoTerrestre(20, "Corrientes 200", "Ciudad Autonoma de Buenos Aires", "Buenos Aires", "Argentina", incucai)
-        Ambulancia2 = VehiculoTerrestre(40, "Libertad 900", "Ciudad Autonoma de Buenos Aires", "Buenos Aires", "Argentina", incucai)
+        Ambulancia2 = VehiculoTerrestre(40, "Corrientes 200", "Ciudad Autonoma de Buenos Aires", "Buenos Aires", "Argentina", incucai)
         Avion1 = Avion(100, "Callao 2500", "Ciudad Autonoma de Buenos Aires", "Buenos Aires", "Argentina", incucai)
         Helicoptero1 = Helicoptero(300, "Roma 550", "General paz", "Cordoba", "Argentina", incucai)
 
@@ -41,7 +41,7 @@ class Registros():
         
 
         #crear receptores
-        Juana = Receptor("Juana", 46091128, fecha_nacimiento, "femenino", 1158141032, "A+", ItalianoCordoba,incucai, "higado", fecha_ingreso, "cancer", "estable")
+        Juana = Receptor("Juana", 46091128, fecha_nacimiento, "femenino", 1158141032, "A+", Otamendi,incucai, "higado", fecha_ingreso, "cancer", "estable")
         Zoe = Receptor("Zoe", 46091127, fecha_nacimiento, "femenino", 1158141032, "A+", Otamendi, incucai, "higado", fecha_ingreso2, "cancer", "inestable")
 
         #crear donantes
