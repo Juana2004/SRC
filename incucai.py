@@ -58,8 +58,8 @@ class INCUCAI:
             if receptor.prioridad() < actual.prioridad():
                 i += 1
             elif receptor.prioridad() == actual.prioridad():
-                fecha_nuevo = datetime.strptime(receptor.fecha_lista, "%d/%m/%Y")
-                fecha_actual = datetime.strptime(actual.fecha_lista, "%d/%m/%Y")
+                fecha_nuevo = receptor.fecha_lista
+                fecha_actual = actual.fecha_lista
                 if fecha_nuevo > fecha_actual:
                     i += 1
                 else:
@@ -264,6 +264,19 @@ class INCUCAI:
                     else:
                         print("La operación falló")
                         return False
+            else:
+                if cirujano.operaciones_realizadas_hoy == 0:
+                    cirujano_disponible = True
+                    if organo_apto:
+                        if self.obtener_numero_aleatorio() > 5:
+                            cirujano.operaciones_realizadas_hoy = 1
+                            print(f"\nLa operación la realiza el cirujano especialista {cirujano.nombre} (mayor probabilidad de que salga bien)")
+                            return True
+                        else:
+                            print("La operación falló")
+                            return False
+                    
+        
 
         # Verificar cirujanos generales
         cirujanos_gen_en_centro = [c for c in self.cirujanos_gen if c.centro == centro]

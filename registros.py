@@ -30,8 +30,7 @@ class Registros():
 
         F = "femenino"
         M = "masculino"
-        si = True
-        no = False
+        
 
 
         print("\n-------------Registros------------")
@@ -54,8 +53,8 @@ class Registros():
         
 
         #crear receptores
-        Juana = Receptor("Juana", 46091128, fecha_nacimiento, F, 1158141032, TipoSangre.A_POSITIVO.value, Otamendi,incucai, TipoOrgano.CORAZON.value, fecha_ingreso, Tipo_Patologia_Corazon.INSUFICIENCIA_C.value,si )
-        Zoe = Receptor("Zoe", 46091127, fecha_nacimiento, F, 1158141032, TipoSangre.A_POSITIVO.value, Otamendi, incucai, TipoOrgano.HIGADO.value, fecha_ingreso2, Tipo_Patologia_Higado.HEPATITIS.value,no )
+        Juana = Receptor("Juana", 46091128, fecha_nacimiento, F, 1158141032, TipoSangre.A_POSITIVO.value, Otamendi,incucai, TipoOrgano.CORAZON.value, fecha_ingreso, Tipo_Patologia_Corazon.INSUFICIENCIA_C.value,"si" )
+        Zoe = Receptor("Zoe", 46091127, fecha_nacimiento, F, 1158141032, TipoSangre.A_POSITIVO.value, Otamendi, incucai, TipoOrgano.HIGADO.value, fecha_ingreso2, Tipo_Patologia_Higado.HEPATITIS.value,"si" )
 
         #crear donantes
         Cami = Donante("Cami", 4600914, fecha_nacimiento, F, 1158143232, TipoSangre.A_POSITIVO.value, Favaloro, incucai, fecha_fallecimiento, [Higado1, Corazon2])
