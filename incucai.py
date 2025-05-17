@@ -1,7 +1,7 @@
 from datetime import datetime
 import random
 from geopy.geocoders import Nominatim
-geolocator = Nominatim(user_agent="mi_aplicacion")
+geolocator = Nominatim(user_agent="incucai_app")
 from geopy.distance import distance
 from organo import Organo
 
