@@ -44,31 +44,31 @@ class INCUCAI:
         if receptor.centro not in self.centros_salud:
             print(f"\n❌ Centro de salud del receptor {receptor.nombre} no está registrado.")
             return
-        
+
         # Validar DNI único entre donantes y receptores
         for d in self.donantes + self.receptores:
             if d.dni == receptor.dni:
                 print(f"\n❌ El DNI de {receptor.nombre} ya está registrado en el sistema (donante o receptor).")
                 return
 
-        # Insertar receptor en orden de prioridad
+        # Insertar receptor en orden de prioridad (mayor número = mayor prioridad)
         i = 0
-        if self.receptores == []:
-            self.receptores.insert(i, receptor)
-        else:
-            while i < len(self.receptores):
-                actual = self.receptores[i]
-                if receptor.prioridad() < actual.prioridad():
-                    break
-                elif receptor.prioridad() == actual.prioridad():
-                    fecha_nuevo = datetime.strptime(receptor.fecha_lista, "%d/%m/%Y")
-                    fecha_actual = datetime.strptime(actual.fecha_lista, "%d/%m/%Y")
-                    if fecha_nuevo < fecha_actual:
-                        break
+        while i < len(self.receptores):
+            actual = self.receptores[i]
+            if receptor.prioridad() < actual.prioridad():
                 i += 1
-            self.receptores.insert(i, receptor)
+            elif receptor.prioridad() == actual.prioridad():
+                fecha_nuevo = datetime.strptime(receptor.fecha_lista, "%d/%m/%Y")
+                fecha_actual = datetime.strptime(actual.fecha_lista, "%d/%m/%Y")
+                if fecha_nuevo > fecha_actual:
+                    i += 1
+                else:
+                    break
+            else:  # receptor.prioridad() > actual.prioridad()
+                break
 
-        print(f"\nReceptor {receptor.nombre} registrado en lista de espera (ordenado por prioridad).")
+        self.receptores.insert(i, receptor)
+        print(f"\n✅ Receptor {receptor.nombre} registrado en lista de espera (ordenado por prioridad).")
 
 
     def registrar_centro(self, centro):
