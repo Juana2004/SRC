@@ -1,5 +1,6 @@
 from geopy.geocoders import Nominatim
 from vehiculos import Vehiculo
+from excepciones import ErrorGeolocalizacion
 import time
 
 class Avion(Vehiculo):
@@ -7,17 +8,19 @@ class Avion(Vehiculo):
 
     def __init__(self, velocidad, direccion, partido, provincia, pais, incucai):
         super().__init__(velocidad, direccion, partido, provincia, pais, incucai)
-        
-        full_address = f"{direccion}, {partido}, {provincia}, {pais}"
-        location = self.obtener_ubicacion(full_address)
-        if location:
-            self.latitud = location.latitude
-            self.longitud = location.longitude
-            print(f"\n✔ Avión localizado correctamente en: {full_address}")
-        else:
-            raise ValueError(f"\n✘ No se pudo geolocalizar la dirección: {full_address}")
-        
-        incucai.registrar_avion(self)
+
+        self.full_address = f"{direccion}, {partido}, {provincia}, {pais}"
+        try:
+            location = self.obtener_ubicacion(self.full_address)
+            if location:
+                self.latitud = location.latitude
+                self.longitud = location.longitude
+                print(f"\n✔ Avión localizado correctamente en: {self.full_address}")
+                incucai.registrar_avion(self)
+            else:
+                raise ErrorGeolocalizacion(self.full_address)
+        except ErrorGeolocalizacion as e:
+            print(f"❌ No se pudo registrar el avión: {e}")
 
     def obtener_ubicacion(self, direccion, intentos_max=3, espera=2):
         for intento in range(intentos_max):

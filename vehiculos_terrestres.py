@@ -1,23 +1,22 @@
 from geopy.geocoders import Nominatim
 from vehiculos import Vehiculo
+from excepciones import ErrorGeolocalizacion  # ← Importar la excepción personalizada
 import time
-
 
 class VehiculoTerrestre(Vehiculo):
     geolocator = Nominatim(user_agent="incucai_app")
 
     def __init__(self, velocidad, direccion, partido, provincia, pais, incucai):
         super().__init__(velocidad, direccion, partido, provincia, pais, incucai)
-
-        if self.obtener_longlat():
-            print(f"\n✔ Vehículo terrestre localizado correctamente en: {self.full_address}")
-            incucai.registrar_vehiculo_terr(self)
-        else:
-            print("No se pudo registrar el vehiculo , intente denuevo")
-    
         
+        try:
+            if self.obtener_longlat():
+                print(f"\n✔ Vehículo terrestre localizado correctamente en: {self.full_address}")
+                incucai.registrar_vehiculo_terr(self)
+        except ErrorGeolocalizacion as e:
+            print(f"❌ No se pudo registrar el vehículo terrestre: {e}")
+
     def obtener_longlat(self):
-        # Obtener latitud y longitud con manejo de excepciones
         self.full_address = f"{self.direccion}, {self.partido}, {self.provincia}, {self.pais}"
         location = self.obtener_ubicacion(self.full_address)
         if location:
@@ -25,9 +24,8 @@ class VehiculoTerrestre(Vehiculo):
             self.longitud = location.longitude
             return True
         else:
-            raise ValueError(f"No se pudo geolocalizar la dirección: {self.full_address}")
-        
-    
+            raise ErrorGeolocalizacion(self.full_address)
+
     def obtener_ubicacion(self, direccion, intentos_max=3, espera=2):
         for intento in range(intentos_max):
             try:
@@ -41,10 +39,16 @@ class VehiculoTerrestre(Vehiculo):
                 if intento < intentos_max - 1:
                     time.sleep(espera)
         return None
-    
+
     def actualizar_ubicacion(self, longitud, latitud):
-            geolocator = Nominatim(user_agent="mi_aplicacion")
+        try:
+            geolocator = Nominatim(user_agent="incucai_app")
             self.latitud = latitud
             self.longitud = longitud
             location = geolocator.reverse((latitud, longitud), language='es')
-            print(f"\n✔ Ubicación actualizada a: {location}")
+            if location:
+                print(f"\n✔ Ubicación actualizada a: {location}")
+            else:
+                raise ErrorGeolocalizacion(f"Coordenadas: {latitud}, {longitud}", mensaje="No se pudo invertir la geolocalización")
+        except Exception as e:
+            print(f"❌ Error al actualizar ubicación: {e}")
