@@ -188,13 +188,22 @@ class INCUCAI:
                 # Cálculo del valor velocidad / distancia
                 d1 = self.calcular_distancia_centros(v1, donante.centro)
                 d2 = self.calcular_distancia_centros(v2, donante.centro)
+                
+                #calculo trafico con random
+                demora1=random.randint (0,30)/60
+                demora2=random.randint (0,30)/60
 
-                c1 = v1.velocidad / d1 if d1 != 0 else float('inf')
-                c2 = v2.velocidad / d2 if d2 != 0 else float('inf')
+                c1 = (d1 / v1.velocidad if v1.velocidad != 0 else float('inf')) + demora1
+                c2 = (d2 / v2.velocidad if v2.velocidad != 0 else float('inf')) + demora2
+
 
                 # Si el segundo es "mejor" (mayor velocidad/distancia), lo sube
                 if c1 < c2:
                     self.vehiculos_terr[j], self.vehiculos_terr[j + 1] = self.vehiculos_terr[j + 1], self.vehiculos_terr[j]
+
+        for idx, v in enumerate(self.vehiculos_terr, start=1):
+            d = self.calcular_distancia_centros(v, donante.centro)
+            print(f"{idx}. ID: {getattr(v, 'id', idx)} | Vel: {v.velocidad} km/h | Dist: {d:.2f} km")
 
 
     def transportar_organo(self, donante, receptor):
@@ -279,6 +288,9 @@ class INCUCAI:
             else:
                 print("Fallo la operacion")
                 self.donantes.remove(donante)
+                self.receptores.remove(receptor)
+                self.receptores.insert(0,receptor)
+                self.mostrar_lista_espera() 
 
         if not matches_realizados:
             print("\n❌ No hubo match disponible.")
