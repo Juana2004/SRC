@@ -117,7 +117,7 @@ class INCUCAI:
     def mostrar_lista_espera(self):
         print("\n--------------------------Lista de espera:---------------------------")
         for r in self.receptores:
-            print(f"{r.nombre} - Órgano: {r.organo_r} - Fecha: {r.fecha_lista} - Estado: {r.estado}")
+            print(f"{r.nombre} - Órgano: {r.organo_r} - Fecha: {r.fecha_lista} ")
         print("-----------------------------------------------------------------------\n")
 
     def calcular_distancia_centros(self, centro1, centro2):
