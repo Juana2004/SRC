@@ -25,16 +25,20 @@ from tipos.tipo_organos_vivos import TipoOrganoVivo
 from tipos.tipo_sangre import TipoSangre
 from tipos.tipo_patologia_corazon import TipoPatologiaCorazon
 from tipos.tipo_patologia_higado import TipoPatologiaHigado
-
-
+from tipos.tipo_patologia_corneas import TipoPatologiaCorneas
+from tipos.tipo_patologia_piel import Tipo_Patologia_Piel
+from tipos.tipo_patologia_rinion import TipoPatologiaRinion
+from tipos.tipo_patologia_pancreas import TipoPatologiaPancreas
+from tipos.tipo_patologia_huesos import TipoPatologiaHuesos 
+from tipos.tipo_patologia_pulmon import TipoPatologiaPulmon
 
 
 class Registros():
     def __init__(self):
         pass
 
-    def Registrar(self):   
-        incucai = INCUCAI()
+    def Registrar(self,incucai):   
+        #incucai = INCUCAI() #lo tuve que comentar para 
 
 
         fecha_nacimiento = datetime.strptime("14/8/2004", "%d/%m/%Y").date()
@@ -53,7 +57,7 @@ class Registros():
         # Crear centros de salud
         Otamendi = CentroDeSalud("Otamendi", "Callao 3000", "Ciudad Autonoma de Buenos Aires", "Buenos Aires", "Argentina", incucai)
         Favaloro = CentroDeSalud("Favaloro", "Sarmiento 1855", "Ciudad Autonoma de Buenos Aires", "Buenos Aires", "Argentina", incucai)
-        #ItalianoCordoba = CentroDeSalud("Italiano de Cordoba", "Roma 550", "General paz", "Cordoba", "Argentina", incucai)
+        ItalianoCordoba = CentroDeSalud("Italiano de Cordoba", "Roma 550", "General paz", "Cordoba", "Argentina", incucai)
 
         # Crear vehiculos
         Ambulancia = VehiculoTerrestre("ambulancia",20, "Corrientes 200", "Ciudad Autonoma de Buenos Aires", "Buenos Aires", "Argentina", incucai)
@@ -83,7 +87,7 @@ class Registros():
         #Carlos = Cirujano_especial("Carlos", 334, Especialidad.GASTROENTEROLOGO.value, ItalianoCordoba, incucai)
         print("\n-----------------------------------------")
 
-'''
+
 #registrar receptores con interfaz 
 
 class RegistroReceptorApp():
@@ -214,22 +218,44 @@ class RegistroReceptorApp():
         self.centro_combo['values'] = centros
         if centros:
             self.centro_combo.current(0)
+        else:
+            self.centro_var.set('') #si no hay centro limpio el combo
+
+    def get_tipo_patologia_por_organo(self, organo):
+   
+    #Retorna el Enum de patologías correspondiente al órgano seleccionado.
     
+    # Mapeo de órganos a sus patologías correspondientes
+        patologias_por_organo = {
+            TipoOrgano.CORAZON.value: TipoPatologiaCorazon,
+            TipoOrgano.CORNEAS.value: TipoPatologiaCorneas,
+            TipoOrgano.HIGADO.value: TipoPatologiaHigado,
+            TipoOrgano.PIEL.value: Tipo_Patologia_Piel,
+            TipoOrgano.RINION.value: TipoPatologiaRinion,
+            TipoOrgano.PANCREAS.value: TipoPatologiaPancreas,
+            TipoOrgano.HUESOS.value: TipoPatologiaHuesos,
+            TipoOrgano.PULMON.value: TipoPatologiaPulmon
+        }
+    
+        # Obtener el enum de patologías correspondiente
+        if organo in patologias_por_organo:
+            return list(patologias_por_organo[organo])
+        else:
+            # Si no hay patologías definidas para este órgano, retornar una lista vacía
+            return []
+        
     def update_patologia_options(self, event):
-        organo_seleccionado = self.organo_var.get()
-        
-        if organo_seleccionado == TipoOrgano.CORAZON.value:
-            self.patologia_combo['values'] = [tipo.value for tipo in TipoPatologiaCorazon]
-        elif organo_seleccionado == TipoOrgano.HIGADO.value:
-            self.patologia_combo['values'] = [tipo.value for tipo in TipoPatologiaHigado]
-        else:
-            self.patologia_combo['values'] = []
-        
-        if self.patologia_combo['values']:
-            self.patologia_combo.current(0)
-        else:
-            self.patologia_var.set("")
-    
+            organo = self.organo_var.get()
+            tipo_patologia = self.get_tipo_patologia_por_organo(organo)
+            
+            # Obtener los nombres de las patologías
+            nombres_patologias = [p.name for p in tipo_patologia]
+            
+            # Actualizar el combobox con los nombres
+            self.patologia_combo['values'] = nombres_patologias
+            if nombres_patologias:
+                self.patologia_var.set(nombres_patologias[0])
+                
     def validate_fields(self):
         # Validar nombre
         if not self.nombre_var.get().strip():
@@ -266,6 +292,9 @@ class RegistroReceptorApp():
         
         return True
     
+    def get_patologia_nombres(tipo_patologia_enum):
+        return [p.name for p in tipo_patologia_enum]
+    
     def register_receptor(self):
         if not self.validate_fields():
             return
@@ -291,7 +320,19 @@ class RegistroReceptorApp():
                 messagebox.showerror("Error", f"Centro de salud '{centro_nombre}' no encontrado.")
                 return
             
+            # Obtener el órgano (esta línea debe estar antes de procesar la patología)
             organo = self.organo_var.get()
+            
+            # Obtener el nombre de la patología seleccionada
+            nombre_patologia = self.patologia_var.get()
+            
+            # Convertir nombre a objeto enum
+            tipo_patologia = self.get_tipo_patologia_por_organo(organo)
+            patologia_obj = None
+            for p in tipo_patologia:
+                if p.name == nombre_patologia:
+                    patologia_obj = p
+                    break
             
             # Crear fecha y hora de ingreso
             fecha_str = self.fecha_ingreso.get()
@@ -299,14 +340,17 @@ class RegistroReceptorApp():
             minuto = int(self.minuto_var.get())
             fecha_ingreso = datetime.strptime(f"{fecha_str} {hora:02d}:{minuto:02d}", "%d/%m/%Y %H:%M")
             
-            patologia = self.patologia_var.get()
             urgencia = self.urgencia_var.get() == "si"
             
-            # Crear el receptor
+            if patologia_obj is None:
+                messagebox.showerror("Error", f"Patología '{nombre_patologia}' no encontrada para el órgano {organo}.")
+                return
+            
+            # Crear el receptor con patologia_obj en lugar de patologia
             receptor = Receptor(
                 nombre, dni, fecha_nacimiento, sexo, telefono,
                 tipo_sangre, centro, self.incucai, organo,
-                fecha_ingreso, patologia, urgencia
+                fecha_ingreso, patologia_obj.value, urgencia
             )
             
             messagebox.showinfo("Éxito", f"Receptor {nombre} registrado exitosamente.")
@@ -329,4 +373,3 @@ class RegistroReceptorApp():
         self.minuto_var.set("00")
         self.update_patologia_options(None)
         self.urgencia_var.set("no")
-'''
