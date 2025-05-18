@@ -20,6 +20,7 @@ from tipos.tipo_patologia_rinion import TipoPatologiaRinion
 from tipos.tipo_patologia_pancreas import TipoPatologiaPancreas
 from tipos.tipo_patologia_huesos import TipoPatologiaHuesos 
 from tipos.tipo_patologia_pulmon import TipoPatologiaPulmon
+from tipos.tipo_patologia_intestino import TipoPatologiaIntestino
 
 #registrar receptores con interfaz 
 
@@ -33,18 +34,22 @@ class RegistroReceptorApp():
         
         # Estilo
         style = ttk.Style()
-        style.configure("TLabel", font=("Arial", 11))
-        style.configure("TButton", font=("Arial", 11))
-        style.configure("TEntry", font=("Arial", 11))
-        style.configure("Header.TLabel", font=("Arial", 14, "bold"))
-        
+        style.theme_use("clam")
+        style.configure("TLabel", font=("Segoe UI", 11), background="#f2f2f2")
+        style.configure("TButton", font=("Segoe UI", 11), padding=6)
+        style.configure("TEntry", font=("Segoe UI", 11))
+        style.configure("Header.TLabel", font=("Segoe UI", 16, "bold"), background="#f2f2f2", foreground="#333")
+        style.map("TButton", background=[('active', '#cce5ff')])
+                
         # Frame principal
-        main_frame = ttk.Frame(root, padding="20")
+        main_frame = ttk.Frame(root, padding=20, style="Card.TFrame")
         main_frame.pack(fill=tk.BOTH, expand=True)
         
+        style.configure("Card.TFrame", background="white", relief="groove", borderwidth=1)
+
         # Título
-        ttk.Label(main_frame, text="Registro de Receptores", style="Header.TLabel").grid(row=0, column=0, columnspan=2, pady=10)
-        
+        ttk.Label(main_frame, text="Registro de Receptores", style="Header.TLabel").grid(row=0, column=0, columnspan=2, pady=(0, 20), sticky="n")
+
         # Creación de los campos
         self.create_fields(main_frame)
         
@@ -52,8 +57,12 @@ class RegistroReceptorApp():
         button_frame = ttk.Frame(main_frame)
         button_frame.grid(row=12, column=0, columnspan=2, pady=20)
         
-        ttk.Button(button_frame, text="Registrar", command=self.register_receptor).pack(side=tk.LEFT, padx=10)
-        ttk.Button(button_frame, text="Limpiar", command=self.clear_fields).pack(side=tk.LEFT, padx=10)
+        ttk.Button(button_frame, text="Registrar", command=self.register_receptor, style="Accent.TButton").grid(row=0, column=0, padx=10)
+        ttk.Button(button_frame, text="Limpiar", command=self.clear_fields).grid(row=0, column=1, padx=10)
+
+        style.configure("Accent.TButton", foreground="white", background="#007acc")
+        style.map("Accent.TButton",
+                   background=[("active", "#005f99"), ("pressed", "#004c7a")])
         
     def create_fields(self, parent):
         # Nombre
@@ -167,7 +176,8 @@ class RegistroReceptorApp():
             TipoOrgano.RINION.value: TipoPatologiaRinion,
             TipoOrgano.PANCREAS.value: TipoPatologiaPancreas,
             TipoOrgano.HUESOS.value: TipoPatologiaHuesos,
-            TipoOrgano.PULMON.value: TipoPatologiaPulmon
+            TipoOrgano.PULMON.value: TipoPatologiaPulmon,
+            TipoOrgano.INTESTINO.value: TipoPatologiaIntestino
         }
     
         # Obtener el enum de patologías correspondiente

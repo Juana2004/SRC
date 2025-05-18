@@ -29,9 +29,10 @@ class Avion(Vehiculo):
                 if location:
                     return location
                 else:
-                    raise ValueError("Geolocalización fallida")
+                    print(f"Geolocalización fallida")
             except Exception as e:
                 print(f"⚠ Error al obtener geolocalización: {e}. Intento {intento+1} de {intentos_max}")
                 if intento < intentos_max - 1:
                     time.sleep(espera)
-        return None
+                    
+        raise ValueError(f"No se pudo geolocalizar la dirección: {direccion}")
