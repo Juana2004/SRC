@@ -1,4 +1,5 @@
 from pacientes.paciente import Paciente
+from organos.organo import Organo
 
 class Donante(Paciente):
 
@@ -9,6 +10,6 @@ class Donante(Paciente):
         self.hora_fallec = fecha_fallec.time()
         self.fecha_abl = fecha_fallec.date()
         self.hora_abl = fecha_fallec.time() ##los organos se extraen a los minutos q el paciente muere
-        self.organos_d = organos_d  # lista
-
+        self.organos_d = [Organo(tipo,fecha_fallec, incucai) for tipo in organos_d]
+        
         incucai.registrar_donante(self)
