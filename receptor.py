@@ -9,10 +9,7 @@ class Receptor(Paciente):
         self.organo_r = organo_r
         self.fecha_lista = fecha_lista
         self.patologia = patologia
-        if accidente == "si":
-            self.accidente = True
-        else:
-            self.accidente = False
+        self.accidente = accidente
 
         incucai.registrar_receptor(self)
 

@@ -4,6 +4,7 @@ from geopy.geocoders import Nominatim
 geolocator = Nominatim(user_agent="incucai_app")
 from geopy.distance import distance
 from organo import Organo
+from donante_vivo import DonanteVivo
 
 class INCUCAI:
 
@@ -243,7 +244,7 @@ class INCUCAI:
         hay_esp = any(c.centro == centro for c in self.cirujanos_esp)
         return hay_gen or hay_esp
     
-    def evaluar_operacion(self, centro, organo: Organo, indice):
+    def evaluar_operacion(self, centro, organo, indice):
         ahora = datetime.now()
         horas_desde_ablacion = int((ahora - organo[indice].ablacion).total_seconds() // 3600)
 
@@ -257,9 +258,9 @@ class INCUCAI:
             if organo[indice].nombre in cirujano.especialidad and cirujano.operaciones_realizadas_hoy == 0:
                 cirujano_disponible = True
                 if organo_apto:
+                    print(f"\nLa operación la realiza el cirujano especialista {cirujano.nombre} (mayor probabilidad de que salga bien)")
                     if self.obtener_numero_aleatorio() >= 3:
                         cirujano.operaciones_realizadas_hoy = 1
-                        print(f"\nLa operación la realiza el cirujano especialista {cirujano.nombre} (mayor probabilidad de que salga bien)")
                         return True
                     else:
                         print("La operación falló")
@@ -268,16 +269,14 @@ class INCUCAI:
                 if cirujano.operaciones_realizadas_hoy == 0:
                     cirujano_disponible = True
                     if organo_apto:
+                        print(f"\nLa operación la realiza el cirujano  {cirujano.nombre} (menor probabilidad de que salga bien)")
                         if self.obtener_numero_aleatorio() > 5:
                             cirujano.operaciones_realizadas_hoy = 1
-                            print(f"\nLa operación la realiza el cirujano especialista {cirujano.nombre} (mayor probabilidad de que salga bien)")
                             return True
                         else:
                             print("La operación falló")
                             return False
                     
-        
-
         # Verificar cirujanos generales
         cirujanos_gen_en_centro = [c for c in self.cirujanos_gen if c.centro == centro]
 
@@ -285,9 +284,9 @@ class INCUCAI:
             if cirujano.operaciones_realizadas_hoy == 0:
                 cirujano_disponible = True
                 if organo_apto:
+                    print(f"\nLa operación la realiza el cirujano general {cirujano.nombre} (menor probabilidad de que salga bien)")
                     if self.obtener_numero_aleatorio() > 5:
                         cirujano.operaciones_realizadas_hoy = 1
-                        print(f"\nLa operación la realiza el cirujano general {cirujano.nombre} (menor probabilidad de que salga bien)")
                         return True
                     else:
                         print("La operación falló")
@@ -301,7 +300,16 @@ class INCUCAI:
         
         return False
 
-        
+    def registrar_fecha_ablacion_si_vivo(self,donante, receptor):
+        if isinstance(donante, DonanteVivo):
+            fecha_actual = datetime.now()
+            donante.fecha_abl = fecha_actual
+            donante.hora_abl = fecha_actual.time()
+
+            for organo in donante.organos_d:
+                if organo.nombre == receptor.organo_r:
+                    organo.ablacion = fecha_actual
+                    break  # solo uno se dona
 
     def match(self):
         self.cambiar_especialidad()
@@ -317,6 +325,7 @@ class INCUCAI:
                 continue
                 
             donante = self.encontrar_donante_compatible(receptor)
+            self.registrar_fecha_ablacion_si_vivo(donante, receptor)
             if not donante:
                 i += 1
                 continue
