@@ -1,4 +1,4 @@
-from cirujano import Cirujano
+from cirujanos.cirujano import Cirujano
 
 class Cirujano_general(Cirujano):
     def __init__(self, nombre, dni, centro, incucai):

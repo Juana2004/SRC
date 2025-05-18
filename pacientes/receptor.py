@@ -1,4 +1,4 @@
-from paciente import Paciente
+from pacientes.paciente import Paciente
 
 
 class Receptor(Paciente):

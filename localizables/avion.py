@@ -1,13 +1,13 @@
 from geopy.geocoders import Nominatim
-from vehiculos import Vehiculo
-from excepciones import ErrorGeolocalizacion
+from localizables.vehiculos import Vehiculo
+from localizables.excepciones import ErrorGeolocalizacion
 import time
 
 class Avion(Vehiculo):
     geolocator = Nominatim(user_agent="incucai_app")
 
-    def __init__(self, velocidad, direccion, partido, provincia, pais, incucai):
-        super().__init__(velocidad, direccion, partido, provincia, pais, incucai)
+    def __init__(self, nombre,velocidad, direccion, partido, provincia, pais, incucai):
+        super().__init__(nombre,velocidad, direccion, partido, provincia, pais, incucai)
 
         self.full_address = f"{direccion}, {partido}, {provincia}, {pais}"
         try:

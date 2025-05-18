@@ -1,6 +1,6 @@
 from geopy.geocoders import Nominatim
 import time
-from excepciones import ErrorGeolocalizacion  
+from localizables.excepciones import ErrorGeolocalizacion  
 
 class CentroDeSalud:
     geolocator = Nominatim(user_agent="incucai_app")
