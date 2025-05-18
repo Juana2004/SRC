@@ -128,7 +128,7 @@ class INCUCAI:
         while receptores_pendientes:
             receptor = receptores_pendientes.pop(0)
             receptor_id = id(receptor)
-            print(f"\n🔍 Evaluando receptor: {receptor.nombre}")
+            print(f"\n------------------------🔍 Evaluando receptor: {receptor.nombre}------------------------")
 
             # Verificar disponibilidad de cirujanos
             if not self.gestor_cirujanos.hay_cirujanos_en_centro(receptor.centro):

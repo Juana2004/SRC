@@ -1,8 +1,9 @@
 from datetime import datetime
 from incucai import INCUCAI
 
-#import tkinter as tk
-#from tkinter import ttk, messagebox
+import tkinter as tk
+from tkinter import ttk, messagebox
+from tkcalendar import DateEntry
 
 from pacientes.receptor import Receptor
 from pacientes.donante import Donante
@@ -80,96 +81,252 @@ class Registros():
         #crear cirujanos
         Juan = Cirujano_especial("Juan", 445, Especialidad.GASTROENTEROLOGO.value, Otamendi, incucai)
         #Carlos = Cirujano_especial("Carlos", 334, Especialidad.GASTROENTEROLOGO.value, ItalianoCordoba, incucai)
-        """
-        try:
-            nombre = entry_nombre.get()
-            dni = int(entry_dni.get())
-            fecha_nac = datetime.strptime(entry_nac.get(), "%d/%m/%Y").date()
-            sexo = combo_sexo.get()
-            telefono = int(entry_tel.get())
-            tipo_sangre = getattr(TipoSangre, combo_sangre.get()).value
-            tipo_organo = getattr(TipoOrgano, combo_organo.get()).value
-            fecha_ing = datetime.strptime(entry_ingreso.get(), "%d/%m/%Y %H:%M")
-            urgente = combo_urgente.get() == "Sí"
-
-            # Patología según órgano
-            if combo_organo.get() == "CORAZON":
-                patologia = getattr(TipoPatologiaCorazon, combo_patologia.get())
-            else:
-                patologia = getattr(TipoPatologiaHigado, combo_patologia.get())
-
-            Receptor(nombre, dni, fecha_nac, sexo, telefono, tipo_sangre,
-                    Otamendi, incucai, tipo_organo, fecha_ing, patologia, urgente)
-
-            messagebox.showinfo("Éxito", f"Receptor {nombre} registrado con éxito.")
-
-        except Exception as e:
-            messagebox.showerror("Error", f"Ocurrió un error: {e}")
-
-        # GUI con Tkinter
-        root = tk.Tk()
-        root.title("Registro de Receptor - INCUCAI")
-
-        # Campos
-        tk.Label(root, text="Nombre:").grid(row=0, column=0)
-        entry_nombre = tk.Entry(root)
-        entry_nombre.grid(row=0, column=1)
-
-        tk.Label(root, text="DNI:").grid(row=1, column=0)
-        entry_dni = tk.Entry(root)
-        entry_dni.grid(row=1, column=1)
-
-        tk.Label(root, text="Fecha Nacimiento (dd/mm/yyyy):").grid(row=2, column=0)
-        entry_nac = tk.Entry(root)
-        entry_nac.grid(row=2, column=1)
-
-        tk.Label(root, text="Sexo:").grid(row=3, column=0)
-        combo_sexo = ttk.Combobox(root, values=["femenino", "masculino"])
-        combo_sexo.grid(row=3, column=1)
-
-        tk.Label(root, text="Teléfono:").grid(row=4, column=0)
-        entry_tel = tk.Entry(root)
-        entry_tel.grid(row=4, column=1)
-
-        tk.Label(root, text="Tipo de Sangre:").grid(row=5, column=0)
-        combo_sangre = ttk.Combobox(root, values=[ts.name for ts in TipoSangre])
-        combo_sangre.grid(row=5, column=1)
-
-        tk.Label(root, text="Órgano que necesita:").grid(row=6, column=0)
-        combo_organo = ttk.Combobox(root, values=[to.name for to in TipoOrgano])
-        combo_organo.grid(row=6, column=1)
-
-        tk.Label(root, text="Fecha de ingreso (dd/mm/yyyy HH:MM):").grid(row=7, column=0)
-        entry_ingreso = tk.Entry(root)
-        entry_ingreso.grid(row=7, column=1)
-
-        tk.Label(root, text="Patología:").grid(row=8, column=0)
-        combo_patologia = ttk.Combobox(root)
-        combo_patologia.grid(row=8, column=1)
-
-        tk.Label(root, text="¿Es urgente?").grid(row=9, column=0)
-        combo_urgente = ttk.Combobox(root, values=["Sí", "No"])
-        combo_urgente.grid(row=9, column=1)
-
-        # Botón de registrar
-        tk.Button(root, text="Registrar", command=incucai.registrar_receptor).grid(row=10, column=0, columnspan=2, pady=10)
-
-        # Cambiar opciones de patología dinámicamente
-        def actualizar_patologias(event):
-            if combo_organo.get() == "CORAZON":
-                combo_patologia["values"] = [p.name for p in TipoPatologiaCorazon]
-            elif combo_organo.get() == "HIGADO":
-                combo_patologia["values"] = [p.name for p in TipoPatologiaHigado]
-            else:
-                combo_patologia["values"] = []
-
-        combo_organo.bind("<<ComboboxSelected>>", actualizar_patologias)
-
-        # Iniciar GUI
-        root.mainloop()
-        """
         print("\n-----------------------------------------")
 
-        incucai.mostrar_lista_espera()
-        incucai.match()
-        incucai.mostrar_estado()
+'''
+#registrar receptores con interfaz 
+
+class RegistroReceptorApp():
+    def __init__(self, root, incucai):
+        self.root = root
+        self.incucai = incucai
+        self.root.title("Registro de Receptores")
+        self.root.geometry("600x650")
+        self.root.resizable(False, False)
+        
+        # Estilo
+        style = ttk.Style()
+        style.configure("TLabel", font=("Arial", 11))
+        style.configure("TButton", font=("Arial", 11))
+        style.configure("TEntry", font=("Arial", 11))
+        style.configure("Header.TLabel", font=("Arial", 14, "bold"))
+        
+        # Frame principal
+        main_frame = ttk.Frame(root, padding="20")
+        main_frame.pack(fill=tk.BOTH, expand=True)
+        
+        # Título
+        ttk.Label(main_frame, text="Registro de Receptores", style="Header.TLabel").grid(row=0, column=0, columnspan=2, pady=10)
+        
+        # Creación de los campos
+        self.create_fields(main_frame)
+        
+        # Botones
+        button_frame = ttk.Frame(main_frame)
+        button_frame.grid(row=12, column=0, columnspan=2, pady=20)
+        
+        ttk.Button(button_frame, text="Registrar", command=self.register_receptor).pack(side=tk.LEFT, padx=10)
+        ttk.Button(button_frame, text="Limpiar", command=self.clear_fields).pack(side=tk.LEFT, padx=10)
+        
+    def create_fields(self, parent):
+        # Nombre
+        ttk.Label(parent, text="Nombre:").grid(row=1, column=0, sticky=tk.W, pady=5)
+        self.nombre_var = tk.StringVar()
+        ttk.Entry(parent, textvariable=self.nombre_var, width=30).grid(row=1, column=1, sticky=tk.W, pady=5)
+        
+        # DNI
+        ttk.Label(parent, text="DNI:").grid(row=2, column=0, sticky=tk.W, pady=5)
+        self.dni_var = tk.StringVar()
+        ttk.Entry(parent, textvariable=self.dni_var, width=30).grid(row=2, column=1, sticky=tk.W, pady=5)
+        
+        # Fecha de nacimiento
+        ttk.Label(parent, text="Fecha de Nacimiento:").grid(row=3, column=0, sticky=tk.W, pady=5)
+        self.fecha_nac = DateEntry(parent, width=27, background='darkblue', foreground='white', date_pattern='dd/mm/yyyy')
+        self.fecha_nac.grid(row=3, column=1, sticky=tk.W, pady=5)
+        
+        # Sexo
+        ttk.Label(parent, text="Sexo:").grid(row=4, column=0, sticky=tk.W, pady=5)
+        self.sexo_var = tk.StringVar()
+        sexo_combo = ttk.Combobox(parent, textvariable=self.sexo_var, width=27)
+        sexo_combo['values'] = ['femenino', 'masculino']
+        sexo_combo.grid(row=4, column=1, sticky=tk.W, pady=5)
+        sexo_combo.current(0)
+        
+        # Número de teléfono
+        ttk.Label(parent, text="Número de Teléfono:").grid(row=5, column=0, sticky=tk.W, pady=5)
+        self.telefono_var = tk.StringVar()
+        ttk.Entry(parent, textvariable=self.telefono_var, width=30).grid(row=5, column=1, sticky=tk.W, pady=5)
+        
+        # Tipo de sangre
+        ttk.Label(parent, text="Tipo de Sangre:").grid(row=6, column=0, sticky=tk.W, pady=5)
+        self.sangre_var = tk.StringVar()
+        sangre_combo = ttk.Combobox(parent, textvariable=self.sangre_var, width=27)
+        sangre_combo['values'] = [tipo.value for tipo in TipoSangre]
+        sangre_combo.grid(row=6, column=1, sticky=tk.W, pady=5)
+        sangre_combo.current(0)
+        
+        # Centro de salud
+        ttk.Label(parent, text="Centro de Salud:").grid(row=7, column=0, sticky=tk.W, pady=5)
+        self.centro_var = tk.StringVar()
+        self.centro_combo = ttk.Combobox(parent, textvariable=self.centro_var, width=27)
+        self.update_centro_combo()
+        self.centro_combo.grid(row=7, column=1, sticky=tk.W, pady=5)
+        
+        # Órgano que necesita
+        ttk.Label(parent, text="Órgano que necesita:").grid(row=8, column=0, sticky=tk.W, pady=5)
+        self.organo_var = tk.StringVar()
+        organo_combo = ttk.Combobox(parent, textvariable=self.organo_var, width=27)
+        organo_combo['values'] = [tipo.value for tipo in TipoOrgano]
+        organo_combo.grid(row=8, column=1, sticky=tk.W, pady=5)
+        organo_combo.current(0)
+        organo_combo.bind("<<ComboboxSelected>>", self.update_patologia_options)
+        
+        # Fecha de ingreso
+        ttk.Label(parent, text="Fecha de Ingreso:").grid(row=9, column=0, sticky=tk.W, pady=5)
+        fecha_ingreso_frame = ttk.Frame(parent)
+        fecha_ingreso_frame.grid(row=9, column=1, sticky=tk.W, pady=5)
+        
+        self.fecha_ingreso = DateEntry(fecha_ingreso_frame, width=15, background='darkblue', 
+                                       foreground='white', date_pattern='dd/mm/yyyy')
+        self.fecha_ingreso.pack(side=tk.LEFT)
+        
+        ttk.Label(fecha_ingreso_frame, text=" Hora: ").pack(side=tk.LEFT)
+        
+        self.hora_var = tk.StringVar(value="00")
+        self.minuto_var = tk.StringVar(value="00")
+        
+        hora_spin = ttk.Spinbox(fecha_ingreso_frame, from_=0, to=23, width=2, textvariable=self.hora_var, format="%02.0f")
+        hora_spin.pack(side=tk.LEFT)
+        
+        ttk.Label(fecha_ingreso_frame, text=":").pack(side=tk.LEFT)
+        
+        minuto_spin = ttk.Spinbox(fecha_ingreso_frame, from_=0, to=59, width=2, textvariable=self.minuto_var, format="%02.0f")
+        minuto_spin.pack(side=tk.LEFT)
+        
+        #patologia
+        ttk.Label(parent, text="Patología:").grid(row=10, column=0, sticky=tk.W, pady=5)
+        self.patologia_var = tk.StringVar()
+        self.patologia_combo = ttk.Combobox(parent, textvariable=self.patologia_var, width=27)
+        self.update_patologia_options(None)  # Inicializar opciones
+        self.patologia_combo.grid(row=10, column=1, sticky=tk.W, pady=5)
+        
+        # Urgencia
+        ttk.Label(parent, text="Urgencia:").grid(row=11, column=0, sticky=tk.W, pady=5)
+        self.urgencia_var = tk.StringVar()
+        urgencia_combo = ttk.Combobox(parent, textvariable=self.urgencia_var, width=27)
+        urgencia_combo['values'] = ['si', 'no']
+        urgencia_combo.grid(row=11, column=1, sticky=tk.W, pady=5)
+        urgencia_combo.current(1)
+    
+    def update_centro_combo(self):
+        # Obtener los centros de salud registrados en INCUCAI
+        centros = [centro.nombre for centro in self.incucai.centros_salud]
+        self.centro_combo['values'] = centros
+        if centros:
+            self.centro_combo.current(0)
+    
+    def update_patologia_options(self, event):
+        organo_seleccionado = self.organo_var.get()
+        
+        if organo_seleccionado == TipoOrgano.CORAZON.value:
+            self.patologia_combo['values'] = [tipo.value for tipo in TipoPatologiaCorazon]
+        elif organo_seleccionado == TipoOrgano.HIGADO.value:
+            self.patologia_combo['values'] = [tipo.value for tipo in TipoPatologiaHigado]
+        else:
+            self.patologia_combo['values'] = []
+        
+        if self.patologia_combo['values']:
+            self.patologia_combo.current(0)
+        else:
+            self.patologia_var.set("")
+    
+    def validate_fields(self):
+        # Validar nombre
+        if not self.nombre_var.get().strip():
+            messagebox.showerror("Error", "Por favor, ingrese un nombre válido.")
+            return False
+        
+        # Validar DNI
+        try:
+            dni = int(self.dni_var.get().strip())
+            if dni <= 0:
+                raise ValueError
+        except ValueError:
+            messagebox.showerror("Error", "Por favor, ingrese un DNI válido (número entero positivo).")
+            return False
+        
+        # Validar teléfono
+        try:
+            telefono = int(self.telefono_var.get().strip())
+            if telefono <= 0:
+                raise ValueError
+        except ValueError:
+            messagebox.showerror("Error", "Por favor, ingrese un número de teléfono válido (número entero positivo).")
+            return False
+        
+        # Validar que haya un centro de salud seleccionado
+        if not self.centro_var.get():
+            messagebox.showerror("Error", "Por favor, seleccione un centro de salud.")
+            return False
+        
+        # Validar que haya una patología seleccionada
+        if not self.patologia_var.get():
+            messagebox.showerror("Error", "Por favor, seleccione una patología.")
+            return False
+        
+        return True
+    
+    def register_receptor(self):
+        if not self.validate_fields():
+            return
+        
+        try:
+            # Obtener los datos del formulario
+            nombre = self.nombre_var.get().strip()
+            dni = int(self.dni_var.get().strip())
+            fecha_nacimiento = datetime.strptime(self.fecha_nac.get(), "%d/%m/%Y").date()
+            sexo = self.sexo_var.get()
+            telefono = int(self.telefono_var.get().strip())
+            tipo_sangre = self.sangre_var.get()
+            
+            # Buscar el centro de salud seleccionado
+            centro_nombre = self.centro_var.get()
+            centro = None
+            for c in self.incucai.centros_salud:
+                if c.nombre == centro_nombre:
+                    centro = c
+                    break
+            
+            if not centro:
+                messagebox.showerror("Error", f"Centro de salud '{centro_nombre}' no encontrado.")
+                return
+            
+            organo = self.organo_var.get()
+            
+            # Crear fecha y hora de ingreso
+            fecha_str = self.fecha_ingreso.get()
+            hora = int(self.hora_var.get())
+            minuto = int(self.minuto_var.get())
+            fecha_ingreso = datetime.strptime(f"{fecha_str} {hora:02d}:{minuto:02d}", "%d/%m/%Y %H:%M")
+            
+            patologia = self.patologia_var.get()
+            urgencia = self.urgencia_var.get() == "si"
+            
+            # Crear el receptor
+            receptor = Receptor(
+                nombre, dni, fecha_nacimiento, sexo, telefono,
+                tipo_sangre, centro, self.incucai, organo,
+                fecha_ingreso, patologia, urgencia
+            )
+            
+            messagebox.showinfo("Éxito", f"Receptor {nombre} registrado exitosamente.")
+            self.clear_fields()
+            
+        except Exception as e:
+            messagebox.showerror("Error", f"Error al registrar receptor: {str(e)}")
+    
+    def clear_fields(self):
+        self.nombre_var.set("")
+        self.dni_var.set("")
+        self.fecha_nac.set_date(datetime.now().date())
+        self.sexo_var.set("femenino")
+        self.telefono_var.set("")
+        self.sangre_var.set(TipoSangre.A_POSITIVO.value)
+        self.centro_var.set("")
+        self.organo_var.set(TipoOrgano.CORAZON.value)
+        self.fecha_ingreso.set_date(datetime.now().date())
+        self.hora_var.set("00")
+        self.minuto_var.set("00")
+        self.update_patologia_options(None)
+        self.urgencia_var.set("no")
+'''
