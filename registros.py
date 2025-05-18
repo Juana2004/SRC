@@ -1,21 +1,28 @@
-from receptor import Receptor
-from donante import Donante
-from donante_vivo import DonanteVivo
-from centro_de_salud import CentroDeSalud
-from cirujano_especial import Cirujano_especial
-from vehiculos_terrestres import VehiculoTerrestre
-from helicoptero import Helicoptero
 from datetime import datetime
-from avion import Avion
 from incucai import INCUCAI
-from organo import Organo
-from organoo import Organoo
-from tipo_especialidad import Especialidad
-from tipo_organo import TipoOrgano
-from tipo_organos_vivos import TipoOrganoVivo
-from tipo_sangre import TipoSangre
-from tipo_patologia_corazon import TipoPatologiaCorazon
-from tipo_patologia_higado import TipoPatologiaHigado
+
+from pacientes.receptor import Receptor
+from pacientes.donante import Donante
+from pacientes.donante_vivo import DonanteVivo
+
+from cirujanos.cirujano_especial import Cirujano_especial
+
+from localizables.centro_de_salud import CentroDeSalud
+from localizables.vehiculos_terrestres import VehiculoTerrestre
+from localizables.helicoptero import Helicoptero
+from localizables.avion import Avion
+
+from organos.organo import Organo
+from organos.organoo import Organoo
+
+from tipos.tipo_especialidad import Especialidad
+from tipos.tipo_organo import TipoOrgano
+from tipos.tipo_organos_vivos import TipoOrganoVivo
+from tipos.tipo_sangre import TipoSangre
+from tipos.tipo_patologia_corazon import TipoPatologiaCorazon
+from tipos.tipo_patologia_higado import TipoPatologiaHigado
+
+
 
 
 class Registros():

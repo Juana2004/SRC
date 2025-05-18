@@ -3,8 +3,8 @@ import random
 from geopy.geocoders import Nominatim
 geolocator = Nominatim(user_agent="incucai_app")
 from geopy.distance import distance
-from organo import Organo
-from donante_vivo import DonanteVivo
+from organos.organo import Organo
+from pacientes.donante_vivo import DonanteVivo
 
 class INCUCAI:
 
