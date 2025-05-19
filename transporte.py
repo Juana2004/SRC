@@ -65,6 +65,7 @@ class Transporte:
         vehiculo = vehiculos_ordenados[0]
         print(f"\nVehículo terrestre asignado con éxito (velocidad: {vehiculo.velocidad})")
         
+        
         # Simular ruta del vehículo
         print("\nYendo a recoger el órgano...")
         vehiculo.actualizar_ubicacion(donante.centro.longitud, donante.centro.latitud)

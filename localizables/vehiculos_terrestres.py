@@ -15,6 +15,7 @@ class VehiculoTerrestre(Vehiculo):
                 incucai.registrar_vehiculo_terr(self)
         except ErrorGeolocalizacion as e:
             print(f"❌ No se pudo registrar el vehículo terrestre: {e}")
+    
 
     def obtener_longlat(self):
         self.full_address = f"{self.direccion}, {self.partido}, {self.provincia}, {self.pais}"
