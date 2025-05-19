@@ -4,3 +4,6 @@ class ErrorGeolocalizacion(Exception):
         self.direccion = direccion
         self.mensaje = f"{mensaje}: {direccion}"
         super().__init__(self.mensaje)
+
+
+######seguir creando aca

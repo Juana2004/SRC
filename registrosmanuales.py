@@ -1,4 +1,4 @@
-from datetime import datetime
+'''from datetime import datetime
 
 import tkinter as tk
 from tkinter import ttk, messagebox
@@ -316,3 +316,4 @@ class RegistroReceptorApp():
         self.minuto_var.set("00")
         self.update_patologia_options(None)
         self.urgencia_var.set("no")
+'''

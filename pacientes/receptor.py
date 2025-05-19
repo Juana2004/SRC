@@ -1,15 +1,23 @@
 from pacientes.paciente import Paciente
-
+from datetime import datetime, date
 
 class Receptor(Paciente):
 
-    
-    def __init__(self, nombre, dni, fecha_nac, sexo, tel, t_sangre, centro, incucai, organo_r, fecha_lista, patologia, accidente):
+    ##METODO MAGICO 1
+    def __init__(self, nombre, dni, fecha_nac, sexo, tel, t_sangre, centro, incucai, organo_r, fecha_lista, patologia, estado):
         super().__init__(nombre, dni, fecha_nac, sexo, tel, t_sangre, centro, incucai)
         self.organo_r = organo_r
         self.fecha_lista = fecha_lista
         self.patologia = patologia
-        self.accidente = accidente
+        self.accidente = estado
+          # Aceptar tanto string como date
+        if isinstance(fecha_nac, str):
+            fecha_nac_date = datetime.strptime(fecha_nac, "%d/%m/%Y").date()
+        else:
+            fecha_nac_date = fecha_nac
+
+        today = date.today()
+        self.edad = today.year - fecha_nac_date.year - ((today.month, today.day) < (fecha_nac_date.month, fecha_nac_date.day))
 
         incucai.registrar_receptor(self)
     
@@ -26,7 +34,7 @@ class Receptor(Paciente):
             return 5
         elif self.patologia == "prioridad alta" and self.accidente == True:
             return 6
-        
+      ##METODO MAGICO 3   
     def __lt__(self, other):
         """
         Define el comportamiento del operador < para ordenar receptores.

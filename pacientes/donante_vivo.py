@@ -1,5 +1,6 @@
 from pacientes.paciente import Paciente
 from organos.organoo import Organoo
+from datetime import datetime, date
 
 class DonanteVivo(Paciente):
     def __init__(self, nombre, dni, fecha_nac, sexo, tel, t_sangre, centro, incucai, organos_d: list):
@@ -7,4 +8,14 @@ class DonanteVivo(Paciente):
         self.fecha_abl = None
         self.hora_abl = None
         self.organos_d = [Organoo(tipo, incucai) for tipo in organos_d]
+        
+        # Aceptar tanto string como date
+        if isinstance(fecha_nac, str):
+            fecha_nac_date = datetime.strptime(fecha_nac, "%d/%m/%Y").date()
+        else:
+            fecha_nac_date = fecha_nac
+
+        today = date.today()
+        self.edad = today.year - fecha_nac_date.year - ((today.month, today.day) < (fecha_nac_date.month, fecha_nac_date.day))
+        
         incucai.registrar_donante(self)

@@ -9,5 +9,10 @@ class Paciente():
         self.tel = tel
         self.t_sangre = t_sangre
         self.centro = centro  # clase CentroSalud
-
+        
+##METODO MAGICO 4!!!
+    def __eq__(self, other):
+        if isinstance(other, Paciente):
+            return self.dni == other.dni
+        return False
   

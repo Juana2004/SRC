@@ -27,7 +27,7 @@ class INCUCAI:
             return
         
         # Validar DNI único
-        if any(d.dni == donante.dni for d in self.donantes + self.receptores):
+        if donante in self.donantes + self.receptores:
             print(f"\n❌ El DNI de {donante.nombre} ya está registrado en el sistema.")
             return
         
@@ -44,7 +44,7 @@ class INCUCAI:
             return
 
         # Validar DNI único
-        if any(d.dni == receptor.dni for d in self.donantes + self.receptores):
+        if receptor in self.donantes + self.receptores:
             print(f"\n❌ El DNI de {receptor.nombre} ya está registrado en el sistema.")
             return
         
@@ -78,7 +78,8 @@ class INCUCAI:
 
     def registrar_helic(self, helic):
         self.helic.append(helic)
-       
+    
+    ##METODO MAGICO 2
     def __str__(self):
         return (
             f"\n------------------ ESTADO ACTUAL DEL SISTEMA -------------------\n"
