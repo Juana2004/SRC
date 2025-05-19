@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import  Tuple, Optional
+from pacientes.donante_vivo import DonanteVivo
 
 class GestorDonaciones:
     """Gestiona el proceso de donación"""
@@ -45,7 +46,6 @@ class GestorDonaciones:
         
     def registrar_ablacion_donante_vivo(self, donante, organo_requerido):
         """Registra la fecha de ablación para un donante vivo"""
-        from pacientes.donante_vivo import DonanteVivo
         
         if isinstance(donante, DonanteVivo):
             fecha_actual = datetime.now()

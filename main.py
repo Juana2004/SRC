@@ -18,7 +18,7 @@ def main():
     root.mainloop()
 
     incucai.match()
-    incucai.mostrar_estado()
+    print(incucai)
 
 if __name__ == "__main__":
     main()

@@ -86,17 +86,20 @@ class INCUCAI:
     def registrar_helic(self, helic):
         self.helic.append(helic)
        
-    def mostrar_estado(self):
-        print("\n------------------ ESTADO ACTUAL DEL SISTEMA -------------------")
-        print(f"Donantes registrados: {len(self.donantes)}")
-        print(f"Receptores en lista de espera: {len(self.receptores)}")
-        print(f"Centros de salud registrados: {len(self.centros_salud)}")
-        print(f"Cirujanos especializados disponibles: {len(self.cirujanos_esp)}")
-        print(f"Cirujanos generales disponibles: {len(self.cirujanos_gen)}")
-        print(f"Vehículos terrestres: {len(self.vehiculos_terr)}")
-        print(f"Aviones disponibles: {len(self.aviones)}")
-        print(f"Helicópteros disponibles: {len(self.helic)}")
-        print("------------------------------------------------------------------\n")
+    def __str__(self):
+        return (
+            f"\n------------------ ESTADO ACTUAL DEL SISTEMA -------------------\n"
+            f"Donantes registrados: {len(self.donantes)}\n"
+            f"Receptores en lista de espera: {len(self.receptores)}\n"
+            f"Centros de salud registrados: {len(self.centros_salud)}\n"
+            f"Cirujanos especializados disponibles: {len(self.cirujanos_esp)}\n"
+            f"Cirujanos generales disponibles: {len(self.cirujanos_gen)}\n"
+            f"Vehículos terrestres: {len(self.vehiculos_terr)}\n"
+            f"Aviones disponibles: {len(self.aviones)}\n"
+            f"Helicópteros disponibles: {len(self.helic)}\n"
+            f"------------------------------------------------------------------\n"
+        )
+
 
     def mostrar_lista_espera(self):
         print("\n--------------------------Lista de espera:---------------------------")
