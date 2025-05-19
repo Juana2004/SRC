@@ -17,8 +17,9 @@ def main():
     app = RegistroReceptorApp(root, incucai)
     root.mainloop()
 
-    incucai.match()
+    #incucai.match()
     print(incucai)
+    incucai.mostrar_lista_espera()
 
 if __name__ == "__main__":
     main()

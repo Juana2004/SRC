@@ -47,22 +47,15 @@ class INCUCAI:
         if any(d.dni == receptor.dni for d in self.donantes + self.receptores):
             print(f"\n❌ El DNI de {receptor.nombre} ya está registrado en el sistema.")
             return
+        
+        self.receptores.append(receptor)
+        self.receptores = sorted(self.receptores)
 
+        self.receptores=sorted(self.receptores)
         # Insertamos ordenando por prioridad y fecha
-        self._insertar_receptor_ordenado(receptor)
         print(f"\n✅ Receptor {receptor.nombre} registrado en lista de espera.")
 
-    def _insertar_receptor_ordenado(self, receptor):
-        i = 0
-        while i < len(self.receptores):
-            actual = self.receptores[i]
-            if receptor.prioridad() < actual.prioridad():
-                i += 1
-            elif receptor.prioridad() == actual.prioridad() and receptor.fecha_lista > actual.fecha_lista:
-                i += 1
-            else:
-                break
-        self.receptores.insert(i, receptor)
+    
 
     def registrar_centro(self, centro):
         self.centros_salud.append(centro)

@@ -24,7 +24,7 @@ from tipos.tipo_patologia_rinion import TipoPatologiaRinion
 from tipos.tipo_patologia_pancreas import TipoPatologiaPancreas
 from tipos.tipo_patologia_huesos import TipoPatologiaHuesos 
 from tipos.tipo_patologia_pulmon import TipoPatologiaPulmon
-
+from tipos.tipo_patologia_intestino import TipoPatologiaIntestino
 
 class Registros():
     def __init__(self):

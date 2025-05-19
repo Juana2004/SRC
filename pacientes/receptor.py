@@ -12,7 +12,7 @@ class Receptor(Paciente):
         self.accidente = accidente
 
         incucai.registrar_receptor(self)
-
+    
     def prioridad(self):
         if self.patologia == "prioridad baja" and self.accidente == False:
             return 1
@@ -26,4 +26,21 @@ class Receptor(Paciente):
             return 5
         elif self.patologia == "prioridad alta" and self.accidente == True:
             return 6
-     
+        
+    def __lt__(self, other):
+        """
+        Define el comportamiento del operador < para ordenar receptores.
+        Cuando Python ordena una lista de receptores, compara pares de objetos.
+        
+        Esta función devuelve True si self debe ir ANTES que other en la lista ordenada.
+        
+        Criterios de ordenamiento:
+        1. Mayor prioridad primero (valores más altos de prioridad() van primero)
+        2. A igual prioridad, se ordena por fecha (fechas más antiguas primero)
+        """
+        if self.prioridad() > other.prioridad():
+            return True
+        elif self.prioridad() == other.prioridad() and self.fecha_lista < other.fecha_lista:
+            return True
+        else:
+            return False
