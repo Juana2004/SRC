@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import  Tuple, Optional
 from pacientes.donante_vivo import DonanteVivo
+from gestor_cirujanos import GestorCirujanos
 
 class GestorDonaciones:
     """Gestiona el proceso de donación"""
@@ -9,6 +10,7 @@ class GestorDonaciones:
         self.incucai = incucai
         self._donantes_por_sangre = {}
         self._receptores_por_organo = {}
+        self.gestor_cirujanos = GestorCirujanos(self)
         
     def actualizar_indices(self):
         self._donantes_por_sangre = {}
@@ -50,15 +52,19 @@ class GestorDonaciones:
         edad_receptor = receptor.edad
         
         donantes_compatibles = self._donantes_por_sangre.get(tipo_sangre, [])
-        
         for donante in donantes_compatibles:
             edad_donante = donante.edad
             if not self._edad_es_compatible(edad_donante,edad_receptor):
-                print("no funco")
+                continue
+            if self.gestor_cirujanos.hay_cirujanos_en_centro(donante.centro):
                 continue
             # Buscar órgano compatible
             for i, organo in enumerate(donante.organos_d):
                 if organo.nombre == organo_requerido:
+                    centro = donante.centro
+                    cirujano = centro.cirujanos[0]
+                    cirujano.operaciones_realizadas_hoy = 1
+                    self.registrar_ablacion_donante_vivo(donante, organo_requerido)
                     return donante, i
         
         return None, None

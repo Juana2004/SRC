@@ -28,32 +28,62 @@ class Transporte:
         
         # Selección de transporte según ubicación
         if centro_donante.provincia != centro_receptor.provincia:
-            return self._asignar_aereo("AVIÓN", self.incucai.aviones)
+            return self._asignar_aereo("AVIÓN", donante, centro_receptor)
             
         elif centro_donante.partido != centro_receptor.partido:
-            return self._asignar_aereo("HELICÓPTERO", self.incucai.helic)
+            return self._asignar_aereo("HELICÓPTERO", donante, centro_receptor)
             
         else:
             return self._asignar_terrestre(donante, centro_receptor)
     
-    def _asignar_aereo(self, tipo, vehiculos) -> bool:
+    def _asignar_aereo(self, tipo, donante, centro_destino) -> bool:
+        """
+        Asigna el vehículo aéreo (helicóptero o avión) según velocidad y distancia.
+        """
         print(f"\n✈️ Transporte requerido: {tipo}")
-        if vehiculos:
-            print(f"\n{tipo} asignado con éxito.")
-            return True
-        else:
+        
+        if tipo == "HELICÓPTERO":
+            vehiculos = self.incucai.helic
+        elif tipo == "AVIÓN":
+            vehiculos = self.incucai.aviones
+        
+        ##me fijo q el vehiculo sea del centro del receptor o del donante
+        vehiculos = [v for v in vehiculos if v.centro in (donante.centro, centro_destino)]
+        if not vehiculos:
             print(f"\n❌ No hay {tipo.lower()}s disponibles.")
             return False
+
+
+        # Ordenar vehículos según distancia / velocidad 
+        vehiculos_ordenados = sorted(
+            vehiculos,
+            key=lambda v: (
+                self.calcular_distancia(v, donante.centro) / v.velocidad
+            )
+        )
+
+        vehiculo = vehiculos_ordenados[0]
+        print(f"\n{tipo} asignado con éxito (velocidad: {vehiculo.velocidad})")
+
+        # Simular ruta
+        print("\nYendo a recoger el órgano...")
+        vehiculo.actualizar_ubicacion(donante.centro.longitud, donante.centro.latitud)
+        print("\nTransportando órgano al centro de destino...")
+        vehiculo.actualizar_ubicacion(centro_destino.longitud, centro_destino.latitud)
+        
+        return True
+
             
     def _asignar_terrestre(self, donante, centro_destino) -> bool:
         """Asigna el vehículo terrestre según velocidad, distancia y trafico"""
         print("\n🚑 Transporte requerido: VEHÍCULO TERRESTRE")
         vehiculos = self.incucai.vehiculos_terr
-        
+        ##me fijo q el vehiculo sea del centro del receptor o del donante
+        vehiculos = [v for v in vehiculos if v.centro in (donante.centro, centro_destino)]
         if not vehiculos:
             print("\n❌ No hay vehículos terrestres disponibles.")
             return False
-            
+
         # Ordenar vehículos 
         vehiculos_ordenados = sorted(
             vehiculos,

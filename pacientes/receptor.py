@@ -1,54 +1,59 @@
 from pacientes.paciente import Paciente
 from datetime import datetime, date
+from excepciones import ErrorDNIRepetido, ErrorCentroNoRegistrado
 
 class Receptor(Paciente):
-
-    ##METODO MAGICO 1
-    def __init__(self, nombre, dni, fecha_nac, sexo, tel, t_sangre, centro, incucai, organo_r, fecha_lista, patologia, estado):
+    
+    def __init__(self, nombre, dni, fecha_nac, sexo, tel, t_sangre, centro, incucai,
+                 organo_r, fecha_lista, patologia, urgencia):
         super().__init__(nombre, dni, fecha_nac, sexo, tel, t_sangre, centro, incucai)
+
         self.organo_r = organo_r
         self.fecha_lista = fecha_lista
         self.patologia = patologia
-        self.accidente = estado
-          # Aceptar tanto string como date
+        self.accidente = urgencia
+        self.estado = "estable"
+
+        # Procesar edad correctamente
         if isinstance(fecha_nac, str):
             fecha_nac_date = datetime.strptime(fecha_nac, "%d/%m/%Y").date()
         else:
             fecha_nac_date = fecha_nac
 
         today = date.today()
-        self.edad = today.year - fecha_nac_date.year - ((today.month, today.day) < (fecha_nac_date.month, fecha_nac_date.day))
+        self.edad = today.year - fecha_nac_date.year - (
+            (today.month, today.day) < (fecha_nac_date.month, fecha_nac_date.day)
+        )
 
-        incucai.registrar_receptor(self)
-    
+        try:
+            incucai.registrar_receptor(self)
+        except (ErrorDNIRepetido, ErrorCentroNoRegistrado) as e:
+            print(e)
+
+
+
     def prioridad(self):
-        if self.patologia == "prioridad baja" and self.accidente == False:
-            return 1
-        elif self.patologia == "prioridad media" and self.accidente == False:
-            return 2
-        elif self.patologia == "prioridad alta" and self.accidente == False:
-            return 3
-        elif self.patologia == "prioridad baja" and self.accidente == True:
-            return 4
-        elif self.patologia == "prioridad media" and self.accidente == True:
-            return 5
-        elif self.patologia == "prioridad alta" and self.accidente == True:
-            return 6
-      ##METODO MAGICO 3   
+        base = {
+            "prioridad baja": 1,
+            "prioridad media": 2,
+            "prioridad alta": 3
+        }.get(self.patologia.lower(), 1)
+
+        return base + 3 if self.accidente else base
+
     def __lt__(self, other):
-        """
-        Define el comportamiento del operador < para ordenar receptores.
-        Cuando Python ordena una lista de receptores, compara pares de objetos.
-        
-        Esta función devuelve True si self debe ir ANTES que other en la lista ordenada.
-        
-        Criterios de ordenamiento:
-        1. Mayor prioridad primero (valores más altos de prioridad() van primero)
-        2. A igual prioridad, se ordena por fecha (fechas más antiguas primero)
-        """
+        # 1. Primero priorizamos por estado clínico
+        if self.estado == "inestable" and other.estado != "inestable":
+            return True
+        if self.estado != "inestable" and other.estado == "inestable":
+            return False
+
+        # 2. Luego por mayor prioridad (número más alto)
         if self.prioridad() > other.prioridad():
             return True
-        elif self.prioridad() == other.prioridad() and self.fecha_lista < other.fecha_lista:
-            return True
-        else:
+        if self.prioridad() < other.prioridad():
             return False
+
+        # 3. Finalmente, por fecha de ingreso a lista (más antiguo primero)
+        return self.fecha_lista < other.fecha_lista
+

@@ -1,17 +1,18 @@
 from geopy.geocoders import Nominatim
 from localizables.vehiculos import Vehiculo
-from localizables.excepciones import ErrorGeolocalizacion  # ← Importar la excepción personalizada
+from excepciones import ErrorGeolocalizacion  # ← Importar la excepción personalizada
 import time
 
 class VehiculoTerrestre(Vehiculo):
     geolocator = Nominatim(user_agent="incucai_app")
 
-    def __init__(self,nombre, velocidad, direccion, partido, provincia, pais, incucai):
-        super().__init__(nombre,velocidad, direccion, partido, provincia, pais, incucai)
+    def __init__(self, nombre, velocidad, direccion, partido, provincia, pais, centro, incucai):
+        super().__init__(nombre, velocidad, direccion, partido, provincia, pais, centro, incucai)
+        self.viajes = 0
         
         try:
             if self.obtener_longlat():
-                print(f"\n✔ Vehículo terrestre localizado correctamente en: {self.full_address}")
+                print(f"\n✔{self.nombre} localizado correctamente en: {self.full_address}")
                 incucai.registrar_vehiculo_terr(self)
         except ErrorGeolocalizacion as e:
             print(f"❌ No se pudo registrar el vehículo terrestre: {e}")
@@ -48,7 +49,9 @@ class VehiculoTerrestre(Vehiculo):
             self.longitud = longitud
             location = geolocator.reverse((latitud, longitud), language='es')
             if location:
+                self.viajes += 1
                 print(f"\n✔ Ubicación actualizada a: {location}")
+                print(f"Viajes del vehiculo: {self.viajes}")
             else:
                 raise ErrorGeolocalizacion(f"Coordenadas: {latitud}, {longitud}", mensaje="No se pudo invertir la geolocalización")
         except Exception as e:

@@ -32,8 +32,8 @@ class Registros():
 
     def Registrar(self,incucai):   
 
-        fecha_nacimiento = datetime.strptime("14/8/2004", "%d/%m/%Y").date()
-        fecha=datetime.strptime("14/08/1963", "%d/%m/%Y").date()
+        fecha_nacimiento = datetime.strptime("14/08/2004", "%d/%m/%Y").date()
+        fecha=datetime.strptime("14/05/2025", "%d/%m/%Y").date()
         fecha_ingreso = datetime.strptime("11/10/2006 19:00", "%d/%m/%Y %H:%M")
         fecha_ingreso2 = datetime.strptime("10/10/2008 18:00", "%d/%m/%Y %H:%M")
         fecha_fallecimiento = datetime.strptime("17/5/2025 13:30", "%d/%m/%Y %H:%M")
@@ -45,31 +45,44 @@ class Registros():
         
 
 
-        print("\n-------------Registros------------")
+        print("\n\033[1;35m★ SISTEMA DE TRASPLANTES - REGISTROS ★\033[0m")
+
+
         # Crear centros de salud
+        print("\n\033[1;35m★ Centros de salud ★\033[0m")
         Otamendi = CentroDeSalud("Otamendi", "Callao 3000", "Ciudad Autonoma de Buenos Aires", "Buenos Aires", "Argentina", incucai)
         Favaloro = CentroDeSalud("Favaloro", "Sarmiento 1855", "Ciudad Autonoma de Buenos Aires", "Buenos Aires", "Argentina", incucai)
-        #ItalianoCordoba = CentroDeSalud("Italiano de Cordoba", "Roma 550", "General paz", "Cordoba", "Argentina", incucai)
+        ItalianoCordoba = CentroDeSalud("Italiano de Cordoba", "Roma 550", "General paz", "Cordoba", "Argentina", incucai)
 
         # Crear vehiculos
-        Ambulancia = VehiculoTerrestre("ambulancia",20, "Corrientes 200", "Ciudad Autonoma de Buenos Aires", "Buenos Aires", "Argentina", incucai)
-        #Ambulancia2 = VehiculoTerrestre(40, "Corrientes 200", "Ciudad Autonoma de Buenos Aires", "Buenos Aires", "Argentina", incucai)
-        #Avion1 = Avion(100, "Callao 2500", "Ciudad Autonoma de Buenos Aires", "Buenos Aires", "Argentina", incucai)
-        #Helicoptero1 = Helicoptero(300, "Roma 550", "General paz", "Cordoba", "Argentina", incucai)
+        print("\n\033[1;35m★ Vehiculos terrestres ★\033[0m")
+        #Ambulancia = VehiculoTerrestre("ambulancia",20, "Corrientes 200", "Ciudad Autonoma de Buenos Aires", "Buenos Aires", "Argentina", Favaloro incucai)
+        #Ambulancia2 = VehiculoTerrestre("ambulancia",40, "Corrientes 200", "Ciudad Autonoma de Buenos Aires", "Buenos Aires", "Argentina", Favaloro, incucai)
+        print("\n\033[1;35m★ Aviones ★\033[0m")
+        #Avion1 = Avion("avion",100, "Callao 2500", "Ciudad Autonoma de Buenos Aires", "Buenos Aires", "Argentina", Favaloro, incucai)
+        Avion2 = Avion("avion2",200, "Callao 2500", "Ciudad Autonoma de Buenos Aires", "Buenos Aires", "Argentina", Favaloro, incucai)
+        print("\n\033[1;35m★ Helicopteros ★\033[0m")
+        #Helicoptero1 = Helicoptero("helicoptero",300, "Roma 550", "General paz", "Cordoba", "Argentina", Favaloro, incucai)
 
         #crear donantes
+        print("\n\033[1;35m★ Donantes ★\033[0m")
        # Cami = Donante("Cami", 4600914, fecha_nacimiento, F, 1158143232, TipoSangre.A_POSITIVO.value, Favaloro, incucai, fecha_fallecimiento, [TipoOrgano.HIGADO.value, TipoOrgano.CORAZON.value])
        # Tere = Donante("Tere", 4600912, fecha_nacimiento, F, 1158143232, TipoSangre.A_POSITIVO.value, Favaloro, incucai, fecha_fallecimiento, [TipoOrgano.HIGADO.value, TipoOrgano.CORAZON.value])
         Carlos = DonanteVivo("Carlos", 409992, fecha, M, 112324256, TipoSangre.A_POSITIVO.value, Favaloro, incucai, [TipoOrganoVivo.HIGADO.value])
 
-        #crear receptores
-        #Juana = Receptor("Juana", 46091128, fecha_nacimiento, F, 1158141032, TipoSangre.A_POSITIVO.value, Otamendi,incucai, TipoOrgano.CORAZON.value, fecha_ingreso, TipoPatologiaCorazon.INSUFICIENCIA_C.value,si )
-        Zoe = Receptor("Zoe", 46091127, fecha_nacimiento, F, 1158141032, TipoSangre.A_POSITIVO.value, Otamendi, incucai, TipoOrgano.HIGADO.value, fecha_ingreso2, TipoPatologiaHigado.HEPATITIS.value,si )
 
-        
+        #crear receptores
+        print("\n\033[1;35m★ Receptores ★\033[0m")
+        #Juana = Receptor("Juana", 46091128, fecha_nacimiento, F, 1158141032, TipoSangre.A_POSITIVO.value, Otamendi,incucai, TipoOrgano.CORAZON.value, fecha_ingreso, TipoPatologiaCorazon.INSUFICIENCIA_C.value,si )
+        #Zoe = Receptor("Zoe", 46091127, fecha_nacimiento, F, 1158141032, TipoSangre.A_POSITIVO.value, ItalianoCordoba, incucai, TipoOrgano.HIGADO.value, fecha_ingreso2, TipoPatologiaHigado.HEPATITIS.value,si )
+
         #crear cirujanos
-        Juan = Cirujano_especial("Juan", 445, Especialidad.GASTROENTEROLOGO.value, Otamendi, incucai)
-       # Pepe = Cirujano_especial("Pepe", 334, Especialidad.GASTROENTEROLOGO.value, ItalianoCordoba, incucai)
-        print("\n-----------------------------------------")
+        print("\n\033[1;35m★ Cirujanos generales ★\033[0m")
+
+        print("\n\033[1;35m★ Cirujanos especializados ★\033[0m")
+        Juan = Cirujano_especial("Juan", 445, Especialidad.GASTROENTEROLOGO.value, Favaloro, incucai)
+        Pepe = Cirujano_especial("Pepe", 334, Especialidad.GASTROENTEROLOGO.value, ItalianoCordoba, incucai)
+        print("\n\033[1;35m★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★\033[0m")
+
 
 

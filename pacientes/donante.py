@@ -1,6 +1,8 @@
 from pacientes.paciente import Paciente
 from organos.organo import Organo
 from datetime import datetime, date
+from excepciones import ErrorDNIRepetido, ErrorCentroNoRegistrado
+
 class Donante(Paciente):
 
 
@@ -20,4 +22,7 @@ class Donante(Paciente):
         today = date.today()
         self.edad = today.year - fecha_nac_date.year - ((today.month, today.day) < (fecha_nac_date.month, fecha_nac_date.day))
         
-        incucai.registrar_donante(self)
+        try:
+            incucai.registrar_donante(self)
+        except (ErrorDNIRepetido, ErrorCentroNoRegistrado) as e:
+            print(e)

@@ -43,7 +43,7 @@ class GestorCirujanos:
         return (centro in self._especialistas_por_centro and self._especialistas_por_centro[centro]) or \
                (centro in self._generales_por_centro and self._generales_por_centro[centro])
     
-    def evaluar_operacion(self, centro, organo) -> bool:
+    def evaluar_operacion(self, centro, organo, receptor) -> bool:
         """Evalúa si se puede realizar la operación con los cirujanos disponibles"""
         # Verificar viabilidad del órgano
         ahora = datetime.now()
@@ -52,6 +52,7 @@ class GestorCirujanos:
         
         if horas_desde_ablacion > 20:
             print("\n❌ No se puede realizar la operación: el órgano tiene más de 20 horas desde la ablación.")
+
             return False
             
         # Buscar cirujanos especialistas disponibles primero
@@ -64,7 +65,7 @@ class GestorCirujanos:
                 cir_dis = True
                 print(f"\nLa operación la realiza el cirujano {cirujano.nombre}")
                 
-                if self._realizar_operacion(cirujano, umbral_exito):
+                if self._realizar_operacion(cirujano, umbral_exito, receptor):
                     return True
         
         # cirujanos generales
@@ -72,21 +73,22 @@ class GestorCirujanos:
         for cirujano in generales:
             if cirujano.operaciones_realizadas_hoy == 0:
                 print(f"\nLa operación la realiza el cirujano {cirujano.nombre}")
+                cirujano.operaciones_realizadas_hoy += 1
                 cir_dis = True
-                if self._realizar_operacion(cirujano, 5):  # Umbral más alto para generales
+                if self._realizar_operacion(cirujano, 5, receptor):  # Umbral más alto para generales
                     return True
         if not cir_dis:
             print("\n❌ No hay cirujanos disponibles para realizar la operación.")
         return False
     
-    def _realizar_operacion(self, cirujano, umbral_exito) -> bool:
+    def _realizar_operacion(self, cirujano, umbral_exito, receptor) -> bool:
         """realización de la operación con probabilidad de éxito"""
         resultado = random.randint(1, 10)
         exito = resultado >= umbral_exito
         
         if exito:
-            cirujano.operaciones_realizadas_hoy = 1
             return True
         else:
             print("\n❌ La operación falló")
+            receptor.estado = "inestable"
             return False

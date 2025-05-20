@@ -5,4 +5,5 @@ class Cirujano_especial(Cirujano):
         super().__init__(nombre, dni, centro, incucai)
         self.especialidad = especialidad
         self.operaciones_realizadas_hoy = 0
+        
         incucai.registrar_cirujano_esp(self)

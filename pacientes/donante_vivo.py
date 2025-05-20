@@ -1,6 +1,7 @@
 from pacientes.paciente import Paciente
 from organos.organoo import Organoo
 from datetime import datetime, date
+from excepciones import ErrorDNIRepetido, ErrorCentroNoRegistrado
 
 class DonanteVivo(Paciente):
     def __init__(self, nombre, dni, fecha_nac, sexo, tel, t_sangre, centro, incucai, organos_d: list):
@@ -18,4 +19,7 @@ class DonanteVivo(Paciente):
         today = date.today()
         self.edad = today.year - fecha_nac_date.year - ((today.month, today.day) < (fecha_nac_date.month, fecha_nac_date.day))
         
-        incucai.registrar_donante(self)
+        try:
+            incucai.registrar_donante(self)
+        except (ErrorDNIRepetido, ErrorCentroNoRegistrado) as e:
+            print(e)

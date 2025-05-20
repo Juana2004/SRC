@@ -1,13 +1,14 @@
-'''from datetime import datetime
-
+from datetime import datetime
 import tkinter as tk
 from tkinter import ttk, messagebox
 from tkcalendar import DateEntry
 
+# Importaciones de pacientes
 from pacientes.receptor import Receptor
 from pacientes.donante import Donante
 from pacientes.donante_vivo import DonanteVivo
 
+# Importaciones de tipos
 from tipos.tipo_especialidad import Especialidad
 from tipos.tipo_organo import TipoOrgano
 from tipos.tipo_organos_vivos import TipoOrganoVivo
@@ -18,17 +19,105 @@ from tipos.tipo_patologia_corneas import TipoPatologiaCorneas
 from tipos.tipo_patologia_piel import Tipo_Patologia_Piel
 from tipos.tipo_patologia_rinion import TipoPatologiaRinion
 from tipos.tipo_patologia_pancreas import TipoPatologiaPancreas
-from tipos.tipo_patologia_huesos import TipoPatologiaHuesos 
+from tipos.tipo_patologia_huesos import TipoPatologiaHuesos
 from tipos.tipo_patologia_pulmon import TipoPatologiaPulmon
 from tipos.tipo_patologia_intestino import TipoPatologiaIntestino
 
-#registrar receptores con interfaz 
-
-class RegistroReceptorApp():
+class IncucaiApp:
     def __init__(self, root, incucai):
         self.root = root
         self.incucai = incucai
-        self.root.title("Registro de Receptores")
+        self.root.title("Sistema INCUCAI")
+        self.root.geometry("600x400")
+        self.root.resizable(False, False)
+        
+        # Estilo
+        self.setup_styles()
+        
+        # Frame principal
+        main_frame = ttk.Frame(root, padding=20, style="Card.TFrame")
+        main_frame.pack(fill=tk.BOTH, expand=True)
+        
+        # Título
+        ttk.Label(main_frame, text="Sistema de Gestión INCUCAI", style="Header.TLabel").pack(pady=(0, 40))
+        
+        # Descripción
+        ttk.Label(
+            main_frame, 
+            text="Seleccione una opción para registrar pacientes en el sistema", 
+            wraplength=500,
+            justify="center"
+        ).pack(pady=(0, 30))
+        
+        # Botones
+        button_frame = ttk.Frame(main_frame)
+        button_frame.pack(fill=tk.X, expand=True)
+        
+        # Botón para Registrar Receptor
+        ttk.Button(
+            button_frame, 
+            text="Registrar Receptor", 
+            command=self.open_receptor_form,
+            width=25,
+            style="Accent.TButton"
+        ).pack(pady=10)
+        
+        # Botón para Registrar Donante
+        ttk.Button(
+            button_frame, 
+            text="Registrar Donante", 
+            command=self.open_donante_form,
+            width=25
+        ).pack(pady=10)
+        
+        # Botón para Registrar Donante Vivo
+        ttk.Button(
+            button_frame, 
+            text="Registrar Donante Vivo", 
+            command=self.open_donante_vivo_form,
+            width=25
+        ).pack(pady=10)
+    
+    def setup_styles(self):
+        style = ttk.Style()
+        style.theme_use("clam")
+        
+        # Estilo general
+        style.configure("TLabel", font=("Segoe UI", 11), background="#f2f2f2")
+        style.configure("TButton", font=("Segoe UI", 11), padding=6)
+        style.configure("TEntry", font=("Segoe UI", 11))
+        
+        # Estilo para títulos
+        style.configure("Header.TLabel", font=("Segoe UI", 20, "bold"), background="#f2f2f2", foreground="#333")
+        
+        # Estilo para botones destacados
+        style.configure("Accent.TButton", foreground="white", background="#007acc")
+        style.map("Accent.TButton",
+                 background=[("active", "#005f99"), ("pressed", "#004c7a")])
+        
+        # Estilo para el marco principal
+        style.configure("Card.TFrame", background="white", relief="groove", borderwidth=1)
+    
+    def open_receptor_form(self):
+        # Crear una nueva ventana para el formulario de receptor
+        receptor_window = tk.Toplevel(self.root)
+        receptor_app = RegistroReceptorApp(receptor_window, self.incucai)
+        receptor_window.transient(self.root)  # Hacer que la ventana sea dependiente de la principal
+    
+    def open_donante_form(self):
+        # Por ahora muestra un mensaje de "En desarrollo"
+        messagebox.showinfo("En desarrollo", "El registro de donantes está en desarrollo.")
+    
+    def open_donante_vivo_form(self):
+        # Por ahora muestra un mensaje de "En desarrollo"
+        messagebox.showinfo("En desarrollo", "El registro de donantes vivos está en desarrollo.")
+
+
+class RegistroReceptorApp:
+    def __init__(self, root, incucai):
+        self.root = root
+        self.incucai = incucai
+        self.root.title("Registro de Receptor")
         self.root.geometry("600x650")
         self.root.resizable(False, False)
         
@@ -40,30 +129,28 @@ class RegistroReceptorApp():
         style.configure("TEntry", font=("Segoe UI", 11))
         style.configure("Header.TLabel", font=("Segoe UI", 16, "bold"), background="#f2f2f2", foreground="#333")
         style.map("TButton", background=[('active', '#cce5ff')])
-                
+        
         # Frame principal
         main_frame = ttk.Frame(root, padding=20, style="Card.TFrame")
         main_frame.pack(fill=tk.BOTH, expand=True)
-        
         style.configure("Card.TFrame", background="white", relief="groove", borderwidth=1)
-
+        
         # Título
         ttk.Label(main_frame, text="Registro de Receptores", style="Header.TLabel").grid(row=0, column=0, columnspan=2, pady=(0, 20), sticky="n")
-
+        
         # Creación de los campos
         self.create_fields(main_frame)
         
         # Botones
         button_frame = ttk.Frame(main_frame)
         button_frame.grid(row=12, column=0, columnspan=2, pady=20)
-        
         ttk.Button(button_frame, text="Registrar", command=self.register_receptor, style="Accent.TButton").grid(row=0, column=0, padx=10)
         ttk.Button(button_frame, text="Limpiar", command=self.clear_fields).grid(row=0, column=1, padx=10)
-
+        
         style.configure("Accent.TButton", foreground="white", background="#007acc")
         style.map("Accent.TButton",
-                   background=[("active", "#005f99"), ("pressed", "#004c7a")])
-        
+                 background=[("active", "#005f99"), ("pressed", "#004c7a")])
+    
     def create_fields(self, parent):
         # Nombre
         ttk.Label(parent, text="Nombre:").grid(row=1, column=0, sticky=tk.W, pady=5)
@@ -121,25 +208,19 @@ class RegistroReceptorApp():
         ttk.Label(parent, text="Fecha de Ingreso:").grid(row=9, column=0, sticky=tk.W, pady=5)
         fecha_ingreso_frame = ttk.Frame(parent)
         fecha_ingreso_frame.grid(row=9, column=1, sticky=tk.W, pady=5)
-        
-        self.fecha_ingreso = DateEntry(fecha_ingreso_frame, width=15, background='darkblue', 
-                                       foreground='white', date_pattern='dd/mm/yyyy')
+        self.fecha_ingreso = DateEntry(fecha_ingreso_frame, width=15, background='darkblue',
+                                      foreground='white', date_pattern='dd/mm/yyyy')
         self.fecha_ingreso.pack(side=tk.LEFT)
-        
         ttk.Label(fecha_ingreso_frame, text=" Hora: ").pack(side=tk.LEFT)
-        
         self.hora_var = tk.StringVar(value="00")
         self.minuto_var = tk.StringVar(value="00")
-        
         hora_spin = ttk.Spinbox(fecha_ingreso_frame, from_=0, to=23, width=2, textvariable=self.hora_var, format="%02.0f")
         hora_spin.pack(side=tk.LEFT)
-        
         ttk.Label(fecha_ingreso_frame, text=":").pack(side=tk.LEFT)
-        
         minuto_spin = ttk.Spinbox(fecha_ingreso_frame, from_=0, to=59, width=2, textvariable=self.minuto_var, format="%02.0f")
         minuto_spin.pack(side=tk.LEFT)
         
-        #patologia
+        # Patología
         ttk.Label(parent, text="Patología:").grid(row=10, column=0, sticky=tk.W, pady=5)
         self.patologia_var = tk.StringVar()
         self.patologia_combo = ttk.Combobox(parent, textvariable=self.patologia_var, width=27)
@@ -161,13 +242,11 @@ class RegistroReceptorApp():
         if centros:
             self.centro_combo.current(0)
         else:
-            self.centro_var.set('') #si no hay centro limpio el combo
-
-    def get_tipo_patologia_por_organo(self, organo):
-   
-    #Retorna el Enum de patologías correspondiente al órgano seleccionado.
+            self.centro_var.set('')  # Si no hay centro limpio el combo
     
-    # Mapeo de órganos a sus patologías correspondientes
+    def get_tipo_patologia_por_organo(self, organo):
+        # Retorna el Enum de patologías correspondiente al órgano seleccionado.
+        # Mapeo de órganos a sus patologías correspondientes
         patologias_por_organo = {
             TipoOrgano.CORAZON.value: TipoPatologiaCorazon,
             TipoOrgano.CORNEAS.value: TipoPatologiaCorneas,
@@ -179,26 +258,26 @@ class RegistroReceptorApp():
             TipoOrgano.PULMON.value: TipoPatologiaPulmon,
             TipoOrgano.INTESTINO.value: TipoPatologiaIntestino
         }
-    
+        
         # Obtener el enum de patologías correspondiente
         if organo in patologias_por_organo:
             return list(patologias_por_organo[organo])
         else:
             # Si no hay patologías definidas para este órgano, retornar una lista vacía
             return []
-        
+    
     def update_patologia_options(self, event):
-            organo = self.organo_var.get()
-            tipo_patologia = self.get_tipo_patologia_por_organo(organo)
-            
-            # Obtener los nombres de las patologías
-            nombres_patologias = [p.name for p in tipo_patologia]
-            
-            # Actualizar el combobox con los nombres
-            self.patologia_combo['values'] = nombres_patologias
-            if nombres_patologias:
-                self.patologia_var.set(nombres_patologias[0])
-                
+        organo = self.organo_var.get()
+        tipo_patologia = self.get_tipo_patologia_por_organo(organo)
+        
+        # Obtener los nombres de las patologías
+        nombres_patologias = [p.name for p in tipo_patologia]
+        
+        # Actualizar el combobox con los nombres
+        self.patologia_combo['values'] = nombres_patologias
+        if nombres_patologias:
+            self.patologia_var.set(nombres_patologias[0])
+    
     def validate_fields(self):
         # Validar nombre
         if not self.nombre_var.get().strip():
@@ -234,9 +313,6 @@ class RegistroReceptorApp():
             return False
         
         return True
-    
-    def get_patologia_nombres(tipo_patologia_enum):
-        return [p.name for p in tipo_patologia_enum]
     
     def register_receptor(self):
         if not self.validate_fields():
@@ -316,4 +392,5 @@ class RegistroReceptorApp():
         self.minuto_var.set("00")
         self.update_patologia_options(None)
         self.urgencia_var.set("no")
-'''
+
+

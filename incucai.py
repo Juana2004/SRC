@@ -1,6 +1,8 @@
 from transporte import Transporte
 from gestor_cirujanos import GestorCirujanos
 from gestor_donaciones import GestorDonaciones
+from excepciones import ErrorDNIRepetido, ErrorCentroNoRegistrado
+
 
 class INCUCAI:
     """Sistema central"""
@@ -15,7 +17,6 @@ class INCUCAI:
         self.aviones = []
         self.helic = []
         self.organos = []
-        
         self.transporte = Transporte(self)
         self.gestor_cirujanos = GestorCirujanos(self)
         self.gestor_donaciones = GestorDonaciones(self)
@@ -23,16 +24,20 @@ class INCUCAI:
     def registrar_donante(self, donante):
         # Validar centro de salud
         if donante.centro not in self.centros_salud:
-            print(f"\n❌ Centro de salud del donante {donante.nombre} no está registrado.")
-            return
+            raise ErrorCentroNoRegistrado(donante.nombre, donante.centro)
         
         # Validar DNI único
         if donante in self.donantes + self.receptores:
-            print(f"\n❌ El DNI de {donante.nombre} ya está registrado en el sistema.")
-            return
+            raise ErrorDNIRepetido(donante.nombre)
         
+        #el centro guarda a todos sus donadores
         self.donantes.append(donante)
-        print(f"\n✅ Donante {donante.nombre} registrado.")
+        for centro in self.centros_salud:
+            if centro.nombre == donante.centro.nombre:  
+                centro.donantes.append(donante)
+                break
+
+        print(f"\n✔{donante.nombre}")
 
     def registrar_organo(self, organo):
         self.organos.append(organo)
@@ -40,20 +45,21 @@ class INCUCAI:
     def registrar_receptor(self, receptor):
         # Validar centro de salud
         if receptor.centro not in self.centros_salud:
-            print(f"\n❌ Centro de salud del receptor {receptor.nombre} no está registrado.")
-            return
+            raise ErrorCentroNoRegistrado(receptor.nombre, receptor.centro)
 
         # Validar DNI único
         if receptor in self.donantes + self.receptores:
-            print(f"\n❌ El DNI de {receptor.nombre} ya está registrado en el sistema.")
-            return
+            raise ErrorDNIRepetido(receptor.nombre)
         
         self.receptores.append(receptor)
-        self.receptores = sorted(self.receptores)
+        self.receptores.sort()  # Usa __lt__
 
-        self.receptores=sorted(self.receptores)
-        # Insertamos ordenando por prioridad y fecha
-        print(f"\n✅ Receptor {receptor.nombre} registrado en lista de espera.")
+        for centro in self.centros_salud:
+            if centro.nombre == receptor.centro.nombre:  
+                centro.receptores.append(receptor)
+                break
+        print(f"✔ {receptor.nombre}")
+
 
     
 
@@ -62,22 +68,42 @@ class INCUCAI:
 
     def registrar_cirujano_esp(self, cirujano):
         self.cirujanos_esp.append(cirujano)
-        print(f"\n✅ Cirujano especializado {cirujano.nombre} registrado.")
+        print(f"✔{cirujano.nombre}")
         self.gestor_cirujanos.actualizar_datos()
+        for centro in self.centros_salud:
+            if centro.nombre == cirujano.centro.nombre:  
+                centro.cirujanos.append(cirujano)
+                break
 
     def registrar_cirujano_gen(self, cirujano):
         self.cirujanos_gen.append(cirujano)
-        print(f"\n✅ Cirujano general {cirujano.nombre} registrado.")
+        print(f"\n✔{cirujano.nombre}")
         self.gestor_cirujanos.actualizar_datos()
+        for centro in self.centros_salud:
+            if centro.nombre == cirujano.centro.nombre:  
+                centro.cirujanos.append(cirujano)
+                break
 
     def registrar_vehiculo_terr(self, vehiculo_terr):
         self.vehiculos_terr.append(vehiculo_terr)
+        for centro in self.centros_salud:
+            if centro.nombre == vehiculo_terr.centro.nombre:  
+                centro.vehiculos.append(vehiculo_terr)
+                break
 
     def registrar_avion(self, avion):
         self.aviones.append(avion)
+        for centro in self.centros_salud:
+            if centro.nombre == avion.centro.nombre:  
+                centro.vehiculos.append(avion)
+                break
 
     def registrar_helic(self, helic):
         self.helic.append(helic)
+        for centro in self.centros_salud:
+            if centro.nombre == helic.centro.nombre:  
+                centro.vehiculos.append(helic)
+                break
     
     ##METODO MAGICO 2
     def __str__(self):
@@ -99,6 +125,29 @@ class INCUCAI:
         print("\n--------------------------Lista de espera:---------------------------")
         for r in self.receptores:
             print(f"{r.nombre} - Órgano: {r.organo_r} - Fecha: {r.fecha_lista}")
+        print("-----------------------------------------------------------------------\n")
+
+    def receptores_encentro(self, centro):
+        for c in self.centros_salud:
+            if c == centro:  #__eq__
+                nombres = [receptor.nombre for receptor in c.receptores]
+                print(nombres)
+                
+
+        ##buscar un receptor e informar q prioridad tiene
+    def prioridad_receptor(self, receptor):
+        if receptor in self.receptores:
+            posicion = self.receptores.index(receptor)
+            print(f"El receptor {receptor.nombre} está en el lugar {posicion + 1} de la lista de espera.")
+        else:
+            print("El receptor no está en la lista de espera.")
+
+
+        ##mostrar lista de donantes
+    def mostrar_lista_donantes(self):
+        print("\n--------------------------Lista de espera:---------------------------")
+        for r in self.donantes:
+            print(f"{r.nombre} ")
         print("-----------------------------------------------------------------------\n")
 
     def realizar_transplante(self, donante, receptor, indice_organo):
@@ -127,7 +176,7 @@ class INCUCAI:
             receptor_id = id(receptor)
             print(f"\n------------------------🔍 Evaluando receptor: {receptor.nombre}------------------------")
 
-            # Verificar disponibilidad de cirujanos
+            # Verificar disponibilidad de cirujanos en centro receptor
             if not self.gestor_cirujanos.hay_cirujanos_en_centro(receptor.centro):
                 print(f"\n❌ No hay cirujanos disponibles en el centro de {receptor.nombre}. Operación cancelada.")
                 continue
@@ -138,8 +187,6 @@ class INCUCAI:
                 print(f"\n❌ No se encontró donante compatible para {receptor.nombre}.")
                 continue
 
-            # Registrar ablación para donante vivo
-            self.gestor_donaciones.registrar_ablacion_donante_vivo(donante, receptor.organo_r)
             print(f"\n✅ Match encontrado: Receptor {receptor.nombre} y Donante {donante.nombre}")
 
             # Transportar órgano si es necesario
@@ -151,7 +198,7 @@ class INCUCAI:
                 print("\n✅ Donante y receptor en el mismo centro. No se requiere transporte.")
 
             # Evaluar operación
-            if self.gestor_cirujanos.evaluar_operacion(receptor.centro, donante.organos_d[indice_organo]):
+            if self.gestor_cirujanos.evaluar_operacion(receptor.centro, donante.organos_d[indice_organo], receptor):
                 print("\n✅ Operación exitosa")
                 self.realizar_transplante(donante, receptor, indice_organo)
                 matches_realizados = True
@@ -170,5 +217,4 @@ class INCUCAI:
                 # Reinsertar receptor con prioridad alta
                 if receptor in self.receptores:
                     self.receptores.remove(receptor)
-                self._insertar_receptor_ordenado(receptor)
                 receptores_pendientes.insert(0, receptor)

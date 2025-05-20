@@ -1,6 +1,6 @@
 from geopy.geocoders import Nominatim
 import time
-from localizables.excepciones import ErrorGeolocalizacion  
+from excepciones import ErrorGeolocalizacion  
 
 class CentroDeSalud:
     geolocator = Nominatim(user_agent="incucai_app")
@@ -11,13 +11,26 @@ class CentroDeSalud:
         self.partido = partido
         self.provincia = provincia
         self.pais = pais
+        self.receptores = []
+        self.donantes = []
+        self.vehiculos = []
+        self.cirujanos = []
 
         try:
             if self.obtener_longlat():
-                print(f"\n✔ Centro de salud '{self.nombre}' registrado en: {self.full_address}")
+                print(f"\n✔'{self.nombre}' registrado en: {self.full_address}")
                 incucai.registrar_centro(self)
         except ErrorGeolocalizacion as e:
             print(f"❌ No se pudo registrar el centro '{self.nombre}': {e}")
+
+    def __eq__(self, other):
+        if isinstance(other, CentroDeSalud):
+            return self.nombre == other.nombre and self.direccion == other.direccion
+        return False
+    
+    def __hash__(self):
+        return hash((self.nombre, self.direccion))
+
 
     def obtener_longlat(self):
         self.full_address = f"{self.direccion}, {self.partido}, {self.provincia}, {self.pais}"
