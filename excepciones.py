@@ -1,3 +1,4 @@
+from enum import Enum
 class ErrorGeolocalizacion(Exception):
     """Excepción lanzada cuando falla la geolocalización."""
     def __init__(self, direccion, mensaje="No se pudo geolocalizar la dirección"):
@@ -16,7 +17,5 @@ class ErrorCentroNoRegistrado(Exception):
     def __init__(self, nombre_receptor, centro):
         self.mensaje = f"❌ Centro de salud '{centro}' de {nombre_receptor} no está registrado en el sistema."
         super().__init__(self.mensaje)
-
-
 
 ######seguir creando aca

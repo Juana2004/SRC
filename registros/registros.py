@@ -26,7 +26,8 @@ from tipos.tipo_patologia_huesos import TipoPatologiaHuesos
 from tipos.tipo_patologia_pulmon import TipoPatologiaPulmon
 from tipos.tipo_patologia_intestino import TipoPatologiaIntestino
 
-class Registros():
+class Registros(): 
+    # Usar logging ?
     def __init__(self):
         pass
 
@@ -70,6 +71,7 @@ class Registros():
 
         # Crear donantes
         print(f"\n{AZUL}── Donantes ──{RESET}")
+        PersonaInfo = ""# Esto viene de donante_vivo.py crear clase para datos personas asi no pasamos todo en carlos
         Carlos = DonanteVivo("Carlos", 409992, fecha, M, 112324256, TipoSangre.A_POSITIVO.value, Favaloro, incucai, [TipoOrganoVivo.HIGADO.value])
 
         # Crear receptores
