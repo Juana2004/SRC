@@ -1,250 +1,146 @@
-##TEREEEE ESTEEEEE
 from datetime import datetime
 import tkinter as tk
 from tkinter import ttk, messagebox
-from tkcalendar import DateEntry
-
+# Importamos la clase base para heredar de ella
+from registros.paparegistro import RegistroBaseApp
 # Importaciones de pacientes
 from pacientes.donante import Donante
-from datetime import datetime
-
-
 # Importaciones de tipos
 from tipos.tipo_organo import TipoOrgano
-from tipos.tipo_sangre import TipoSangre
 
 
-class RegistroDonantesApp:
+class RegistroDonantesApp(RegistroBaseApp):
+    """
+    Clase para el registro de donantes en el sistema INCUCAI.
+    Hereda de RegistroBaseApp para mantener la consistencia con los otros registros.
+    """
     def __init__(self, root, incucai):
-        self.root = root
-        self.incucai = incucai
-        self.root.title("Registro de Donantes")
-        self.root.geometry("600x650")
-        self.root.resizable(False, False)
+        super().__init__(root, incucai, titulo="Registro de Donante", tamano="700x650")
         
-        # Estilo
-        style = ttk.Style()
-        style.theme_use("clam")
-        style.configure("TLabel", font=("Segoe UI", 11), background="#f2f2f2")
-        style.configure("TButton", font=("Segoe UI", 11), padding=6)
-        style.configure("TEntry", font=("Segoe UI", 11))
-        style.configure("Header.TLabel", font=("Segoe UI", 16, "bold"), background="#f2f2f2", foreground="#333")
-        style.map("TButton", background=[('active', '#cce5ff')])
+        # Campos específicos para donantes
+        self.crear_campos_donante()
         
-        # Frame principal
-        main_frame = ttk.Frame(root, padding=20, style="Card.TFrame")
-        main_frame.pack(fill=tk.BOTH, expand=True)
-        style.configure("Card.TFrame", background="white", relief="groove", borderwidth=1)
-        
-        # Título
-        ttk.Label(main_frame, text="Registro de Donantes", style="Header.TLabel").grid(row=0, column=0, columnspan=2, pady=(0, 20), sticky="n")
-        
-        # Creación de los campos
-        self.create_fields(main_frame)
-        
-        # Botones
-        button_frame = ttk.Frame(main_frame)
-        button_frame.grid(row=10, column=0, columnspan=2, pady=20)
-        ttk.Button(button_frame, text="Registrar", command=self.register_donante, style="Accent.TButton").grid(row=0, column=0, padx=10)
-        ttk.Button(button_frame, text="Limpiar", command=self.clear_fields).grid(row=0, column=1, padx=10)
-        
-        style.configure("Accent.TButton", foreground="white", background="#007acc")
-        style.map("Accent.TButton",
-                 background=[("active", "#005f99"), ("pressed", "#004c7a")])
+        # Agregamos los botones de acción
+        self.agregar_botones(11, self.registrar_donante, self.limpiar_campos)
     
-    def create_fields(self, parent):
-        # Nombre
-        ttk.Label(parent, text="Nombre:").grid(row=1, column=0, sticky=tk.W, pady=5)
-        self.nombre_var = tk.StringVar()
-        ttk.Entry(parent, textvariable=self.nombre_var, width=30).grid(row=1, column=1, sticky=tk.W, pady=5)
-        
-        # DNI
-        ttk.Label(parent, text="DNI:").grid(row=2, column=0, sticky=tk.W, pady=5)
-        self.dni_var = tk.StringVar()
-        ttk.Entry(parent, textvariable=self.dni_var, width=30).grid(row=2, column=1, sticky=tk.W, pady=5)
-        
-        # Fecha de nacimiento
-        ttk.Label(parent, text="Fecha de Nacimiento:").grid(row=3, column=0, sticky=tk.W, pady=5)
-        self.fecha_nac = DateEntry(parent, width=27, background='darkblue', foreground='white', date_pattern='dd/mm/yyyy')
-        self.fecha_nac.grid(row=3, column=1, sticky=tk.W, pady=5)
-        
-        # Sexo
-        ttk.Label(parent, text="Sexo:").grid(row=4, column=0, sticky=tk.W, pady=5)
-        self.sexo_var = tk.StringVar()
-        sexo_combo = ttk.Combobox(parent, textvariable=self.sexo_var, width=27)
-        sexo_combo['values'] = ['femenino', 'masculino']
-        sexo_combo.grid(row=4, column=1, sticky=tk.W, pady=5)
-        sexo_combo.current(0)
-        
-        # Número de teléfono
-        ttk.Label(parent, text="Número de Teléfono:").grid(row=5, column=0, sticky=tk.W, pady=5)
-        self.telefono_var = tk.StringVar()
-        ttk.Entry(parent, textvariable=self.telefono_var, width=30).grid(row=5, column=1, sticky=tk.W, pady=5)
-        
-        # Tipo de sangre
-        ttk.Label(parent, text="Tipo de Sangre:").grid(row=6, column=0, sticky=tk.W, pady=5)
-        self.sangre_var = tk.StringVar()
-        sangre_combo = ttk.Combobox(parent, textvariable=self.sangre_var, width=27)
-        sangre_combo['values'] = [tipo.value for tipo in TipoSangre]
-        sangre_combo.grid(row=6, column=1, sticky=tk.W, pady=5)
-        sangre_combo.current(0)
-        
-        # Centro de salud
-        ttk.Label(parent, text="Centro de Salud:").grid(row=7, column=0, sticky=tk.W, pady=5)
-        self.centro_var = tk.StringVar()
-        self.centro_combo = ttk.Combobox(parent, textvariable=self.centro_var, width=27)
-        self.update_centro_combo()
-        self.centro_combo.grid(row=7, column=1, sticky=tk.W, pady=5)
-        
+    def crear_campos_donante(self):
+        """Crea los campos específicos para el registro de donantes"""
         # Fecha y hora de fallecimiento
-        ttk.Label(parent, text="Fecha de Fallecimiento:").grid(row=8, column=0, sticky=tk.W, pady=5)
-        fecha_fallec_frame = ttk.Frame(parent)
-        fecha_fallec_frame.grid(row=8, column=1, sticky=tk.W, pady=5)
-        self.fecha_fallec = DateEntry(fecha_fallec_frame, width=15, background='darkblue',
-                                      foreground='white', date_pattern='dd/mm/yyyy')
-        self.fecha_fallec.pack(side=tk.LEFT)
-        ttk.Label(fecha_fallec_frame, text=" Hora: ").pack(side=tk.LEFT)
-        self.hora_fallec_var = tk.StringVar(value="00")
-        self.minuto_fallec_var = tk.StringVar(value="00")
-        hora_spin = ttk.Spinbox(fecha_fallec_frame, from_=0, to=23, width=2, textvariable=self.hora_fallec_var, format="%02.0f")
-        hora_spin.pack(side=tk.LEFT)
-        ttk.Label(fecha_fallec_frame, text=":").pack(side=tk.LEFT)
-        minuto_spin = ttk.Spinbox(fecha_fallec_frame, from_=0, to=59, width=2, textvariable=self.minuto_fallec_var, format="%02.0f")
-        minuto_spin.pack(side=tk.LEFT)
+        self.fecha_fallec, self.hora_fallec_var, self.min_fallec_var = self.crear_frame_fecha_hora(
+            self.main_frame, "Fecha/Hora de Fallecimiento:", 8
+        )
         
-        # Órganos para donar (Checkbuttons)
-        ttk.Label(parent, text="Órganos para Donar:").grid(row=9, column=0, sticky=tk.NW, pady=5)
+        # No solicitamos fecha de ablación ya que se maneja automáticamente en la clase Donante
         
-        # Frame para contener los checkbuttons de órganos
-        organos_frame = ttk.Frame(parent)
-        organos_frame.grid(row=9, column=1, sticky=tk.W, pady=5)
-        
-        # Crear variables y checkbuttons para cada tipo de órgano
-        self.organ_vars = {}
-        
-        # Organizar los checkbuttons en columnas
-        organs_per_column = 5
-        for i, organo in enumerate([tipo.value for tipo in TipoOrgano]):
-            # Calcular posición en la grid
-            col = i // organs_per_column
-            row = i % organs_per_column
-            
-            var = tk.BooleanVar(value=False)
-            self.organ_vars[organo] = var
-            
-            # Crear y posicionar el checkbutton
-            chk = ttk.Checkbutton(organos_frame, text=organo, variable=var)
-            chk.grid(row=row, column=col, sticky=tk.W, padx=(0 if col == 0 else 10))
+        # Checkboxes para seleccionar los órganos a donar
+        self.organos_vars = self.crear_checkbuttons_organos(
+            self.main_frame, 9, [tipo.value for tipo in TipoOrgano], 
+            titulo="Órganos para Donar:", organs_per_column=4
+        )
     
-    def update_centro_combo(self):
-        # Obtener los centros de salud registrados en INCUCAI
-        centros = [centro.nombre for centro in self.incucai.centros_salud]
-        self.centro_combo['values'] = centros
-        if centros:
-            self.centro_combo.current(0)
-        else:
-            self.centro_var.set('')  # Si no hay centro limpio el combo
+    def limpiar_campos(self):
+        """Limpia todos los campos del formulario"""
+        # Limpiamos los campos base
+        self.clear_fields_base()
+        
+        # Limpiamos los campos específicos de donante
+        self.fecha_fallec.set_date(datetime.now().date())
+        self.hora_fallec_var.set("00")
+        self.min_fallec_var.set("00")
+        
+        # Desmarcamos todas las casillas de órganos
+        for var in self.organos_vars.values():
+            var.set(False)
     
-    def validate_fields(self):
-        # Validar nombre
-        if not self.nombre_var.get().strip():
-            messagebox.showerror("Error", "Por favor, ingrese un nombre válido.")
-            return False
+    def registrar_donante(self):
+        """Registra un nuevo donante en el sistema"""
+        # Validamos los campos base primero
+        if not self.validate_fields_base():
+            return
         
-        # Validar DNI
-        try:
-            dni = int(self.dni_var.get().strip())
-            if dni <= 0:
-                raise ValueError
-        except ValueError:
-            messagebox.showerror("Error", "Por favor, ingrese un DNI válido (número entero positivo).")
-            return False
-        
-        # Validar teléfono
-        try:
-            telefono = int(self.telefono_var.get().strip())
-            if telefono <= 0:
-                raise ValueError
-        except ValueError:
-            messagebox.showerror("Error", "Por favor, ingrese un número de teléfono válido (número entero positivo).")
-            return False
-        
-        # Validar que haya un centro de salud seleccionado
-        if not self.centro_var.get():
-            messagebox.showerror("Error", "Por favor, seleccione un centro de salud.")
-            return False
-        
-        # Validar que al menos un órgano esté seleccionado
-        if not any(self.organ_vars.values()):
-            messagebox.showerror("Error", "Por favor, seleccione al menos un órgano para donar.")
-            return False
-        
-        return True
-    
-    def register_donante(self):
-        if not self.validate_fields():
+        # Validamos campos específicos de donante
+        if not self.validar_campos_donante():
             return
         
         try:
-            # Obtener los datos del formulario
-            nombre = self.nombre_var.get().strip()
-            dni = int(self.dni_var.get().strip())
-            fecha_nacimiento = datetime.strptime(self.fecha_nac.get(), "%d/%m/%Y").date()
-            sexo = self.sexo_var.get()
-            telefono = int(self.telefono_var.get().strip())
-            tipo_sangre = self.sangre_var.get()
-            
-            # Buscar el centro de salud seleccionado
-            centro_nombre = self.centro_var.get()
-            centro = None
-            for c in self.incucai.centros_salud:
-                if c.nombre == centro_nombre:
-                    centro = c
-                    break
-            
+            # Obtenemos el centro de salud
+            centro = self.get_centro_salud()
             if not centro:
-                messagebox.showerror("Error", f"Centro de salud '{centro_nombre}' no encontrado.")
+                messagebox.showerror("Error", "Centro de salud no encontrado.")
                 return
             
-            # Crear fecha y hora de fallecimiento
-            fecha_str = self.fecha_fallec.get()
-            hora = int(self.hora_fallec_var.get())
-            minuto = int(self.minuto_fallec_var.get())
-            fecha_fallecimiento = datetime.strptime(f"{fecha_str} {hora:02d}:{minuto:02d}", "%d/%m/%Y %H:%M")
-            
-            # Obtener los órganos seleccionados
+            # Obtenemos la lista de órganos seleccionados
             organos_seleccionados = []
-            for organo, var in self.organ_vars.items():
+            for organo, var in self.organos_vars.items():
                 if var.get():
-                    organos_seleccionados.append(organo)
+                    # Convertimos el valor a enum TipoOrgano
+                    for tipo in TipoOrgano:
+                        if tipo.value == organo:
+                            organos_seleccionados.append(tipo)
+                            break
             
-            # Crear el donante - La clase Donante ya se encarga de convertir los tipos de órganos
-            # en objetos Organo dentro de su constructor, según vemos en la definición:
-            # self.organos_d = [Organo(tipo,fecha_fallec, incucai) for tipo in organos_d]
-            donante = Donante(
-                nombre, dni, fecha_nacimiento, sexo, telefono,
-                tipo_sangre, centro, self.incucai, fecha_fallecimiento, 
-                organos_seleccionados
+            # Verificamos que haya al menos un órgano seleccionado
+            if not organos_seleccionados:
+                messagebox.showerror("Error", "Debe seleccionar al menos un órgano para donar.")
+                return
+            
+            # Creamos la fecha de fallecimiento
+            fecha_fallecimiento = self.get_datetime_from_widgets(
+                self.fecha_fallec, self.hora_fallec_var, self.min_fallec_var
             )
             
-            messagebox.showinfo("Éxito", f"Donante {nombre} registrado exitosamente.")
-            self.clear_fields()
+            # Creamos un nuevo donante
+            donante = Donante(
+                nombre=self.nombre_var.get().strip(),
+                dni=int(self.dni_var.get().strip()),
+                fecha_nac=self.fecha_nac.get_date(),
+                sexo=self.sexo_var.get(),
+                tel=int(self.telefono_var.get().strip()),
+                t_sangre=self.sangre_var.get(),
+                centro=centro,
+                incucai=self.incucai,
+                fecha_fallec=fecha_fallecimiento,
+                organos_d=organos_seleccionados
+            )
+            
+            # Mostramos mensaje de éxito
+            messagebox.showinfo("Éxito", f"Donante {donante.nombre} registrado correctamente.")
+            
+            # Limpiamos los campos para un nuevo registro
+            self.limpiar_campos()
             
         except Exception as e:
-            messagebox.showerror("Error", f"Error al registrar donante: {str(e)}")
+            messagebox.showerror("Error", f"No se pudo registrar el donante: {str(e)}")
     
-    def clear_fields(self):
-        self.nombre_var.set("")
-        self.dni_var.set("")
-        self.fecha_nac.set_date(datetime.now().date())
-        self.sexo_var.set("femenino")
-        self.telefono_var.set("")
-        self.sangre_var.set(TipoSangre.A_POSITIVO.value)
-        self.centro_var.set("")
-        self.fecha_fallec.set_date(datetime.now().date())
-        self.hora_fallec_var.set("00")
-        self.minuto_fallec_var.set("00")
+    def validar_campos_donante(self):
+        """Valida los campos específicos del donante
         
-        # Limpiar selección de órganos
-        for var in self.organ_vars.values():
-            var.set(False)
+        Returns:
+            bool: True si todos los campos son válidos, False en caso contrario
+        """
+        # Validar que la fecha de nacimiento sea anterior a la fecha actual
+        fecha_nac = self.fecha_nac.get_date()
+        if fecha_nac >= datetime.now().date():
+            messagebox.showerror("Error", "La fecha de nacimiento debe ser anterior a la fecha actual.")
+            return False
+        
+        # Validar fecha y hora de fallecimiento
+        try:
+            fecha_fallec = self.get_datetime_from_widgets(
+                self.fecha_fallec, self.hora_fallec_var, self.min_fallec_var
+            )
+            
+            # Validar que la fecha de fallecimiento sea posterior a la fecha de nacimiento
+            if fecha_fallec.date() <= fecha_nac:
+                messagebox.showerror("Error", "La fecha de fallecimiento debe ser posterior a la fecha de nacimiento.")
+                return False
+            
+            # Validar que la fecha de fallecimiento no sea futura
+            if fecha_fallec > datetime.now():
+                messagebox.showerror("Error", "La fecha de fallecimiento no puede ser futura.")
+                return False
+        except Exception:
+            messagebox.showerror("Error", "Fecha u hora de fallecimiento inválida.")
+            return False
+        
+        return True

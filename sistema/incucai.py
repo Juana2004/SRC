@@ -3,7 +3,6 @@ from sistema.gestor_cirujanos import GestorCirujanos
 from sistema.gestor_donaciones import GestorDonaciones
 from excepciones import ErrorDNIRepetido, ErrorCentroNoRegistrado
 
-
 class INCUCAI:
     """Sistema central"""
 
@@ -161,6 +160,78 @@ class INCUCAI:
             print(f"🗑️ Donante {donante.nombre} removido del sistema (sin órganos disponibles)")
     
     def match(self):
+        ##match xra interfaz
+        """Emparejar donantes y receptores y devolver los logs como lista"""
+        logs = []
+
+        self.gestor_cirujanos.normalizar_especialidades()
+        self.gestor_cirujanos.actualizar_datos()
+        self.gestor_donaciones.actualizar_indices()
+        
+        matches_realizados = False
+        receptores_procesados = set() 
+        
+        receptores_pendientes = list(self.receptores)
+        
+        while receptores_pendientes:
+            receptor = receptores_pendientes.pop(0)
+            receptor_id = id(receptor)
+            logs.append(f"\n------------------------🔍 Evaluando receptor: {receptor.nombre}------------------------")
+
+            # Verificar disponibilidad de cirujanos en centro receptor
+            if not self.gestor_cirujanos.hay_cirujanos_en_centro(receptor.centro):
+                logs.append(f"\n❌ No hay cirujanos disponibles en el centro de {receptor.nombre}. Operación cancelada.")
+                continue
+
+            # Buscar donante compatible
+            donante, indice_organo = self.gestor_donaciones.encontrar_donante_compatible(receptor)
+            if not donante:
+                logs.append(f"\n❌ No se encontró donante compatible para {receptor.nombre}.")
+                continue
+
+            logs.append(f"\n✅ Match encontrado: Receptor {receptor.nombre} y Donante {donante.nombre}")
+
+            # Transportar órgano si es necesario
+            if donante.centro != receptor.centro:
+                if not self.transporte.asignar_vehiculo(donante, receptor):
+                    logs.append("\n❌ No se pudo transportar el órgano. Match cancelado.")
+                    continue
+                else:
+                    logs.append("\n🚐 Transporte asignado con éxito.")
+            else:
+                logs.append("\n✅ Donante y receptor en el mismo centro. No se requiere transporte.")
+
+            # Evaluar operación
+            if self.gestor_cirujanos.evaluar_operacion(receptor.centro, donante.organos_d[indice_organo], receptor):
+                logs.append("\n✅ Operación exitosa")
+                self.realizar_transplante(donante, receptor, indice_organo)
+                matches_realizados = True
+                receptores_procesados.add(receptor_id)  # Solo aquí se marca como procesado
+            else:
+                # Eliminar el órgano si la operación falló
+                if 0 <= indice_organo < len(donante.organos_d):
+                    organo_fallido = donante.organos_d.pop(indice_organo)
+                    logs.append(f"\n❌ Órgano {organo_fallido.nombre} descartado después de operación fallida")
+
+                    # Eliminar donante si no tiene más órganos
+                    if not donante.organos_d:
+                        self.donantes.remove(donante)
+                        logs.append(f"🗑️ Donante {donante.nombre} removido del sistema (sin órganos disponibles)")
+
+                # Reinsertar receptor con prioridad alta
+                if receptor in self.receptores:
+                    self.receptores.remove(receptor)
+                receptores_pendientes.insert(0, receptor)
+
+        if not matches_realizados:
+            logs.append("\n⚠️ No se realizaron emparejamientos exitosos.")
+        else:
+            logs.append("\n🎉 Emparejamientos completados.")
+
+        return logs
+
+    ''' match para terminal
+    def match(self):
         """emparejar donantes y receptores"""
         self.gestor_cirujanos.normalizar_especialidades()
         self.gestor_cirujanos.actualizar_datos()
@@ -218,3 +289,4 @@ class INCUCAI:
                 if receptor in self.receptores:
                     self.receptores.remove(receptor)
                 receptores_pendientes.insert(0, receptor)
+    '''
