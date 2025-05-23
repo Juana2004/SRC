@@ -1,4 +1,4 @@
-from registros.paparegistro import RegistroBaseApp
+'''from registros.paparegistro import RegistroBaseApp
 import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import datetime
@@ -170,4 +170,4 @@ class RegistroReceptorApp(RegistroBaseApp):
         self.hora_var.set("00")
         self.minuto_var.set("00")
         self.update_patologia_options(None)
-        self.urgencia_var.set("no")
+        self.urgencia_var.set("no")'''

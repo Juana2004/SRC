@@ -1,292 +1,285 @@
 from sistema.transporte import Transporte
 from sistema.gestor_cirujanos import GestorCirujanos
 from sistema.gestor_donaciones import GestorDonaciones
-from excepciones import ErrorDNIRepetido, ErrorCentroNoRegistrado
+from excepciones import ErrorDNIRepetido, ErrorCentroNoRegistrado, ErrorCedulaRepetido, ErrorTipoDatoInvalido
+from localizables.centro_de_salud import CentroDeSalud
+
 
 class INCUCAI:
-    """Sistema central"""
-
     def __init__(self):
-        self.donantes = []
-        self.receptores = []
-        self.centros_salud = []
-        self.cirujanos_esp = []
-        self.cirujanos_gen = []
-        self.vehiculos_terr = []
-        self.aviones = []
-        self.helic = []
-        self.organos = []
-        self.transporte = Transporte(self)
-        self.gestor_cirujanos = GestorCirujanos(self)
-        self.gestor_donaciones = GestorDonaciones(self)
+        self.donantes: list[object] = []
+        self.receptores: list[object] = []
+        self.organos: list[object] = []
+        self.centros_salud: list[object] = []
+        self._centros_por_nombre: dict = {}
+        self.cirujanos_especializados: list[object] = []
+        self.cirujanos_generales: list[object] = []
+        self.vehiculos_terrestres: list[object] = []
+        self.aviones: list[object] = []
+        self.helicopteros: list[object] = []
 
-    def registrar_donante(self, donante):
-        # Validar centro de salud
-        if donante.centro not in self.centros_salud:
-            raise ErrorCentroNoRegistrado(donante.nombre, donante.centro)
-        
-        # Validar DNI único
-        if donante in self.donantes + self.receptores:
-            raise ErrorDNIRepetido(donante.nombre)
-        
-        #el centro guarda a todos sus donadores
-        self.donantes.append(donante)
+        self.transporte: object = Transporte(self)
+        self.gestor_cirujanos: object = GestorCirujanos(self)
+        self.gestor_donaciones: object = GestorDonaciones(self)
+
+    def _validar_centro_registrado(self, persona: object):
+        if persona.centro not in self.centros_salud:
+            raise ErrorCentroNoRegistrado(persona.nombre, persona.centro)
+
+    def _validar_dni_unico(self, persona: object):
+        if persona in self.donantes + self.receptores:
+            raise ErrorDNIRepetido(persona.nombre)
+    
+    def _validar_cedula_unica(self, persona: object):
+        if persona in self.cirujanos_especializados + self.cirujanos_generales:
+            raise ErrorCedulaRepetido(persona.nombre)
+
+    def _validar_datos(self, objeto: object, campos_esperados: dict, opcionales: list = []):
+        for campo, tipo_esperado in campos_esperados.items():
+            valor = getattr(objeto, campo, None)
+
+            if campo in opcionales:
+                # Si el campo es opcional y no está o es None, lo ignoramos
+                if valor is None:
+                    continue
+
+            if not isinstance(valor, tipo_esperado):
+                raise ErrorTipoDatoInvalido(objeto.nombre,
+                    campo,
+                    f"{tipo_esperado.__name__} (recibido: {type(valor).__name__})"
+            )
+
+
+    def _encontrar_centro_por_nombre(self, nombre_centro: str):
+        if nombre_centro in self._centros_por_nombre:
+            return self._centros_por_nombre[nombre_centro]
         for centro in self.centros_salud:
-            if centro.nombre == donante.centro.nombre:  
-                centro.donantes.append(donante)
-                break
+            if centro.nombre == nombre_centro:
+                self._centros_por_nombre[nombre_centro] = centro
+                return centro
+        return None
 
-        print(f"\n✔{donante.nombre}")
+    def _agregar_persona_a_centro(self, persona: object, lista_centro_attr: str):
+        centro = self._encontrar_centro_por_nombre(persona.centro.nombre)
+        if centro:
+            getattr(centro, lista_centro_attr).append(persona)
 
-    def registrar_organo(self, organo):
+    def registrar_donante(self, donante: object):
+        self._validar_centro_registrado(donante)
+        self._validar_dni_unico(donante)
+        self.donantes.append(donante)
+        self._agregar_persona_a_centro(donante, "donantes")
+        print(f"✔{donante.nombre}")
+
+    def registrar_organo(self, organo: object):
         self.organos.append(organo)
 
-    def registrar_receptor(self, receptor):
-        # Validar centro de salud
-        if receptor.centro not in self.centros_salud:
-            raise ErrorCentroNoRegistrado(receptor.nombre, receptor.centro)
-
-        # Validar DNI único
-        if receptor in self.donantes + self.receptores:
-            raise ErrorDNIRepetido(receptor.nombre)
-        
+    def registrar_receptor(self, receptor: object):
+        self._validar_centro_registrado(receptor)
+        self._validar_dni_unico(receptor)
         self.receptores.append(receptor)
-        self.receptores.sort()  # Usa __lt__
+        self.receptores.sort()
+        self._agregar_persona_a_centro(receptor, "receptores")
+        print(f"✔{receptor.nombre}")
 
-        for centro in self.centros_salud:
-            if centro.nombre == receptor.centro.nombre:  
-                centro.receptores.append(receptor)
-                break
-        print(f"✔ {receptor.nombre}")
-
-
-    
-
-    def registrar_centro(self, centro):
+    def registrar_centro(self, centro: object):
         self.centros_salud.append(centro)
+        self._centros_por_nombre[centro.nombre] = centro
 
-    def registrar_cirujano_esp(self, cirujano):
-        self.cirujanos_esp.append(cirujano)
-        print(f"✔{cirujano.nombre}")
-        self.gestor_cirujanos.actualizar_datos()
-        for centro in self.centros_salud:
-            if centro.nombre == cirujano.centro.nombre:  
-                centro.cirujanos.append(cirujano)
-                break
+    def _registrar_cirujano(self, cirujano, lista_cirujanos, tipo_cirujano):
+        self._validar_centro_registrado(cirujano)
+        self._validar_cedula_unica(cirujano)
+        self._validar_datos(
+        cirujano,
+        {
+            "nombre": str,
+            "cedula": int,
+            "centro": CentroDeSalud,
+            "especialidad": str,
+        }, opcionales= ["especialidad"]
+        )
+        lista_cirujanos.append(cirujano)
+        self._agregar_persona_a_centro(cirujano, "cirujanos")
+        print(f"✔{tipo_cirujano}: {cirujano.nombre}")
 
-    def registrar_cirujano_gen(self, cirujano):
-        self.cirujanos_gen.append(cirujano)
-        print(f"\n✔{cirujano.nombre}")
-        self.gestor_cirujanos.actualizar_datos()
-        for centro in self.centros_salud:
-            if centro.nombre == cirujano.centro.nombre:  
-                centro.cirujanos.append(cirujano)
-                break
-
-    def registrar_vehiculo_terr(self, vehiculo_terr):
-        self.vehiculos_terr.append(vehiculo_terr)
-        for centro in self.centros_salud:
-            if centro.nombre == vehiculo_terr.centro.nombre:  
-                centro.vehiculos.append(vehiculo_terr)
-                break
-
-    def registrar_avion(self, avion):
-        self.aviones.append(avion)
-        for centro in self.centros_salud:
-            if centro.nombre == avion.centro.nombre:  
-                centro.vehiculos.append(avion)
-                break
-
-    def registrar_helic(self, helic):
-        self.helic.append(helic)
-        for centro in self.centros_salud:
-            if centro.nombre == helic.centro.nombre:  
-                centro.vehiculos.append(helic)
-                break
-    
-    ##METODO MAGICO 2
-    def __str__(self):
-        return (
-            f"\n------------------ ESTADO ACTUAL DEL SISTEMA -------------------\n"
-            f"Donantes registrados: {len(self.donantes)}\n"
-            f"Receptores en lista de espera: {len(self.receptores)}\n"
-            f"Centros de salud registrados: {len(self.centros_salud)}\n"
-            f"Cirujanos especializados disponibles: {len(self.cirujanos_esp)}\n"
-            f"Cirujanos generales disponibles: {len(self.cirujanos_gen)}\n"
-            f"Vehículos terrestres: {len(self.vehiculos_terr)}\n"
-            f"Aviones disponibles: {len(self.aviones)}\n"
-            f"Helicópteros disponibles: {len(self.helic)}\n"
-            f"------------------------------------------------------------------\n"
+    def registrar_cirujano_especializado(self, cirujano):
+        self._registrar_cirujano(
+            cirujano, self.cirujanos_especializados, "especializado"
         )
 
+    def registrar_cirujano_general(self, cirujano):
+        self._registrar_cirujano(cirujano, self.cirujanos_generales, "general")
 
-    def mostrar_lista_espera(self):
-        print("\n--------------------------Lista de espera:---------------------------")
-        for r in self.receptores:
-            print(f"{r.nombre} - Órgano: {r.organo_r} - Fecha: {r.fecha_lista}")
-        print("-----------------------------------------------------------------------\n")
+    def _registrar_vehiculo(self, vehiculo, lista_vehiculos):
+        lista_vehiculos.append(vehiculo)
+        centro = self._encontrar_centro_por_nombre(vehiculo.centro.nombre)
+        if centro:
+            centro.vehiculos.append(vehiculo)
 
-    def receptores_encentro(self, centro):
-        for c in self.centros_salud:
-            if c == centro:  #__eq__
-                nombres = [receptor.nombre for receptor in c.receptores]
-                print(nombres)
-                
+    def registrar_vehiculo_terrestre(self, vehiculo_terrestre):
+        self._registrar_vehiculo(vehiculo_terrestre, self.vehiculos_terrestres)
 
-        ##buscar un receptor e informar q prioridad tiene
-    def prioridad_receptor(self, receptor):
-        if receptor in self.receptores:
-            posicion = self.receptores.index(receptor)
-            print(f"El receptor {receptor.nombre} está en el lugar {posicion + 1} de la lista de espera.")
+    def registrar_avion(self, avion):
+        self._registrar_vehiculo(avion, self.aviones)
+
+    def registrar_helicoptero(self, helicoptero):
+        self._registrar_vehiculo(helicoptero, self.helicopteros)
+
+    def __str__(self):
+        salida = (
+            f"\n{'-' * 60}\n"
+            f"ESTADO ACTUAL DEL SISTEMA INCUCAI\n"
+            f" Donantes registrados: {len(self.donantes)}\n"
+            f" Receptores en lista de espera: {len(self.receptores)}\n"
+            f" Centros de salud registrados: {len(self.centros_salud)}\n"
+            f" Cirujanos especializados: {len(self.cirujanos_especializados)}\n"
+            f" Cirujanos generales: {len(self.cirujanos_generales)}\n"
+            f" Vehículos terrestres: {len(self.vehiculos_terrestres)}\n"
+            f" Aviones disponibles: {len(self.aviones)}\n"
+            f" Helicópteros disponibles: {len(self.helicopteros)}\n"
+            f"\n{'-' * 60}\n"
+            f"LISTA DE ESPERA\n"
+        )
+        if not self.receptores:
+            salida += "No hay receptores en lista de espera.\n"
         else:
-            print("El receptor no está en la lista de espera.")
+            for i, receptor in enumerate(self.receptores, 1):
+                salida += (
+                    f"{i:2d}. {receptor.nombre:<20} | Órgano: {receptor.organo_receptor:<15} "
+                    f"| Fecha: {receptor.fecha_lista}\n"
+                )
+        salida += f"{'-' * 60}\nLISTA DE DONANTES\n"
+        if not self.donantes:
+            salida += "No hay donantes registrados.\n"
+        else:
+            for i, donante in enumerate(self.donantes, 1):
+                organos_disponibles = (
+                    len(donante.organos_d) if hasattr(donante, "organos_d") else 0
+                )
+                salida += f"{i:2d}. {donante.nombre} ({organos_disponibles} órganos disponibles)\n"
+        salida += f"{'-' * 60}\n"
+        return salida
 
+    def obtener_receptores_por_centro(self, centro):
+        centro_encontrado = self._encontrar_centro_por_nombre(centro.nombre)
+        if centro_encontrado:
+            return [receptor.nombre for receptor in centro_encontrado.receptores]
+        return []
 
-        ##mostrar lista de donantes
-    def mostrar_lista_donantes(self):
-        print("\n--------------------------Lista de espera:---------------------------")
-        for r in self.donantes:
-            print(f"{r.nombre} ")
-        print("-----------------------------------------------------------------------\n")
+    def mostrar_receptores_por_centro(self, centro):
+        receptores = self.obtener_receptores_por_centro(centro)
+        print(f"\n--- Receptores en {centro.nombre} ---")
+        if receptores:
+            for i, nombre in enumerate(receptores, 1):
+                print(f"{i}. {nombre}")
+        else:
+            print("No hay receptores en este centro.")
+
+    def obtener_prioridad_receptor(self, receptor):
+        try:
+            posicion = self.receptores.index(receptor)
+            return posicion + 1
+        except ValueError:
+            return None
+
+    def mostrar_prioridad_receptor(self, receptor):
+        prioridad = self.obtener_prioridad_receptor(receptor)
+        if prioridad:
+            print(
+                f"📍 El receptor {receptor.nombre} está en el lugar {prioridad} de la lista de espera."
+            )
+        else:
+            print(f"❌ El receptor {receptor.nombre} no está en la lista de espera.")
 
     def realizar_transplante(self, donante, receptor, indice_organo):
-        print(f"\n🩺 Trasplante realizado con éxito entre Donante {donante.nombre} y Receptor {receptor.nombre}")
-        # Remover receptor de la lista de espera
+        print(
+            f"Trasplante entre {donante.nombre} y {receptor.nombre} realizado con éxito"
+        )
+        centro_receptor = receptor.centro
+        centro_donante = donante.centro
         self.receptores.remove(receptor)
-        # Actualizar órganos disponibles del donante
-        donante.organos_d.pop(indice_organo)
-        if not donante.organos_d:
-            self.donantes.remove(donante)
-            print(f"🗑️ Donante {donante.nombre} removido del sistema (sin órganos disponibles)")
-    
-    def match(self):
-        ##match xra interfaz
-        """Emparejar donantes y receptores y devolver los logs como lista"""
-        logs = []
+        centro_receptor.receptores.remove(receptor)
+        if 0 <= indice_organo < len(donante.organos_donante):
+            donante.organos_donante.pop(indice_organo)
+            if not donante.organos_donante and donante in self.donantes:
+                self.donantes.remove(donante)
+                centro_donante.donantes.remove(donante)
+                print(f"🗑️ Donante {donante.nombre} removido del sistema.")
 
+    def match(self):
         self.gestor_cirujanos.normalizar_especialidades()
-        self.gestor_cirujanos.actualizar_datos()
         self.gestor_donaciones.actualizar_indices()
-        
+
         matches_realizados = False
-        receptores_procesados = set() 
-        
+        receptores_procesados = set()
         receptores_pendientes = list(self.receptores)
-        
+
         while receptores_pendientes:
             receptor = receptores_pendientes.pop(0)
-            receptor_id = id(receptor)
-            logs.append(f"\n------------------------🔍 Evaluando receptor: {receptor.nombre}------------------------")
+            receptor_id = id(receptor)  # identificador unico
 
-            # Verificar disponibilidad de cirujanos en centro receptor
+            print(f"\nEvaluando receptor: {receptor.nombre}")
+
             if not self.gestor_cirujanos.hay_cirujanos_en_centro(receptor.centro):
-                logs.append(f"\n❌ No hay cirujanos disponibles en el centro de {receptor.nombre}. Operación cancelada.")
+                print(f"\n❌ No hay cirujanos disponibles en el centro de {receptor.nombre}\n")
                 continue
 
-            # Buscar donante compatible
-            donante, indice_organo = self.gestor_donaciones.encontrar_donante_compatible(receptor)
+            donante, indice_organo = (
+                self.gestor_donaciones.encontrar_donante_compatible(receptor)
+            )
+
             if not donante:
-                logs.append(f"\n❌ No se encontró donante compatible para {receptor.nombre}.")
+                print(f"\n❌ No se encontró donante compatible para {receptor.nombre}\n")
                 continue
 
-            logs.append(f"\n✅ Match encontrado: Receptor {receptor.nombre} y Donante {donante.nombre}")
+            print(f"✅ Match encontrado: {receptor.nombre} ↔ {donante.nombre}")
 
-            # Transportar órgano si es necesario
-            if donante.centro != receptor.centro:
-                if not self.transporte.asignar_vehiculo(donante, receptor):
-                    logs.append("\n❌ No se pudo transportar el órgano. Match cancelado.")
-                    continue
-                else:
-                    logs.append("\n🚐 Transporte asignado con éxito.")
-            else:
-                logs.append("\n✅ Donante y receptor en el mismo centro. No se requiere transporte.")
+            exito_transporte, tiempo_transporte = self.gestionar_transporte(donante, receptor)
+            if not exito_transporte:
+                continue
 
-            # Evaluar operación
-            if self.gestor_cirujanos.evaluar_operacion(receptor.centro, donante.organos_d[indice_organo], receptor):
-                logs.append("\n✅ Operación exitosa")
-                self.realizar_transplante(donante, receptor, indice_organo)
+            if self._ejecutar_operacion(donante, receptor, indice_organo, tiempo_transporte):
                 matches_realizados = True
-                receptores_procesados.add(receptor_id)  # Solo aquí se marca como procesado
+                receptores_procesados.add(receptor_id)
             else:
-                # Eliminar el órgano si la operación falló
-                if 0 <= indice_organo < len(donante.organos_d):
-                    organo_fallido = donante.organos_d.pop(indice_organo)
-                    logs.append(f"\n❌ Órgano {organo_fallido.nombre} descartado después de operación fallida")
+                self._manejar_operacion_fallida(
+                    donante, receptor, indice_organo, receptores_pendientes
+                )
+        return matches_realizados
 
-                    # Eliminar donante si no tiene más órganos
-                    if not donante.organos_d:
-                        self.donantes.remove(donante)
-                        logs.append(f"🗑️ Donante {donante.nombre} removido del sistema (sin órganos disponibles)")
-
-                # Reinsertar receptor con prioridad alta
-                if receptor in self.receptores:
-                    self.receptores.remove(receptor)
-                receptores_pendientes.insert(0, receptor)
-
-        if not matches_realizados:
-            logs.append("\n⚠️ No se realizaron emparejamientos exitosos.")
+    def gestionar_transporte(self, donante, receptor) -> tuple[bool, float]:
+        if donante.centro != receptor.centro:
+            exito, tiempo = self.transporte.asignar_vehiculo(donante, receptor)
+            if not exito:
+                print("❌ No se pudo transportar el órgano. Match cancelado.")
+                return False, 0.0
+            else:
+                print(f"✅ Transporte asignado exitosamente. Tiempo estimado: {tiempo:.2f} horas")
+                return True, tiempo
         else:
-            logs.append("\n🎉 Emparejamientos completados.")
+            print("✅ Donante y receptor en el mismo centro. No se requiere transporte.")
+            return True, 0.0 
 
-        return logs
+    def _ejecutar_operacion(self, donante, receptor, indice_organo, tiempo_transporte):
+        if self.gestor_cirujanos.evaluar_operacion(
+            receptor.centro, donante.organos_donante[indice_organo], receptor, tiempo_transporte):
+            print("✅ Operación exitosa")
+            self.realizar_transplante(donante, receptor, indice_organo)
+            return True
+        return False
 
-    ''' match para terminal
-    def match(self):
-        """emparejar donantes y receptores"""
-        self.gestor_cirujanos.normalizar_especialidades()
-        self.gestor_cirujanos.actualizar_datos()
-        self.gestor_donaciones.actualizar_indices()
-        
-        matches_realizados = False
-        receptores_procesados = set() 
-        
-        receptores_pendientes = list(self.receptores)
-        
-        while receptores_pendientes:
-            receptor = receptores_pendientes.pop(0)
-            receptor_id = id(receptor)
-            print(f"\n------------------------🔍 Evaluando receptor: {receptor.nombre}------------------------")
+    def _manejar_operacion_fallida(self, donante, receptor, indice_organo, receptores_pendientes):
+        centro_donante = donante.centro
+        if 0 <= indice_organo < len(donante.organos_donante):
+            organo_fallido = donante.organos_donante.pop(indice_organo)
+            print(
+                f"❌ Órgano {organo_fallido.nombre} descartado después de operación fallida"
+            )
+            if not donante.organos_donante and donante in self.donantes:
+                self.donantes.remove(donante)
+                centro_donante.donantes.remove(donante)
+                print(f"🗑️ Donante {donante.nombre} removido del sistema (sin órganos disponibles)")
+        self.receptores.remove(receptor)
+        receptores_pendientes.insert(0, receptor)
 
-            # Verificar disponibilidad de cirujanos en centro receptor
-            if not self.gestor_cirujanos.hay_cirujanos_en_centro(receptor.centro):
-                print(f"\n❌ No hay cirujanos disponibles en el centro de {receptor.nombre}. Operación cancelada.")
-                continue
-
-            # Buscar donante compatible
-            donante, indice_organo = self.gestor_donaciones.encontrar_donante_compatible(receptor)
-            if not donante:
-                print(f"\n❌ No se encontró donante compatible para {receptor.nombre}.")
-                continue
-
-            print(f"\n✅ Match encontrado: Receptor {receptor.nombre} y Donante {donante.nombre}")
-
-            # Transportar órgano si es necesario
-            if donante.centro != receptor.centro:
-                if not self.transporte.asignar_vehiculo(donante, receptor):
-                    print("\n❌ No se pudo transportar el órgano. Match cancelado.")
-                    continue
-            else:
-                print("\n✅ Donante y receptor en el mismo centro. No se requiere transporte.")
-
-            # Evaluar operación
-            if self.gestor_cirujanos.evaluar_operacion(receptor.centro, donante.organos_d[indice_organo], receptor):
-                print("\n✅ Operación exitosa")
-                self.realizar_transplante(donante, receptor, indice_organo)
-                matches_realizados = True
-                receptores_procesados.add(receptor_id)  # Solo aquí se marca como procesado
-            else:
-                # Eliminar el órgano si la operación falló
-                if 0 <= indice_organo < len(donante.organos_d):
-                    organo_fallido = donante.organos_d.pop(indice_organo)
-                    print(f"\n❌ Órgano {organo_fallido.nombre} descartado después de operación fallida")
-
-                    # Eliminar donante si no tiene más órganos
-                    if not donante.organos_d:
-                        self.donantes.remove(donante)
-                        print(f"🗑️ Donante {donante.nombre} removido del sistema (sin órganos disponibles)")
-
-                # Reinsertar receptor con prioridad alta
-                if receptor in self.receptores:
-                    self.receptores.remove(receptor)
-                receptores_pendientes.insert(0, receptor)
-    '''
+    

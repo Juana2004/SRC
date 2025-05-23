@@ -1,4 +1,4 @@
-import tkinter as tk
+'''import tkinter as tk
 from tkinter import ttk
 
 #importacion subclases
@@ -97,4 +97,4 @@ class IncucaiApp:
         # Crear una nueva ventana para el formulario de donante vivo
         donante_vivo_window = tk.Toplevel(self.root)
         donante_vivo_app = RegistroDonanteVivoApp(donante_vivo_window, self.incucai)
-        donante_vivo_window.transient(self.root)
+        donante_vivo_window.transient(self.root)'''
