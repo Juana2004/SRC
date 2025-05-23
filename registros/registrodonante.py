@@ -1,4 +1,4 @@
-from datetime import datetime
+'''from datetime import datetime
 import tkinter as tk
 from tkinter import ttk, messagebox
 # Importamos la clase base para heredar de ella
@@ -143,4 +143,4 @@ class RegistroDonantesApp(RegistroBaseApp):
             messagebox.showerror("Error", "Fecha u hora de fallecimiento inválida.")
             return False
         
-        return True
+        return True'''

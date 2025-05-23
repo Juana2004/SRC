@@ -1,4 +1,4 @@
-from registros.paparegistro import RegistroBaseApp
+'''from registros.paparegistro import RegistroBaseApp
 import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import datetime
@@ -88,4 +88,4 @@ class RegistroDonanteVivoApp(RegistroBaseApp):
         
         # Limpiar selección de órganos
         for var in self.organ_vars.values():
-            var.set(False)
+            var.set(False)'''

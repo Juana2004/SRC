@@ -1,4 +1,4 @@
-from datetime import datetime
+'''from datetime import datetime
 import tkinter as tk
 from tkinter import ttk, messagebox
 from tkcalendar import DateEntry
@@ -406,3 +406,4 @@ class RegistroBaseApp:
     def mostrar_mensaje_exito(self, mensaje="Registro completado con éxito"):
         """Muestra un mensaje de éxito con estilo mejorado"""
         messagebox.showinfo("Operación Exitosa", mensaje)
+        '''

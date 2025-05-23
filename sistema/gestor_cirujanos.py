@@ -1,5 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import random
+
 
 
 class GestorCirujanos:
@@ -7,24 +8,6 @@ class GestorCirujanos:
 
     def __init__(self, incucai):
         self.incucai = incucai
-        self._especialistas_por_centro = {}
-        self._generales_por_centro = {}
-
-    def actualizar_datos(self):  # Deberia ser async
-        self._especialistas_por_centro = {}
-        self._generales_por_centro = {}
-
-        for cirujano in self.incucai.cirujanos_esp:
-            centro = cirujano.centro
-            if centro not in self._especialistas_por_centro:
-                self._especialistas_por_centro[centro] = []
-            self._especialistas_por_centro[centro].append(cirujano)
-
-        for cirujano in self.incucai.cirujanos_gen:
-            centro = cirujano.centro
-            if centro not in self._generales_por_centro:
-                self._generales_por_centro[centro] = []
-            self._generales_por_centro[centro].append(cirujano)
 
     def normalizar_especialidades(self):
         especialidad_map = {
@@ -35,7 +18,7 @@ class GestorCirujanos:
             "gastroenterologo": ["instestino", "rinion", "higado", "pancreas"],
         }
 
-        for cirujano in self.incucai.cirujanos_esp:
+        for cirujano in self.incucai.cirujanos_especializados:
             if (
                 isinstance(cirujano.especialidad, str)
                 and cirujano.especialidad in especialidad_map
@@ -43,46 +26,37 @@ class GestorCirujanos:
                 cirujano.especialidad = especialidad_map[cirujano.especialidad]
 
     def hay_cirujanos_en_centro(self, centro) -> bool:
-        """Verifica si hay cirujanos disponibles en un centro"""
-        return (
-            centro in self._especialistas_por_centro
-            and self._especialistas_por_centro[centro]
-        ) or (
-            centro in self._generales_por_centro and self._generales_por_centro[centro]
-        )
+        if centro.cirujanos != []:
+            return True
+        else:
+            return False
 
-    def evaluar_operacion(self, centro, organo, receptor) -> bool:
+    def evaluar_operacion(self, centro, organo, receptor, tiempo_transporte) -> bool:
         """Evalúa si se puede realizar la operación con los cirujanos disponibles"""
         # Verificar viabilidad del órgano
         ahora = datetime.now()
-        horas_desde_ablacion = int((ahora - organo.ablacion).total_seconds() // 3600)
+        delta_transporte = timedelta(hours=tiempo_transporte)
+        horas_desde_ablacion = int((ahora - delta_transporte - organo.ablacion).total_seconds() // 3600)
         cir_dis = False
 
         if horas_desde_ablacion > 20:
-            print(
-                "\n❌ No se puede realizar la operación: el órgano tiene más de 20 horas desde la ablación."
-            )
-
+            print("\n❌ No se puede realizar la operación: el órgano tiene más de 20 horas desde la ablación.")
             return False
 
-        # Buscar cirujanos especialistas disponibles primero
-        especialistas = self._especialistas_por_centro.get(centro, [])
-        for cirujano in especialistas:
-            if cirujano.operaciones_realizadas_hoy == 0:
-                # Priorizar especialistas en el órgano específico
-                es_especialista = (
-                    isinstance(cirujano.especialidad, list)
-                    and organo.nombre in cirujano.especialidad
-                )
-                umbral_exito = 3 if es_especialista else 5
-                cir_dis = True
-                print(f"\nLa operación la realiza el cirujano {cirujano.nombre}")
+        especialistas = [c for c in centro.cirujanos if getattr(c, 'especialidad', None) is not None]
+        generales = [c for c in centro.cirujanos if not hasattr(c, 'especialidad')]
+        for cirujano in especialistas:  
+            es_especialista = (
+                isinstance(cirujano.especialidad, list)
+                and organo.nombre in cirujano.especialidad
+            )
+            umbral_exito = 3 if es_especialista else 5
+            cir_dis = True
+            print(f"\nLa operación la realiza el cirujano {cirujano.nombre}")
 
-                if self._realizar_operacion(cirujano, umbral_exito, receptor):
-                    return True
+            if self._realizar_operacion(cirujano, umbral_exito, receptor):
+                return True
 
-        # cirujanos generales
-        generales = self._generales_por_centro.get(centro, [])
         for cirujano in generales:
             if cirujano.operaciones_realizadas_hoy == 0:
                 print(f"\nLa operación la realiza el cirujano {cirujano.nombre}")
@@ -100,7 +74,6 @@ class GestorCirujanos:
         """realización de la operación con probabilidad de éxito"""
         resultado = random.randint(1, 10)
         exito = resultado >= umbral_exito
-
         if exito:
             return True
         else:

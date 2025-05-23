@@ -19,14 +19,14 @@ class GestorDonaciones:
 
         # Indexar donantes por tipo de sangre
         for donante in self.incucai.donantes:
-            tipo = donante.t_sangre
+            tipo = donante.tipo_sangre
             if tipo not in self._donantes_por_sangre:
                 self._donantes_por_sangre[tipo] = []
             self._donantes_por_sangre[tipo].append(donante)
 
         # Indexar receptores por órgano requerido
         for receptor in self.incucai.receptores:
-            organo = receptor.organo_r
+            organo = receptor.organo_receptor
             if organo not in self._receptores_por_organo:
                 self._receptores_por_organo[organo] = []
             self._receptores_por_organo[organo].append(receptor)
@@ -50,26 +50,26 @@ class GestorDonaciones:
     ) -> Tuple[Optional[object], Optional[int]]:
         """Encuentra un donante compatible con el receptor, retorna (donante, índice_organo)"""
         # filtra solo donantes con el mismo tipo de sangre
-        tipo_sangre = receptor.t_sangre
-        organo_requerido = receptor.organo_r
+        tipo_sangre = receptor.tipo_sangre
+        organo_requerido = receptor.organo_receptor
         edad_receptor = receptor.edad
 
         donantes_compatibles = self._donantes_por_sangre.get(tipo_sangre, [])
 
         if not donantes_compatibles: # Chequear si vale la pena agregar esto, si vale la pena!!!! chequear que funcione!
             return None,None
-        
         for donante in donantes_compatibles:
             edad_donante = donante.edad
             if not self._edad_es_compatible(edad_donante, edad_receptor):
                 continue
-            if self.gestor_cirujanos.hay_cirujanos_en_centro(donante.centro):
+            if not self.gestor_cirujanos.hay_cirujanos_en_centro(donante.centro):
                 continue
             # Buscar órgano compatible
-            for i, organo in enumerate(donante.organos_d):
+            for i, organo in enumerate(donante.organos_donante):
                 if organo.nombre == organo_requerido:
                     centro = donante.centro
                     cirujano = centro.cirujanos[0]
+                    print(f"El cirujano {cirujano.nombre} realiza la ablacion")
                     cirujano.operaciones_realizadas_hoy = 1
                     self.registrar_ablacion_donante_vivo(donante, organo_requerido)
                     return donante, i
@@ -85,7 +85,7 @@ class GestorDonaciones:
             donante.hora_abl = fecha_actual.time()
 
             # Marcar el órgano específico
-            for organo in donante.organos_d:
+            for organo in donante.organos_donante:
                 if organo.nombre == organo_requerido:
                     organo.ablacion = fecha_actual
                     break

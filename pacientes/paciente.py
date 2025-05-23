@@ -1,18 +1,30 @@
-class Paciente():
+from datetime import datetime
 
 
-    def __init__(self, nombre, dni, fecha_nac, sexo, tel, t_sangre, centro, incucai):
+
+class Paciente:
+
+
+    def __init__(
+        self,
+        nombre: str,
+        dni: int,
+        fecha_nacimiento: datetime.date,
+        sexo: str,
+        telefono: int,
+        tipo_sangre: str,
+        centro: object,
+        incucai,
+    ):
         self.nombre = nombre
         self.dni = dni
-        self.fecha_nac = fecha_nac
+        self.fecha_nacimiento = fecha_nacimiento
         self.sexo = sexo
-        self.tel = tel
-        self.t_sangre = t_sangre
-        self.centro = centro  # clase CentroSalud
-        
-##METODO MAGICO 4!!!
+        self.telefono = telefono
+        self.tipo_sangre = tipo_sangre
+        self.centro = centro
+
     def __eq__(self, other):
         if isinstance(other, Paciente):
             return self.dni == other.dni
         return False
-  

@@ -2,27 +2,44 @@ from pacientes.paciente import Paciente
 from datetime import datetime, date
 from excepciones import ErrorDNIRepetido, ErrorCentroNoRegistrado
 
-class Receptor(Paciente):
-    
-    def __init__(self, nombre, dni, fecha_nac, sexo, tel, t_sangre, centro, incucai,
-                 organo_r, fecha_lista, patologia, urgencia):
-        super().__init__(nombre, dni, fecha_nac, sexo, tel, t_sangre, centro, incucai)
 
-        self.organo_r = organo_r
+
+class Receptor(Paciente):
+
+
+    def __init__(
+        self,
+        nombre: str,
+        dni: int,
+        fecha_nacimiento: datetime.date,
+        sexo: str,
+        telefono: int,
+        tipo_sangre: str,
+        centro: object,
+        incucai,  # Instancia de la clase incucai
+        organo_receptor: str,
+        fecha_lista: datetime,
+        patologia: str,
+        urgencia: str,
+    ):
+        super().__init__(
+            nombre, dni, fecha_nacimiento, sexo, telefono, tipo_sangre, centro, incucai
+        )
+
+        self.organo_receptor = organo_receptor
         self.fecha_lista = fecha_lista
         self.patologia = patologia
-        self.accidente = urgencia
+        self.urgencia = urgencia
         self.estado = "estable"
 
-        # Procesar edad correctamente
-        if isinstance(fecha_nac, str):
-            fecha_nac_date = datetime.strptime(fecha_nac, "%d/%m/%Y").date()
-        else:
-            fecha_nac_date = fecha_nac
-
         today = date.today()
-        self.edad = today.year - fecha_nac_date.year - (
-            (today.month, today.day) < (fecha_nac_date.month, fecha_nac_date.day)
+        self.edad = (
+            today.year
+            - fecha_nacimiento.year
+            - (
+                (today.month, today.day)
+                < (fecha_nacimiento.month, fecha_nacimiento.day)
+            )
         )
 
         try:
@@ -30,16 +47,12 @@ class Receptor(Paciente):
         except (ErrorDNIRepetido, ErrorCentroNoRegistrado) as e:
             print(e)
 
-
-
     def prioridad(self):
-        base = {
-            "prioridad baja": 1,
-            "prioridad media": 2,
-            "prioridad alta": 3
-        }.get(self.patologia.lower(), 1)
+        base = {"prioridad baja": 1, "prioridad media": 2, "prioridad alta": 3}.get(
+            self.patologia.lower(), 1
+        )
 
-        return base + 3 if self.accidente else base
+        return base + 3 if self.urgencia else base
 
     def __lt__(self, other):
         # 1. Primero priorizamos por estado clínico
@@ -56,4 +69,3 @@ class Receptor(Paciente):
 
         # 3. Finalmente, por fecha de ingreso a lista (más antiguo primero)
         return self.fecha_lista < other.fecha_lista
-

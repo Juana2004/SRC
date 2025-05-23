@@ -1,20 +1,32 @@
 from geopy.geocoders import Nominatim
 import time
-from excepciones import ErrorGeolocalizacion  
+from excepciones import ErrorGeolocalizacion
+
+
 
 class CentroDeSalud:
+
+    
     geolocator = Nominatim(user_agent="incucai_app")
 
-    def __init__(self, nombre, direccion, partido, provincia, pais, incucai):
+    def __init__(
+        self, 
+        nombre: str, 
+        direccion: str, 
+        partido: str, 
+        provincia: str, 
+        pais: str, 
+        incucai
+    ):
         self.nombre = nombre
         self.direccion = direccion
         self.partido = partido
         self.provincia = provincia
         self.pais = pais
-        self.receptores = []
-        self.donantes = []
-        self.vehiculos = []
-        self.cirujanos = []
+        self.receptores: list[object] = []
+        self.donantes: list[object] = []
+        self.vehiculos: list[object] = []
+        self.cirujanos: list[object] = []
 
         try:
             if self.obtener_longlat():
@@ -27,13 +39,14 @@ class CentroDeSalud:
         if isinstance(other, CentroDeSalud):
             return self.nombre == other.nombre and self.direccion == other.direccion
         return False
-    
+
     def __hash__(self):
         return hash((self.nombre, self.direccion))
 
-
     def obtener_longlat(self):
-        self.full_address = f"{self.direccion}, {self.partido}, {self.provincia}, {self.pais}"
+        self.full_address = (
+            f"{self.direccion}, {self.partido}, {self.provincia}, {self.pais}"
+        )
         location = self.obtener_ubicacion(self.full_address)
         if location:
             self.latitud = location.latitude
@@ -51,11 +64,12 @@ class CentroDeSalud:
                 else:
                     print(f"Geolocalización fallida")
             except Exception as e:
-               
-             print(f"⚠ Error al obtener geolocalización: {e}. Intento {intento+1} de {intentos_max}")
-               
+
+                print(
+                    f"⚠ Error al obtener geolocalización: {e}. Intento {intento+1} de {intentos_max}"
+                )
+
             if intento < intentos_max - 1:
-                    time.sleep(espera) 
+                time.sleep(espera)
 
         raise ValueError(f"No se pudo geolocalizar la dirección: {direccion}")
-       

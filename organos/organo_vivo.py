@@ -1,16 +1,13 @@
 from datetime import datetime
 
-
-
-class Organo:
+class OrganoVivo:
 
     
     def __init__(
         self, 
         nombre: str, 
-        ablacion: datetime, 
         incucai
     ):
         self.nombre = nombre.lower()
-        self.ablacion = ablacion
+        self.ablacion: datetime = None
         incucai.registrar_organo(self)
