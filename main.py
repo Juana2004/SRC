@@ -12,7 +12,7 @@ def main():
    # app = IncucaiApp(root, incucai)
    # root.mainloop()
 
-    #incucai.match()
+    incucai.match()
     #print(incucai)
     #incucai.mostrar_lista_espera()
 

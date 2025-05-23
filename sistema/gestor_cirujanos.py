@@ -33,7 +33,7 @@ class GestorCirujanos:
 
     def evaluar_operacion(self, centro, organo, receptor, tiempo_transporte) -> bool:
         """Evalúa si se puede realizar la operación con los cirujanos disponibles"""
-        # Verificar viabilidad del órgano
+        
         ahora = datetime.now()
         delta_transporte = timedelta(hours=tiempo_transporte)
         horas_desde_ablacion = int((ahora - delta_transporte - organo.ablacion).total_seconds() // 3600)
@@ -64,7 +64,7 @@ class GestorCirujanos:
                 cir_dis = True
                 if self._realizar_operacion(
                     cirujano, 5, receptor
-                ):  # Umbral más alto para generales
+                ):  
                     return True
         if not cir_dis:
             print("\n❌ No hay cirujanos disponibles para realizar la operación.")

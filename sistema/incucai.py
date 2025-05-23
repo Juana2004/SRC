@@ -43,7 +43,7 @@ class INCUCAI:
             valor = getattr(objeto, campo, None)
 
             if campo in opcionales:
-                # Si el campo es opcional y no está o es None, lo ignoramos
+                
                 if valor is None:
                     continue
 
@@ -260,7 +260,7 @@ class INCUCAI:
 
         while receptores_pendientes:
             receptor = receptores_pendientes.pop(0)
-            receptor_id = id(receptor)  # identificador unico
+            receptor_id = id(receptor)  
 
             print(f"\nEvaluando receptor: {receptor.nombre}")
 

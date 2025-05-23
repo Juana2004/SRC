@@ -35,7 +35,7 @@ class Registros:
 
         print(f"\n{AZUL}★ SISTEMA DE TRASPLANTES - REGISTROS ★{RESET}")
 
-        # Crear centros de salud
+        '''Crear centros de salud'''
         print(f"\n{AZUL}── Centros de salud ──{RESET}")
         Otamendi = CentroDeSalud(
             "Otamendi",
@@ -62,7 +62,7 @@ class Registros:
             incucai,
         )
 
-        # Crear vehículos
+        ''' Crear vehículos'''
         print(f"\n{AZUL}── Vehículos terrestres ──{RESET}")
         Ambulancia2 = VehiculoTerrestre(
             "Ambulancia",
@@ -109,7 +109,7 @@ class Registros:
             fecha_nacimiento_carlos,
             M,
             112324256,
-            TipoSangre.A_POSITIVO.value,
+            TipoSangre.O_NEGATIVO.value,
             Favaloro,
             incucai,
             [TipoOrganoVivo.HIGADO.value, TipoOrganoVivo.INTESTINO.value],
@@ -123,14 +123,14 @@ class Registros:
             fecha_nacimiento_tere,
             M,
             112324276,
-            TipoSangre.A_POSITIVO.value,
+            TipoSangre.O_NEGATIVO.value,
             Otamendi,
             incucai,
             fecha_fallecimiento_tere,
             [TipoOrgano.HIGADO.value, TipoOrgano.INTESTINO.value],
         )
 
-        # Crear receptores
+        '''Crear receptores'''
         print(f"\n{AZUL}── Receptores ──{RESET}")
 
         fecha_nacimiento_zoe = datetime.strptime("14/08/2005", "%d/%m/%Y").date()
@@ -141,10 +141,10 @@ class Registros:
             fecha_nacimiento_zoe,
             F,
             1158141032,
-            TipoSangre.A_POSITIVO.value,
+            TipoSangre.O_NEGATIVO.value,
             ItalianoCordoba,
             incucai,
-            "higado",
+            "Higado",
             fecha_ingreso_zoe,
             TipoPatologiaHigado.CANCER.value,
             no,
@@ -167,7 +167,7 @@ class Registros:
             si
         )
 
-        # Crear cirujanos
+        '''Crear cirujanos'''
         print(f"\n{AZUL}── Cirujanos ──{RESET}")
 
         print(f"\n{AZUL}── Cirujanos ──{RESET}")
@@ -181,4 +181,4 @@ class Registros:
         print(
             f"\n{AZUL}═════════════════════════════════════════════════════════════════════{RESET}"
         )
-        #incucai.imprimir_estado_centro(Favaloro)
+        

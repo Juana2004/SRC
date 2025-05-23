@@ -13,7 +13,6 @@ class CalculadorDistancias:
             coords_destino = (destino.latitud, destino.longitud)
             distancia_km = distance(coords_origen, coords_destino).km
             
-            # Cache bidireccional
             self._cache[clave] = distancia_km
             self._cache[(destino.nombre, origen.nombre)] = distancia_km
         

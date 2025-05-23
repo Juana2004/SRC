@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Tuple, Optional
 from pacientes.donante_vivo import DonanteVivo
 from sistema.gestor_cirujanos import GestorCirujanos
+from tipos.tipo_sangre import TipoSangre
 
 
 class GestorDonaciones:
@@ -17,14 +18,14 @@ class GestorDonaciones:
         self._donantes_por_sangre = {}
         self._receptores_por_organo = {}
 
-        # Indexar donantes por tipo de sangre
+       
         for donante in self.incucai.donantes:
             tipo = donante.tipo_sangre
             if tipo not in self._donantes_por_sangre:
                 self._donantes_por_sangre[tipo] = []
             self._donantes_por_sangre[tipo].append(donante)
 
-        # Indexar receptores por órgano requerido
+        
         for receptor in self.incucai.receptores:
             organo = receptor.organo_receptor
             if organo not in self._receptores_por_organo:
@@ -45,26 +46,62 @@ class GestorDonaciones:
             if rango_donante[0] <= edad_donante <= rango_donante[1]:
                 return rango_receptor[0] <= edad_receptor <= rango_receptor[1]
 
+    
+    def _sangre_es_compatible(self, donante, receptor) -> bool:
+        sangre_donante = donante.tipo_sangre
+        sangre_receptor = receptor.tipo_sangre
+
+        compatibilidad = [
+            (TipoSangre.O_NEGATIVO.value, [TipoSangre.O_NEGATIVO.value]),
+            (TipoSangre.O_POSITIVO.value, [TipoSangre.O_POSITIVO.value, TipoSangre.O_NEGATIVO.value]),
+            (TipoSangre.A_NEGATIVO.value, [TipoSangre.A_NEGATIVO.value, TipoSangre.O_NEGATIVO.value]),
+            (TipoSangre.A_POSITIVO.value, [TipoSangre.A_POSITIVO.value, TipoSangre.A_NEGATIVO.value, TipoSangre.O_POSITIVO.value, TipoSangre.O_NEGATIVO.value]),
+            (TipoSangre.B_NEGATIVO.value, [TipoSangre.B_NEGATIVO.value, TipoSangre.O_NEGATIVO.value]),
+            (TipoSangre.B_POSITIVO.value, [TipoSangre.B_POSITIVO.value, TipoSangre.B_NEGATIVO.value, TipoSangre.O_POSITIVO.value, TipoSangre.O_NEGATIVO.value]),
+            (TipoSangre.AB_NEGATIVO.value, [TipoSangre.AB_NEGATIVO.value, TipoSangre.A_NEGATIVO.value, TipoSangre.B_NEGATIVO.value, TipoSangre.O_NEGATIVO.value]),
+            (TipoSangre.AB_POSITIVO.value, [
+                TipoSangre.AB_POSITIVO.value, TipoSangre.AB_NEGATIVO.value,
+                TipoSangre.A_POSITIVO.value, TipoSangre.A_NEGATIVO.value,
+                TipoSangre.B_POSITIVO.value, TipoSangre.B_NEGATIVO.value,
+                TipoSangre.O_POSITIVO.value, TipoSangre.O_NEGATIVO.value,
+            ]),
+        ]
+
+        
+        compatibles = []
+        for receptor_tipo, donantes_compatibles in compatibilidad:
+            if receptor_tipo == sangre_receptor:
+                compatibles = donantes_compatibles
+                break
+
+        return any(sangre_donante == d for d in compatibles)
+
+
     def encontrar_donante_compatible(
-        self, receptor:object
+        self, receptor: object
     ) -> Tuple[Optional[object], Optional[int]]:
         """Encuentra un donante compatible con el receptor, retorna (donante, índice_organo)"""
-        # filtra solo donantes con el mismo tipo de sangre
+        
         tipo_sangre = receptor.tipo_sangre
         organo_requerido = receptor.organo_receptor
         edad_receptor = receptor.edad
+ 
+        donantes_compatibles = []
+        for tipo_donante, donantes in self._donantes_por_sangre.items():
+                for donante in donantes:
+                    if self._sangre_es_compatible(donante, receptor):
+                         donantes_compatibles.append(donante)
 
-        donantes_compatibles = self._donantes_por_sangre.get(tipo_sangre, [])
+        if not donantes_compatibles:
+            return None, None
 
-        if not donantes_compatibles: # Chequear si vale la pena agregar esto, si vale la pena!!!! chequear que funcione!
-            return None,None
         for donante in donantes_compatibles:
             edad_donante = donante.edad
             if not self._edad_es_compatible(edad_donante, edad_receptor):
                 continue
             if not self.gestor_cirujanos.hay_cirujanos_en_centro(donante.centro):
                 continue
-            # Buscar órgano compatible
+
             for i, organo in enumerate(donante.organos_donante):
                 if organo.nombre == organo_requerido:
                     centro = donante.centro
@@ -74,7 +111,8 @@ class GestorDonaciones:
                     self.registrar_ablacion_donante_vivo(donante, organo_requerido)
                     return donante, i
 
-        return None, None  # chequear si lo podes sacar!
+        return None, None
+
 
     def registrar_ablacion_donante_vivo(self, donante, organo_requerido):
         """Registra la fecha de ablación para un donante vivo"""
@@ -84,7 +122,7 @@ class GestorDonaciones:
             donante.fecha_abl = fecha_actual
             donante.hora_abl = fecha_actual.time()
 
-            # Marcar el órgano específico
+            
             for organo in donante.organos_donante:
                 if organo.nombre == organo_requerido:
                     organo.ablacion = fecha_actual
