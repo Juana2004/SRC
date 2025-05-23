@@ -1,6 +1,6 @@
 from geopy.geocoders import Nominatim
 import time
-from excepciones import ErrorGeolocalizacion
+from excepciones import ErrorGeolocalizacion, ErrorTipoDatoInvalido
 
 
 
@@ -32,7 +32,7 @@ class CentroDeSalud:
             if self.obtener_longlat():
                 print(f"\n✔'{self.nombre}' registrado en: {self.full_address}")
                 incucai.registrar_centro(self)
-        except ErrorGeolocalizacion as e:
+        except (ErrorGeolocalizacion, ErrorTipoDatoInvalido) as e:
             print(f"❌ No se pudo registrar el centro '{self.nombre}': {e}")
 
     def __eq__(self, other):

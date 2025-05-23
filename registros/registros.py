@@ -16,17 +16,7 @@ from tipos.tipo_especialidad import Especialidad
 from tipos.tipo_organo import TipoOrgano
 from tipos.tipo_organos_vivos import TipoOrganoVivo
 from tipos.tipo_sangre import TipoSangre
-from tipos.patologias import (
-    TipoPatologiaCorazon,
-    TipoPatologiaCorneas,
-    TipoPatologiaHigado,
-    TipoPatologiaHuesos,
-    TipoPatologiaIntestino,
-    TipoPatologiaPancreas,
-    TipoPatologiaPiel,
-    TipoPatologiaPulmon,
-    TipoPatologiaRinion,
-)
+from tipos.patologias import *
 
 
 class Registros:
@@ -126,7 +116,7 @@ class Registros:
         )
 
         fecha_fallecimiento_tere = datetime.strptime("17/5/2025 13:30", "%d/%m/%Y %H:%M")
-        fecha_nacimiento_tere = datetime.strptime("17/5/2003 13:30", "%d/%m/%Y %H:%M")
+        fecha_nacimiento_tere = datetime.strptime("17/5/2003", "%d/%m/%Y").date()
         Tere = Donante(
             "Tere",
             409998,
@@ -137,7 +127,7 @@ class Registros:
             Otamendi,
             incucai,
             fecha_fallecimiento_tere,
-            [TipoOrganoVivo.HIGADO.value, TipoOrganoVivo.INTESTINO.value],
+            [TipoOrgano.HIGADO.value, TipoOrgano.INTESTINO.value],
         )
 
         # Crear receptores
@@ -186,7 +176,7 @@ class Registros:
         )
 
         Juan = CirujanoEspecializado(
-            "Juan", "juan", Especialidad.GASTROENTEROLOGO.value, Favaloro, incucai
+            "Juan", 888, Especialidad.GASTROENTEROLOGO.value, Favaloro, incucai
         )
         print(
             f"\n{AZUL}═════════════════════════════════════════════════════════════════════{RESET}"

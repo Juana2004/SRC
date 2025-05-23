@@ -1,7 +1,7 @@
 from .paciente import Paciente
 from organos.organo_vivo import OrganoVivo
 from datetime import datetime, date
-from excepciones import ErrorDNIRepetido, ErrorCentroNoRegistrado
+from excepciones import ErrorDNIRepetido, ErrorCentroNoRegistrado ,ErrorTipoDatoInvalido
 
 
 
@@ -39,5 +39,5 @@ class DonanteVivo(Paciente):
 
         try:
             incucai.registrar_donante(self)
-        except (ErrorDNIRepetido, ErrorCentroNoRegistrado) as e:
+        except (ErrorDNIRepetido, ErrorCentroNoRegistrado, ErrorTipoDatoInvalido) as e:
             print(e)

@@ -3,6 +3,10 @@ from sistema.gestor_cirujanos import GestorCirujanos
 from sistema.gestor_donaciones import GestorDonaciones
 from excepciones import ErrorDNIRepetido, ErrorCentroNoRegistrado, ErrorCedulaRepetido, ErrorTipoDatoInvalido
 from localizables.centro_de_salud import CentroDeSalud
+from datetime import date
+from organos.organo import Organo
+from organos.organo_vivo import OrganoVivo
+
 
 
 class INCUCAI:
@@ -67,6 +71,20 @@ class INCUCAI:
     def registrar_donante(self, donante: object):
         self._validar_centro_registrado(donante)
         self._validar_dni_unico(donante)
+        self._validar_datos(
+        donante,
+        {
+            "nombre": str,
+            "dni": int,
+            "centro": CentroDeSalud,
+            "fecha_nacimiento": date,
+            "sexo": str,
+            "telefono": int,
+            "tipo_sangre": str,
+            "fecha_fallecimiento": date,
+            "organos_donante": list,
+        }, opcionales= ["fecha_fallecimiento"]
+        )
         self.donantes.append(donante)
         self._agregar_persona_a_centro(donante, "donantes")
         print(f"✔{donante.nombre}")
@@ -77,6 +95,22 @@ class INCUCAI:
     def registrar_receptor(self, receptor: object):
         self._validar_centro_registrado(receptor)
         self._validar_dni_unico(receptor)
+        self._validar_datos(
+        receptor,
+        {
+            "nombre": str,
+            "dni": int,
+            "fecha_nacimiento": date,
+            "sexo": str,
+            "telefono": int,
+            "tipo_sangre": str,
+            "centro": CentroDeSalud,
+            "organo_receptor": str,
+            "fecha_lista": date,
+            "patologia": str,
+            "urgencia": bool,
+        }
+        )
         self.receptores.append(receptor)
         self.receptores.sort()
         self._agregar_persona_a_centro(receptor, "receptores")
@@ -85,6 +119,16 @@ class INCUCAI:
     def registrar_centro(self, centro: object):
         self.centros_salud.append(centro)
         self._centros_por_nombre[centro.nombre] = centro
+        self._validar_datos(
+        centro,
+        {
+            "nombre": str, 
+            "direccion": str, 
+            "partido": str, 
+            "provincia": str, 
+            "pais": str 
+        }
+        )
 
     def _registrar_cirujano(self, cirujano, lista_cirujanos, tipo_cirujano):
         self._validar_centro_registrado(cirujano)

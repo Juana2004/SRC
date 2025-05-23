@@ -1,6 +1,6 @@
 from pacientes.paciente import Paciente
 from datetime import datetime, date
-from excepciones import ErrorDNIRepetido, ErrorCentroNoRegistrado
+from excepciones import ErrorDNIRepetido, ErrorCentroNoRegistrado, ErrorTipoDatoInvalido
 
 
 
@@ -44,7 +44,7 @@ class Receptor(Paciente):
 
         try:
             incucai.registrar_receptor(self)
-        except (ErrorDNIRepetido, ErrorCentroNoRegistrado) as e:
+        except (ErrorDNIRepetido, ErrorCentroNoRegistrado,ErrorTipoDatoInvalido) as e:
             print(e)
 
     def prioridad(self):

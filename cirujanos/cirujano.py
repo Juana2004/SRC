@@ -1,5 +1,3 @@
-from localizables.centro_de_salud import CentroDeSalud
-from excepciones import ErrorTipoDatoInvalido
 class Cirujano:
 
 
