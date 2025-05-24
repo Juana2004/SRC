@@ -27,10 +27,10 @@ class Vehiculo:
         self.full_address = (
             f"{self.direccion}, {self.partido}, {self.provincia}, {self.pais}"
         )
-        location = self.obtener_ubicacion(self.full_address)
-        if location:
-            self.latitud = location.latitude
-            self.longitud = location.longitude
+        self.location = self.obtener_ubicacion(self.full_address)
+        if self.location:
+            self.latitud = self.location.latitude
+            self.longitud = self.location.longitude
             return True
         else:
             raise ErrorGeolocalizacion(self.full_address)
@@ -69,23 +69,14 @@ class Vehiculo:
         except Exception as e:
             print(f"❌ Error al actualizar ubicación: {e}")
 
-    def calcular_tiempo_hasta_origen(self, centro_origen, calculador_distancias):
-        """Calcula el tiempo necesario para llegar al punto de recogida."""
-        from geopy.distance import distance
-        coords_vehiculo = (self.latitud, self.longitud)
-        coords_origen = (centro_origen.latitud, centro_origen.longitud)
-        distancia = distance(coords_vehiculo, coords_origen).km
+    def calcular_tiempo_hasta_origen(self, centro_donante, calculador_distancias):
+        distancia = calculador_distancias.obtener_distancia(self, centro_donante)
         return distancia / self.velocidad
     
-    def calcular_tiempo_transporte(self, centro_origen, centro_destino):
-        """Calcula el tiempo de transporte entre origen y destino."""
-        from geopy.distance import distance
-        coords_origen = (centro_origen.latitud, centro_origen.longitud)
-        coords_destino = (centro_destino.latitud, centro_destino.longitud)
-        distancia = distance(coords_origen, coords_destino).km
+    def calcular_tiempo_transporte(self, centro_donante, centro_receptor, calculador_distancias):
+        distancia = calculador_distancias.obtener_distancia(centro_donante, centro_receptor)
         return distancia / self.velocidad
     
     def esta_disponible_para_ruta(self, centro_origen, centro_destino):
-        """Determina si el vehículo está disponible para realizar el transporte."""
         return self.centro in (centro_origen, centro_destino)
 

@@ -37,23 +37,29 @@ class Helicoptero(Vehiculo):
                 centro_origen.provincia == centro_destino.provincia and
                 centro_origen.partido != centro_destino.partido)
     
-    def calcular_tiempo_total_mision(self, centro_origen, centro_destino, calculador_distancias):
-        """Calcula el tiempo total de la misión aérea."""
-        tiempo_recogida = self.calcular_tiempo_hasta_origen(centro_origen, calculador_distancias)
-        tiempo_transporte = self.calcular_tiempo_transporte(centro_origen, centro_destino)
+    def calcular_tiempo_total_mision(self, centro_donante, centro_receptor, calculador_distancias):
+        #desde donde esta el vehiculo hasta centro donante
+        tiempo_recogida = self.calcular_tiempo_hasta_origen(centro_donante, calculador_distancias)
+        #desde centro donante hasta centro receptor
+        tiempo_transporte = self.calcular_tiempo_transporte(centro_donante, centro_receptor, calculador_distancias)
         return tiempo_recogida + tiempo_transporte
     
-    def ejecutar_transporte(self, centro_origen, centro_destino, calculador_distancias):
-        """Ejecuta la misión completa de transporte en helicóptero."""
-        tiempo_total = self.calcular_tiempo_total_mision(centro_origen, centro_destino, calculador_distancias)
+    def ejecutar_transporte(self, centro_donante, centro_receptor, calculador_distancias):
+        tiempo_total = self.calcular_tiempo_total_mision(centro_donante, centro_receptor, calculador_distancias)
+        horas = int(tiempo_total)
+        minutos = int(round((tiempo_total - horas) * 60))
+
+
+        print(f"\nHELICOPTERO asignado con éxito (velocidad: {self.velocidad} km/h)")
         
-        print(f"\nHELICÓPTERO asignado con éxito (velocidad: {self.velocidad} km/h)")
-        print(f"⏱️ Tiempo estimado total: {tiempo_total:.2f} horas")
+        print(f"🕒 Tiempo estimado del viaje: {horas}h {minutos}min.")
         
         print("\nYendo a recoger el órgano...")
-        self.actualizar_ubicacion(centro_origen.longitud, centro_origen.latitud)
+        self.actualizar_ubicacion(centro_donante.longitud, centro_donante.latitud)
         
         print("\nTransportando órgano al centro de destino...")
-        self.actualizar_ubicacion(centro_destino.longitud, centro_destino.latitud)
+        self.actualizar_ubicacion(centro_receptor.longitud, centro_receptor.latitud)
         
         return tiempo_total
+
+   

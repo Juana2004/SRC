@@ -1,6 +1,7 @@
 from geopy.geocoders import Nominatim
 from .vehiculos import Vehiculo
 from excepciones import ErrorGeolocalizacion  
+import random
 
 
 class VehiculoTerrestre(Vehiculo):
@@ -33,31 +34,34 @@ class VehiculoTerrestre(Vehiculo):
 
     
     def puede_realizar_transporte(self, centro_origen, centro_destino):
-        """Los vehículos terrestres operan dentro del mismo partido."""
         return (self.esta_disponible_para_ruta(centro_origen, centro_destino) and 
                 centro_origen.provincia == centro_destino.provincia and
                 centro_origen.partido == centro_destino.partido)
     
-    def calcular_tiempo_total_mision(self, centro_origen, centro_destino, calculador_distancias):
-        """Calcula el tiempo total incluyendo tráfico."""
-        import random
-        tiempo_recogida = self.calcular_tiempo_hasta_origen(centro_origen, calculador_distancias)
-        tiempo_transporte = self.calcular_tiempo_transporte(centro_origen, centro_destino)
-        tiempo_trafico = random.randint(0, 60) / 60
+    def calcular_tiempo_total_mision(self, centro_donante, centro_receptor, calculador_distancias):
+        #desde donde esta el vehiculo hasta centro donante
+        tiempo_recogida = self.calcular_tiempo_hasta_origen(centro_donante, calculador_distancias)
+        #desde centro donante hasta centro receptor
+        tiempo_transporte = self.calcular_tiempo_transporte(centro_donante, centro_receptor, calculador_distancias)
+        tiempo_trafico = random.randint(1, 30) / 60
         return tiempo_recogida + tiempo_transporte + tiempo_trafico, tiempo_trafico
     
-    def ejecutar_transporte(self, centro_origen, centro_destino, calculador_distancias):
-        """Ejecuta la misión completa de transporte terrestre."""
-        tiempo_total, tiempo_trafico = self.calcular_tiempo_total_mision(centro_origen, centro_destino, calculador_distancias)
-        
+    def ejecutar_transporte(self, centro_donante, centro_receptor, calculador_distancias):
+        tiempo_total, tiempo_trafico = self.calcular_tiempo_total_mision(centro_donante, centro_receptor, calculador_distancias)
+        horas = int(tiempo_total)
+        minutos = int(round((tiempo_total - horas) * 60))
+        horas_trafico = int(tiempo_trafico)
+        minutos_trafico = int(round((tiempo_trafico - horas) * 60))
+
         print(f"\nVEHÍCULO TERRESTRE asignado con éxito (velocidad: {self.velocidad} km/h)")
-        print(f"⏱️ Tiempo estimado total: {tiempo_total:.2f} horas (incluye {tiempo_trafico:.2f}h de tráfico)")
+        
+        print(f"🕒 Tiempo estimado del viaje: {horas}h {minutos}min. Incluye {minutos_trafico}min de tráfico.")
         
         print("\nYendo a recoger el órgano...")
-        self.actualizar_ubicacion(centro_origen.longitud, centro_origen.latitud)
+        self.actualizar_ubicacion(centro_donante.longitud, centro_donante.latitud)
         
         print("\nTransportando órgano al centro de destino...")
-        self.actualizar_ubicacion(centro_destino.longitud, centro_destino.latitud)
+        self.actualizar_ubicacion(centro_receptor.longitud, centro_receptor.latitud)
         
         return tiempo_total
 

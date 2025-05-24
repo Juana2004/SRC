@@ -39,7 +39,7 @@ class Registros:
         print(f"\n{AZUL}── Centros de salud ──{RESET}")
         Otamendi = CentroDeSalud(
             "Otamendi",
-            "Callao 3000",
+            "Azcuenaga 870",
             "Ciudad Autonoma de Buenos Aires",
             "Buenos Aires",
             "Argentina",
@@ -47,7 +47,7 @@ class Registros:
         )
         Favaloro = CentroDeSalud(
             "Favaloro",
-            "Sarmiento 1855",
+            "Av. Belgrano 1746",
             "Ciudad Autonoma de Buenos Aires",
             "Buenos Aires",
             "Argentina",
@@ -76,7 +76,7 @@ class Registros:
         )
 
         print(f"\n{AZUL}── Aviones ──{RESET}")
-
+        
         Avion1 = Avion(
             "avion",
             700,
@@ -84,7 +84,7 @@ class Registros:
             "Carlos Paz",
             "Cordoba", 
             "Argentina", 
-            Favaloro, 
+            ItalianoCordoba, 
             incucai)
         
         Avion2 = Avion(
@@ -109,7 +109,7 @@ class Registros:
             Favaloro,
             incucai,
         )
-
+        
         print(f"\n{AZUL}── Donantes ──{RESET}")
        
         fecha_nacimiento_carlos = datetime.strptime("14/05/2002", "%d/%m/%Y").date()
@@ -120,7 +120,7 @@ class Registros:
             M,
             112324256,
             TipoSangre.O_NEGATIVO.value,
-            Favaloro,
+            Otamendi,
             incucai,
             [TipoOrganoVivo.HIGADO.value, TipoOrganoVivo.INTESTINO.value],
         )
@@ -183,7 +183,7 @@ class Registros:
             F,
             1145367234,
             TipoSangre.A_POSITIVO.value,
-            Otamendi,
+            Favaloro,
             incucai,
             TipoOrgano.INTESTINO.value,
             fecha_ingreso_juana,

@@ -28,7 +28,6 @@ class Transporte:
         return True, tiempo_total
     
     def _obtener_vehiculos_por_ubicacion(self, centro_origen, centro_destino):
-        """Obtiene todos los vehículos que pueden realizar el transporte."""
         vehiculos_disponibles = []
         
         for avion in self.incucai.aviones:
@@ -46,14 +45,24 @@ class Transporte:
         return vehiculos_disponibles
     
     def _seleccionar_mejor_vehiculo(self, vehiculos, centro_origen, centro_destino):
-        """Selecciona el vehículo con menor tiempo total de misión."""
-        def obtener_tiempo_estimado(vehiculo):
+        mejor_vehiculo = None
+        mejor_tiempo = float('inf')
+
+        for vehiculo in vehiculos:
             if hasattr(vehiculo, 'calcular_tiempo_total_mision'):
-                if isinstance(vehiculo, VehiculoTerrestre):  
-                    tiempo_total, _ = vehiculo.calcular_tiempo_total_mision(centro_origen, centro_destino, self.calculador_distancias)
-                    return tiempo_total
-                else:  
-                    return vehiculo.calcular_tiempo_total_mision(centro_origen, centro_destino, self.calculador_distancias)
-            return float('inf')
-        
-        return min(vehiculos, key=obtener_tiempo_estimado)
+                if isinstance(vehiculo, VehiculoTerrestre):
+                    tiempo_total, _ = vehiculo.calcular_tiempo_total_mision(
+                        centro_origen, centro_destino, self.calculador_distancias
+                    )
+                else:
+                    tiempo_total = vehiculo.calcular_tiempo_total_mision(
+                        centro_origen, centro_destino, self.calculador_distancias
+                    )
+            else:
+                tiempo_total = float('inf')
+
+            if tiempo_total < mejor_tiempo:
+                mejor_tiempo = tiempo_total
+                mejor_vehiculo = vehiculo
+
+        return mejor_vehiculo
