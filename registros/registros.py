@@ -133,7 +133,7 @@ class Registros:
         '''Crear receptores'''
         print(f"\n{AZUL}── Receptores ──{RESET}")
 
-        fecha_nacimiento_zoe = datetime.strptime("14/08/2005", "%d/%m/%Y").date()
+        fecha_nacimiento_zoe = datetime.strptime("14/08/2003", "%d/%m/%Y").date()
         fecha_ingreso_zoe = datetime.strptime("11/10/2006 19:00", "%d/%m/%Y %H:%M")
         Zoe = Receptor(
             "Zoe",
@@ -141,10 +141,10 @@ class Registros:
             fecha_nacimiento_zoe,
             F,
             1158141032,
-            TipoSangre.O_NEGATIVO.value,
+            TipoSangre.A_POSITIVO.value,
             ItalianoCordoba,
             incucai,
-            "Higado",
+            "higado",
             fecha_ingreso_zoe,
             TipoPatologiaHigado.CANCER.value,
             no,
@@ -181,4 +181,4 @@ class Registros:
         print(
             f"\n{AZUL}═════════════════════════════════════════════════════════════════════{RESET}"
         )
-        
+     

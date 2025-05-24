@@ -67,6 +67,9 @@ class INCUCAI:
         centro = self._encontrar_centro_por_nombre(persona.centro.nombre)
         if centro:
             getattr(centro, lista_centro_attr).append(persona)
+        else:
+            raise ValueError(f"Centro '{persona.centro.nombre}' no encontrado para la persona '{persona.nombre}'")
+
 
     def registrar_donante(self, donante: object):
         self._validar_centro_registrado(donante)
@@ -252,7 +255,6 @@ class INCUCAI:
 
     def match(self):
         self.gestor_cirujanos.normalizar_especialidades()
-        self.gestor_donaciones.actualizar_indices()
 
         matches_realizados = False
         receptores_procesados = set()
@@ -268,9 +270,7 @@ class INCUCAI:
                 print(f"\n❌ No hay cirujanos disponibles en el centro de {receptor.nombre}\n")
                 continue
 
-            donante, indice_organo = (
-                self.gestor_donaciones.encontrar_donante_compatible(receptor)
-            )
+            donante, indice_organo = (self.gestor_donaciones.encontrar_donante_compatible(receptor))
 
             if not donante:
                 print(f"\n❌ No se encontró donante compatible para {receptor.nombre}\n")
@@ -298,7 +298,6 @@ class INCUCAI:
                 print("❌ No se pudo transportar el órgano. Match cancelado.")
                 return False, 0.0
             else:
-                print(f"✅ Transporte asignado exitosamente. Tiempo estimado: {tiempo:.2f} horas")
                 return True, tiempo
         else:
             print("✅ Donante y receptor en el mismo centro. No se requiere transporte.")
@@ -325,5 +324,3 @@ class INCUCAI:
                 print(f"🗑️ Donante {donante.nombre} removido del sistema (sin órganos disponibles)")
         self.receptores.remove(receptor)
         receptores_pendientes.insert(0, receptor)
-
-    

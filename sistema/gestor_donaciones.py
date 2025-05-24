@@ -10,41 +10,25 @@ class GestorDonaciones:
 
     def __init__(self, incucai):
         self.incucai = incucai
-        self._donantes_por_sangre = {}
-        self._receptores_por_organo = {}
         self.gestor_cirujanos = GestorCirujanos(self)
-
-    def actualizar_indices(self):
-        self._donantes_por_sangre = {}
-        self._receptores_por_organo = {}
-
-       
-        for donante in self.incucai.donantes:
-            tipo = donante.tipo_sangre
-            if tipo not in self._donantes_por_sangre:
-                self._donantes_por_sangre[tipo] = []
-            self._donantes_por_sangre[tipo].append(donante)
-
-        
-        for receptor in self.incucai.receptores:
-            organo = receptor.organo_receptor
-            if organo not in self._receptores_por_organo:
-                self._receptores_por_organo[organo] = []
-            self._receptores_por_organo[organo].append(receptor)
 
     def _edad_es_compatible(self, edad_donante, edad_receptor):
         rangos = [
-            ((0, 12), (0, 18)),  # donante,receptor
+            ((0, 12), (0, 18)),    # (rango_donante), (rango_receptor)
             ((13, 25), (10, 40)),
             ((26, 40), (15, 55)),
             ((41, 60), (30, 70)),
             ((61, 75), (50, 80)),
             ((76, 120), (60, 120)),
-            ##agregar except aca , mi donantes ni receptor pueden tener mas de 120 anios
         ]
-        for rango_donante, rango_receptor in rangos:
-            if rango_donante[0] <= edad_donante <= rango_donante[1]:
-                return rango_receptor[0] <= edad_receptor <= rango_receptor[1]
+        
+        for (min_don, max_don), (min_rec, max_rec) in rangos:
+            # Verificar si la edad del donante está en el rango del donante
+            if min_don <= edad_donante <= max_don and min_rec <= edad_receptor <= max_rec:
+                # Si está en el rango, verificar si el receptor está en el rango correspondiente
+                return True
+        
+        return False
 
     
     def _sangre_es_compatible(self, donante, receptor) -> bool:
@@ -81,16 +65,15 @@ class GestorDonaciones:
         self, receptor: object
     ) -> Tuple[Optional[object], Optional[int]]:
         """Encuentra un donante compatible con el receptor, retorna (donante, índice_organo)"""
-        
-        tipo_sangre = receptor.tipo_sangre
+
         organo_requerido = receptor.organo_receptor
         edad_receptor = receptor.edad
+        donantes = self.incucai.donantes
  
         donantes_compatibles = []
-        for tipo_donante, donantes in self._donantes_por_sangre.items():
-                for donante in donantes:
-                    if self._sangre_es_compatible(donante, receptor):
-                         donantes_compatibles.append(donante)
+        for donante in donantes:
+            if self._sangre_es_compatible(donante, receptor):
+                donantes_compatibles.append(donante)
 
         if not donantes_compatibles:
             return None, None
