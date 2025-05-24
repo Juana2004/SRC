@@ -87,6 +87,16 @@ class Registros:
             Favaloro, 
             incucai)
 
+        Avion2 = Avion(
+            "avion",
+            800,
+            "Chacabuco 2000",
+            "Carlos Paz",
+            "Cordoba", 
+            "Argentina", 
+            Favaloro, 
+            incucai)
+        
         print(f"\n{AZUL}── Helicópteros ──{RESET}")
 
         Helicoptero1 = Helicoptero(
@@ -109,13 +119,28 @@ class Registros:
             fecha_nacimiento_carlos,
             M,
             112324256,
-            TipoSangre.A_POSITIVO.value,
+            TipoSangre.O_NEGATIVO.value,
             Favaloro,
             incucai,
             [TipoOrganoVivo.HIGADO.value, TipoOrganoVivo.INTESTINO.value],
         )
 
-        fecha_fallecimiento_tere = datetime.strptime("17/5/2025 13:30", "%d/%m/%Y %H:%M")
+        fecha_nacimiento_maria = datetime.strptime("14/05/2020", "%d/%m/%Y").date()
+        fecha_fallecimiento_maria=datetime.strptime("19/03/2021 15:52","%d/%m/%Y %H:%M")
+        Maria = Donante(
+            "Maria",
+            409982,
+            fecha_nacimiento_maria,
+            M,
+            112324256,
+            TipoSangre.O_POSITIVO.value,
+            Otamendi,
+            incucai,
+            fecha_fallecimiento_maria,
+            [TipoOrgano.HIGADO.value, TipoOrgano.INTESTINO.value],
+        )
+
+        fecha_fallecimiento_tere = datetime.strptime("24/5/2025 10:30", "%d/%m/%Y %H:%M")
         fecha_nacimiento_tere = datetime.strptime("17/5/2003", "%d/%m/%Y").date()
         Tere = Donante(
             "Tere",
@@ -123,7 +148,7 @@ class Registros:
             fecha_nacimiento_tere,
             M,
             112324276,
-            TipoSangre.A_POSITIVO.value,
+            TipoSangre.O_NEGATIVO.value,
             Otamendi,
             incucai,
             fecha_fallecimiento_tere,
@@ -173,6 +198,10 @@ class Registros:
         print(f"\n{AZUL}── Cirujanos ──{RESET}")
         Pepe = CirujanoGeneral(
             "Pepe", 334, ItalianoCordoba, incucai
+        )
+
+        Damian = CirujanoEspecializado(
+            "Damian", 354, Especialidad.GASTROENTEROLOGO.value ,Otamendi, incucai
         )
 
         Juan = CirujanoEspecializado(
