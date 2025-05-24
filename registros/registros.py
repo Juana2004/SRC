@@ -168,7 +168,7 @@ class Registros:
             TipoSangre.A_POSITIVO.value,
             ItalianoCordoba,
             incucai,
-            "higado",
+            TipoOrgano.HIGADO.value,
             fecha_ingreso_zoe,
             TipoPatologiaHigado.CANCER.value,
             no,
@@ -185,7 +185,7 @@ class Registros:
             TipoSangre.A_POSITIVO.value,
             Otamendi,
             incucai,
-            "intestino",
+            TipoOrgano.INTESTINO.value,
             fecha_ingreso_juana,
             TipoPatologiaIntestino.OTRA.value,
             si
