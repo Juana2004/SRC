@@ -86,7 +86,17 @@ class Registros:
             "Argentina", 
             Favaloro, 
             incucai)
-
+        
+        Avion2 = Avion(
+            "avion2",
+            900,
+            "Chacabuco 2000",
+            "Carlos Paz",
+            "Cordoba", 
+            "Argentina", 
+            Favaloro, 
+            incucai)
+        
         print(f"\n{AZUL}── Helicópteros ──{RESET}")
 
         Helicoptero1 = Helicoptero(
@@ -130,6 +140,20 @@ class Registros:
             [TipoOrgano.HIGADO.value, TipoOrgano.INTESTINO.value],
         )
 
+        fecha_fallecimiento_maria = datetime.strptime("24/5/2025 11:30", "%d/%m/%Y %H:%M")
+        fecha_nacimiento_maria = datetime.strptime("17/5/2003", "%d/%m/%Y").date()
+        Maria = Donante(
+            "Maria",
+            409978,
+            fecha_nacimiento_maria,
+            M,
+            112324276,
+            TipoSangre.O_POSITIVO.value,
+            Otamendi,
+            incucai,
+            fecha_fallecimiento_maria,
+            [TipoOrgano.HIGADO.value, TipoOrgano.INTESTINO.value],
+        )
         '''Crear receptores'''
         print(f"\n{AZUL}── Receptores ──{RESET}")
 
@@ -173,6 +197,10 @@ class Registros:
         print(f"\n{AZUL}── Cirujanos ──{RESET}")
         Pepe = CirujanoGeneral(
             "Pepe", 334, ItalianoCordoba, incucai
+        )
+
+        Damian = CirujanoGeneral(
+            "Damian", 334, Otamendi, incucai
         )
 
         Juan = CirujanoEspecializado(

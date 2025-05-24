@@ -322,5 +322,6 @@ class INCUCAI:
                 self.donantes.remove(donante)
                 centro_donante.donantes.remove(donante)
                 print(f"🗑️ Donante {donante.nombre} removido del sistema (sin órganos disponibles)")
-        self.receptores.remove(receptor)
+        if receptor in self.receptores:
+            self.receptores.remove(receptor)
         receptores_pendientes.insert(0, receptor)
