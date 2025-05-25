@@ -1,6 +1,8 @@
 from localizables.centro_de_salud import CentroDeSalud
 from datetime import date
-from excepciones import ErrorCedulaRepetido, ErrorCentroNoRegistrado, ErrorDNIRepetido, ErrorTipoDatoInvalido
+from excepciones import *
+from .validaciones import Validaciones
+from typing import Optional
 
 
 class INCUCAI:
@@ -15,8 +17,11 @@ class INCUCAI:
         self.vehiculos_terrestres: list[object] = []
         self.aviones: list[object] = []
         self.helicopteros: list[object] = []
+        self.validaciones = Validaciones(self)
 
-    def _encontrar_centro_por_nombre(self, nombre_centro: str):
+    def _encontrar_centro_por_nombre(
+        self, nombre_centro: str
+    ) -> Optional[CentroDeSalud]:
         if nombre_centro in self._centros_por_nombre:
             return self._centros_por_nombre[nombre_centro]
         for centro in self.centros_salud:
@@ -30,54 +35,28 @@ class INCUCAI:
         if centro:
             getattr(centro, lista_centro_attr).append(persona)
         else:
-            raise ValueError(f"Centro '{persona.centro.nombre}' no encontrado para la persona '{persona.nombre}'")
-        
-    def validar_centro_registrado(self, persona: object):
-        if persona.centro not in self.centros_salud:
-            raise ErrorCentroNoRegistrado(persona.nombre, persona.centro)
-
-    def validar_dni_unico(self, persona: object):
-        if persona in self.donantes + self.receptores:
-            raise ErrorDNIRepetido(persona.nombre)
-    
-    def validar_cedula_unica(self, persona: object):
-        if persona in self.cirujanos_especializados + self.cirujanos_generales:
-            raise ErrorCedulaRepetido(persona.nombre)
-
-    def validar_datos(self, objeto: object, campos_esperados: dict, opcionales: list = []):
-        for campo, tipo_esperado in campos_esperados.items():
-            valor = getattr(objeto, campo, None)
-
-            if campo in opcionales:
-                
-                if valor is None:
-                    continue
-
-            if not isinstance(valor, tipo_esperado):
-                raise ErrorTipoDatoInvalido(objeto.nombre,
-                    campo,
-                    f"{tipo_esperado.__name__} (recibido: {type(valor).__name__})"
+            raise ValueError(
+                f"Centro '{persona.centro.nombre}' no encontrado para la persona '{persona.nombre}'"
             )
 
-
-
     def registrar_donante(self, donante: object):
-        
-        self.validar_centro_registrado( donante)
-        self.validar_dni_unico(donante)
-        self.validar_datos(
-        donante,
-        {
-            "nombre": str,
-            "dni": int,
-            "centro": CentroDeSalud,
-            "fecha_nacimiento": date,
-            "sexo": str,
-            "telefono": int,
-            "tipo_sangre": str,
-            "fecha_fallecimiento": date,
-            "organos_donante": list,
-        }, opcionales= ["fecha_fallecimiento"]
+
+        self.validaciones.validar_centro_registrado(donante)
+        self.validaciones.validar_dni_unico(donante)
+        self.validaciones.validar_datos(
+            donante,
+            {
+                "nombre": str,
+                "dni": int,
+                "centro": CentroDeSalud,
+                "fecha_nacimiento": date,
+                "sexo": str,
+                "telefono": int,
+                "tipo_sangre": str,
+                "fecha_fallecimiento": date,
+                "organos_donante": list,
+            },
+            opcionales=["fecha_fallecimiento"],
         )
         self.donantes.append(donante)
         self._agregar_persona_a_centro(donante, "donantes")
@@ -87,23 +66,23 @@ class INCUCAI:
         self.organos.append(organo)
 
     def registrar_receptor(self, receptor: object):
-        self.validar_centro_registrado(receptor)
-        self.validar_dni_unico(receptor)
-        self.validar_datos(
-        receptor,
-        {
-            "nombre": str,
-            "dni": int,
-            "fecha_nacimiento": date,
-            "sexo": str,
-            "telefono": int,
-            "tipo_sangre": str,
-            "centro": CentroDeSalud,
-            "organo_receptor": str,
-            "fecha_lista": date,
-            "patologia": str,
-            "urgencia": bool,
-        }
+        self.validaciones.validar_centro_registrado(receptor)
+        self.validaciones.validar_dni_unico(receptor)
+        self.validaciones.validar_datos(
+            receptor,
+            {
+                "nombre": str,
+                "dni": int,
+                "fecha_nacimiento": date,
+                "sexo": str,
+                "telefono": int,
+                "tipo_sangre": str,
+                "centro": CentroDeSalud,
+                "organo_receptor": str,
+                "fecha_lista": date,
+                "patologia": str,
+                "urgencia": bool,
+            },
         )
         self.receptores.append(receptor)
         self.receptores.sort()
@@ -114,43 +93,46 @@ class INCUCAI:
         self.centros_salud.append(centro)
         self._centros_por_nombre[centro.nombre] = centro
 
-    def _registrar_cirujano(self, cirujano, lista_cirujanos, tipo_cirujano):
-        self.validar_centro_registrado(cirujano)
-        self.validar_dni_unico(cirujano)
-        self.validar_datos(
-        cirujano,
-        {
-            "nombre": str,
-            "cedula": int,
-            "centro": CentroDeSalud,
-            "especialidad": str,
-        }, opcionales= ["especialidad"]
+    def _registrar_cirujano(
+        self, cirujano: object, lista_cirujanos: list[object], tipo_cirujano: str
+    ):
+        self.validaciones.validar_centro_registrado(cirujano)
+        self.validaciones.validar_dni_unico(cirujano)
+        self.validaciones.validar_datos(
+            cirujano,
+            {
+                "nombre": str,
+                "cedula": int,
+                "centro": CentroDeSalud,
+                "especialidad": str,
+            },
+            opcionales=["especialidad"],
         )
         lista_cirujanos.append(cirujano)
         self._agregar_persona_a_centro(cirujano, "cirujanos")
         print(f"✔{tipo_cirujano}: {cirujano.nombre}")
 
-    def registrar_cirujano_especializado(self, cirujano):
+    def registrar_cirujano_especializado(self, cirujano: object):
         self._registrar_cirujano(
             cirujano, self.cirujanos_especializados, "especializado"
         )
 
-    def registrar_cirujano_general(self, cirujano):
+    def registrar_cirujano_general(self, cirujano: object):
         self._registrar_cirujano(cirujano, self.cirujanos_generales, "general")
 
-    def _registrar_vehiculo(self, vehiculo, lista_vehiculos):
+    def _registrar_vehiculo(self, vehiculo: object, lista_vehiculos: list[object]):
         lista_vehiculos.append(vehiculo)
         centro = self._encontrar_centro_por_nombre(vehiculo.centro.nombre)
         if centro:
             centro.vehiculos.append(vehiculo)
 
-    def registrar_vehiculo_terrestre(self, vehiculo_terrestre):
+    def registrar_vehiculo_terrestre(self, vehiculo_terrestre: object):
         self._registrar_vehiculo(vehiculo_terrestre, self.vehiculos_terrestres)
 
-    def registrar_avion(self, avion):
+    def registrar_avion(self, avion: object):
         self._registrar_vehiculo(avion, self.aviones)
 
-    def registrar_helicoptero(self, helicoptero):
+    def registrar_helicoptero(self, helicoptero: object):
         self._registrar_vehiculo(helicoptero, self.helicopteros)
 
     def __str__(self):
@@ -188,13 +170,13 @@ class INCUCAI:
         salida += f"{'-' * 60}\n"
         return salida
 
-    def obtener_receptores_por_centro(self, centro):
+    def obtener_receptores_por_centro(self, centro: CentroDeSalud) -> list:
         centro_encontrado = self._encontrar_centro_por_nombre(centro.nombre)
         if centro_encontrado:
             return [receptor.nombre for receptor in centro_encontrado.receptores]
         return []
 
-    def mostrar_receptores_por_centro(self, centro):
+    def mostrar_receptores_por_centro(self, centro: CentroDeSalud):
         receptores = self.obtener_receptores_por_centro(centro)
         print(f"\n--- Receptores en {centro.nombre} ---")
         if receptores:
@@ -203,14 +185,14 @@ class INCUCAI:
         else:
             print("No hay receptores en este centro.")
 
-    def obtener_prioridad_receptor(self, receptor):
+    def obtener_prioridad_receptor(self, receptor: object) -> Optional[int]:
         try:
             posicion = self.receptores.index(receptor)
             return posicion + 1
         except ValueError:
             return None
 
-    def mostrar_prioridad_receptor(self, receptor):
+    def mostrar_prioridad_receptor(self, receptor: object):
         prioridad = self.obtener_prioridad_receptor(receptor)
         if prioridad:
             print(
@@ -218,4 +200,3 @@ class INCUCAI:
             )
         else:
             print(f"❌ El receptor {receptor.nombre} no está en la lista de espera.")
-

@@ -1,78 +1,46 @@
 from sistema.calculador_distancias import CalculadorDistancias
-from localizables.vehiculos_terrestres import VehiculoTerrestre
-from localizables.avion import Avion
-from localizables.helicoptero import Helicoptero
 
 class Transporte:
     def __init__(self, incucai):
         self.incucai = incucai
         self.calculador_distancias = CalculadorDistancias()
 
-    def vehiculo_en_centro(self, centro_donante, centro_receptor)->bool:
-        vehiculos_candidatos = self._obtener_vehiculos_por_ubicacion(centro_donante, centro_receptor)
-        if vehiculos_candidatos == []:
-            return False
-        else:
-            return True
+    def hay_vehiculos_disponibles(self, centro_donante, centro_receptor) -> bool:
+        return bool(self._obtener_vehiculos_por_ubicacion(centro_donante, centro_receptor))
 
     def asignar_vehiculo(self, donante, receptor):
-        """Asigna el mejor vehículo disponible para el transporte."""
         centro_donante = donante.centro
         centro_receptor = receptor.centro
-        
-        
-        distancia = self.calculador_distancias.obtener_distancia(centro_donante, centro_receptor)
-        print(f"\n📍 Distancia entre centros: {distancia:.2f} km")
-        
-        
-        vehiculos_candidatos = self._obtener_vehiculos_por_ubicacion(centro_donante, centro_receptor)
-        
-        if not vehiculos_candidatos:
-            print("\n❌ No hay vehículos disponibles para esta ruta")
+
+        self._informar_distancia(centro_donante, centro_receptor)
+        vehiculos = self._obtener_vehiculos_por_ubicacion(centro_donante, centro_receptor)
+
+        if not vehiculos:
+            self._informar_ausencia_vehiculos()
             return False, 0.0
-        
-        mejor_vehiculo = self._seleccionar_mejor_vehiculo(vehiculos_candidatos, centro_donante, centro_receptor)
-        
-        tiempo_total = mejor_vehiculo.ejecutar_transporte(centro_donante, centro_receptor, self.calculador_distancias)
-        
+
+        vehiculo_optimo = self._seleccionar_mejor_vehiculo(vehiculos, centro_donante, centro_receptor)
+        tiempo_total = vehiculo_optimo.ejecutar_transporte(centro_donante, centro_receptor, self.calculador_distancias)
+
         return True, tiempo_total
-    
-    def _obtener_vehiculos_por_ubicacion(self, centro_origen, centro_destino):
-        vehiculos_disponibles = []
-        
-        for avion in self.incucai.aviones:
-            if avion.puede_realizar_transporte(centro_origen, centro_destino):
-                vehiculos_disponibles.append(avion)
-        
-        for helicoptero in self.incucai.helicopteros:
-            if helicoptero.puede_realizar_transporte(centro_origen, centro_destino):
-                vehiculos_disponibles.append(helicoptero)
-        
-        for vehiculo_terrestre in self.incucai.vehiculos_terrestres:
-            if vehiculo_terrestre.puede_realizar_transporte(centro_origen, centro_destino):
-                vehiculos_disponibles.append(vehiculo_terrestre)
-        
-        return vehiculos_disponibles
-    
-    def _seleccionar_mejor_vehiculo(self, vehiculos, centro_origen, centro_destino):
-        mejor_vehiculo = None
-        mejor_tiempo = float('inf')
 
-        for vehiculo in vehiculos:
-            if hasattr(vehiculo, 'calcular_tiempo_total_mision'):
-                if isinstance(vehiculo, VehiculoTerrestre):
-                    tiempo_total, _ = vehiculo.calcular_tiempo_total_mision(
-                        centro_origen, centro_destino, self.calculador_distancias
-                    )
-                else:
-                    tiempo_total = vehiculo.calcular_tiempo_total_mision(
-                        centro_origen, centro_destino, self.calculador_distancias
-                    )
-            else:
-                tiempo_total = float('inf')
+    def _obtener_vehiculos_por_ubicacion(self, origen, destino):
+        return [
+            v for v in (self.incucai.aviones + self.incucai.helicopteros + self.incucai.vehiculos_terrestres)
+            if v.puede_realizar_transporte(origen, destino)
+        ]
 
-            if tiempo_total < mejor_tiempo:
-                mejor_tiempo = tiempo_total
-                mejor_vehiculo = vehiculo
+    def _seleccionar_mejor_vehiculo(self, vehiculos, origen, destino):
+        return min(
+            vehiculos,
+            key=lambda v: v.calcular_tiempo_total_mision(origen, destino, self.calculador_distancias)
+            if hasattr(v, 'calcular_tiempo_total_mision') else float('inf')
+        )
 
-        return mejor_vehiculo
+    def _informar_distancia(self, origen, destino):
+        distancia = self.calculador_distancias.obtener_distancia(origen, destino)
+        print(f"\n📍 Distancia entre centros: {distancia:.2f} km")
+        return distancia
+
+    def _informar_ausencia_vehiculos(self):
+        print("\n❌ No hay vehículos disponibles para esta ruta")

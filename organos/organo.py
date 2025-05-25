@@ -1,7 +1,3 @@
-from datetime import datetime
-
-
-
 class Organo:
 
     

@@ -1,10 +1,11 @@
 from datetime import datetime, timedelta
 import random
-
+from localizables.centro_de_salud import CentroDeSalud
+from pacientes.receptor import Receptor
+from typing import Optional
 
 
 class GestorCirujanos:
-    """Gestiona la disponibilidad y asignación de cirujanos"""
 
     def __init__(self, incucai):
         self.incucai = incucai
@@ -25,27 +26,39 @@ class GestorCirujanos:
             ):
                 cirujano.especialidad = especialidad_map[cirujano.especialidad]
 
-    def hay_cirujanos_en_centro(self, centro) -> bool:
+    def hay_cirujanos_en_centro(self, centro: CentroDeSalud) -> bool:
         if centro.cirujanos != []:
             return True
         else:
             return False
 
-    def evaluar_operacion(self, centro, organo, receptor, tiempo_transporte) -> bool:
-        """Evalúa si se puede realizar la operación con los cirujanos disponibles"""
-        
+    def evaluar_operacion(
+        self,
+        centro: CentroDeSalud,
+        organo: object,
+        receptor: Receptor,
+        tiempo_transporte: float,
+    ) -> bool:
         ahora = datetime.now()
-        fecha_hora_ablacion = datetime.combine(organo.fecha_ablacion, organo.hora_ablacion)
+        fecha_hora_ablacion = datetime.combine(
+            organo.fecha_ablacion, organo.hora_ablacion
+        )
         delta_transporte = timedelta(hours=tiempo_transporte)
-        horas_desde_ablacion = int((ahora - delta_transporte - fecha_hora_ablacion).total_seconds() // 3600)
+        horas_desde_ablacion = int(
+            (ahora - delta_transporte - fecha_hora_ablacion).total_seconds() // 3600
+        )
         cir_dis = False
 
         if horas_desde_ablacion > 20:
-            print("\n❌ No se puede realizar la operación: el órgano tiene más de 20 horas desde la ablación.")
+            print(
+                "\n❌ No se puede realizar la operación: el órgano tiene más de 20 horas desde la ablación."
+            )
             return False
 
-        especialistas = [c for c in centro.cirujanos if getattr(c, 'especialidad', None) is not None]
-        generales = [c for c in centro.cirujanos if not hasattr(c, 'especialidad')]
+        especialistas = [
+            c for c in centro.cirujanos if getattr(c, "especialidad", None) is not None
+        ]
+        generales = [c for c in centro.cirujanos if not hasattr(c, "especialidad")]
         for cirujano in especialistas:
             if cirujano.operaciones_realizadas_hoy == 0:
                 es_especialista = (
@@ -64,16 +77,13 @@ class GestorCirujanos:
                 print(f"\nLa operación la realiza el cirujano {cirujano.nombre}")
                 cirujano.operaciones_realizadas_hoy = 1
                 cir_dis = True
-                if self._realizar_operacion(
-                    cirujano, 5, receptor
-                ):  
+                if self._realizar_operacion(5, receptor):
                     return True
         if not cir_dis:
             print("\n❌ No hay cirujanos disponibles para realizar la operación.")
         return False
 
-    def _realizar_operacion(self, cirujano, umbral_exito, receptor) -> bool:
-        """realización de la operación con probabilidad de éxito"""
+    def _realizar_operacion(self, umbral_exito: int, receptor: Receptor) -> bool:
         resultado = random.randint(1, 10)
         exito = resultado >= umbral_exito
         if exito:
@@ -83,11 +93,13 @@ class GestorCirujanos:
             receptor.estado = "inestable"
             return False
 
-    def cirujanos_disponibles_ablacion(self, donante):
+    def cirujanos_disponibles_ablacion(self, donante: object) -> Optional[list[object]]:
         centro = donante.centro
-        cirujanos_disponibles = [c for c in centro.cirujanos if c.operaciones_realizadas_hoy == 0]
+        cirujanos_disponibles = [
+            c for c in centro.cirujanos if c.operaciones_realizadas_hoy == 0
+        ]
         return cirujanos_disponibles
 
-    def realizar_operacion_ablacion(self, cirujano):
+    def realizar_operacion_ablacion(self, cirujano: object):
         print(f"El cirujano {cirujano.nombre} realiza la ablación")
         cirujano.operaciones_realizadas_hoy = 1

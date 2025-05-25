@@ -1,12 +1,10 @@
 from .paciente import Paciente
 from organos.organo import Organo
 from datetime import datetime, date
-from excepciones import ErrorDNIRepetido, ErrorCentroNoRegistrado, ErrorTipoDatoInvalido
-
+from excepciones import *
 
 
 class Donante(Paciente):
-
 
     def __init__(
         self,
@@ -17,7 +15,7 @@ class Donante(Paciente):
         telefono: int,
         tipo_sangre: str,
         centro: object,
-        incucai,  # Instancia de la clase incucai
+        incucai,
         fecha_fallecimiento: datetime,
         organos_donante: list[Organo],
     ):
@@ -27,11 +25,10 @@ class Donante(Paciente):
         self.fecha_fallecimiento = fecha_fallecimiento.date()
         self.hora_fallecimiento = fecha_fallecimiento.time()
         self.fecha_ablacion = fecha_fallecimiento.date()
-        self.hora_ablacion = (
-            fecha_fallecimiento.time()  # Los organos se extraen cuando el donante fallece
-        )
+        self.hora_ablacion = fecha_fallecimiento.time()
         self.organos_donante = [
-            Organo(tipo, self.fecha_ablacion, self.hora_ablacion, incucai) for tipo in organos_donante
+            Organo(tipo, self.fecha_ablacion, self.hora_ablacion, incucai)
+            for tipo in organos_donante
         ]
 
         today = date.today()
@@ -46,5 +43,5 @@ class Donante(Paciente):
 
         try:
             incucai.registrar_donante(self)
-        except (ErrorDNIRepetido, ErrorCentroNoRegistrado,ErrorTipoDatoInvalido) as e:
+        except (ErrorDNIRepetido, ErrorCentroNoRegistrado, ErrorTipoDatoInvalido) as e:
             print(e)

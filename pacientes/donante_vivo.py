@@ -1,12 +1,10 @@
 from .paciente import Paciente
 from organos.organo_vivo import OrganoVivo
 from datetime import datetime, date
-from excepciones import ErrorDNIRepetido, ErrorCentroNoRegistrado ,ErrorTipoDatoInvalido
-
+from excepciones import *
 
 
 class DonanteVivo(Paciente):
-
 
     def __init__(
         self,
@@ -17,7 +15,7 @@ class DonanteVivo(Paciente):
         telefono: int,
         tipo_sangre: str,
         centro: object,
-        incucai,  # Instancia de la clase incucai
+        incucai,
         organos_donante: list[OrganoVivo],
     ):
         super().__init__(

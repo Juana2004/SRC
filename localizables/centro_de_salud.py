@@ -3,20 +3,16 @@ import time
 from excepciones import ErrorGeolocalizacion, ErrorTipoDatoInvalido
 
 
-
 class CentroDeSalud:
 
-    
-    geolocator = Nominatim(user_agent="incucai_app")
-
     def __init__(
-        self, 
-        nombre: str, 
-        direccion: str, 
-        partido: str, 
-        provincia: str, 
-        pais: str, 
-        incucai
+        self,
+        nombre: str,
+        direccion: str,
+        partido: str,
+        provincia: str,
+        pais: str,
+        incucai,
     ):
         self.nombre = nombre
         self.direccion = direccion
@@ -27,13 +23,14 @@ class CentroDeSalud:
         self.donantes: list[object] = []
         self.vehiculos: list[object] = []
         self.cirujanos: list[object] = []
+        self.geolocator = Nominatim(user_agent="incucai_app")
 
         try:
             if self.obtener_longlat():
                 print(f"\n✔'{self.nombre}' registrado en: {self.full_address}")
                 incucai.registrar_centro(self)
         except (ErrorGeolocalizacion, ErrorTipoDatoInvalido) as e:
-            print(f"❌ No se pudo registrar el centro '{self.nombre}': {e}")
+            print(e)
 
     def __eq__(self, other):
         if isinstance(other, CentroDeSalud):
@@ -43,7 +40,7 @@ class CentroDeSalud:
     def __hash__(self):
         return hash((self.nombre, self.direccion))
 
-    def obtener_longlat(self):
+    def obtener_longlat(self) -> bool:
         self.full_address = (
             f"{self.direccion}, {self.partido}, {self.provincia}, {self.pais}"
         )
