@@ -69,7 +69,7 @@ class GestorCirujanos:
                 cir_dis = True
                 print(f"\nLa operación la realiza el cirujano {cirujano.nombre}")
                 cirujano.operaciones_realizadas_hoy = 1
-                if self._realizar_operacion(cirujano, umbral_exito, receptor):
+                if self._realizar_operacion( umbral_exito, receptor):
                     return True
 
         for cirujano in generales:
