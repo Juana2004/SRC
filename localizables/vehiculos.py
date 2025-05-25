@@ -1,9 +1,9 @@
 from excepciones import ErrorGeolocalizacion
 from geopy.geocoders import Nominatim
-import time
 from localizables.centro_de_salud import CentroDeSalud
-import typing
 from abc import ABC, abstractmethod
+from localizables.geolocalizacion  import ServicioGeolocalizacion
+from .direccion import Direccion
 
 
 class Vehiculo(ABC):
@@ -12,54 +12,49 @@ class Vehiculo(ABC):
         self,
         nombre: str,
         velocidad: float,
-        direccion: str,
-        partido: str,
-        provincia: str,
-        pais: str,
+        direccion: Direccion,
         centro: CentroDeSalud,
         incucai,
     ):
+        if type(self) is Vehiculo:
+            raise TypeError("Vehiculo es una clase abstracta y no puede ser instanciada directamente.")
+
         self.nombre = nombre
-        self.partido = partido
-        self.provincia = provincia
-        self.direccion = direccion
-        self.pais = pais
         self.velocidad = velocidad
+        self.direccion: Direccion = direccion
         self.centro = centro
         self.geolocator = Nominatim(user_agent="incucai_app")
         self.viajes: int = 0
-        if type(self) is Vehiculo:
-            raise TypeError(
-                "Vehiculo es una clase abstracta y no puede ser instanciada directamente."
-            )
+        self.servicio_geo = ServicioGeolocalizacion(self.geolocator)
+
+    @abstractmethod
+    def ejecutar_transporte(
+        self,
+        centro_donante: CentroDeSalud,
+        centro_receptor: CentroDeSalud,
+        calculador_distancias: callable,
+    ):
+        pass
+
+    @abstractmethod
+    def puede_realizar_transporte(
+        self, centro_origen: CentroDeSalud, centro_destino: CentroDeSalud
+    ):
+        pass
 
     def obtener_longlat(self) -> bool:
-        self.full_address = (
-            f"{self.direccion}, {self.partido}, {self.provincia}, {self.pais}"
-        )
-        self.location = self.obtener_ubicacion(self.full_address)
-        if self.location:
-            self.latitud = self.location.latitude
-            self.longitud = self.location.longitude
+        try:
+            coordenadas = self.servicio_geo.obtener_coordenadas(
+                self.direccion.direccion,
+                self.direccion.partido,
+                self.direccion.provincia,
+                self.direccion.pais
+            )
+            self.latitud = coordenadas.latitud
+            self.longitud = coordenadas.longitud
             return True
-        else:
-            raise ErrorGeolocalizacion(self.full_address)
-
-    def obtener_ubicacion(self, direccion: str, intentos_max=3, espera=2):
-        for intento in range(intentos_max):
-            try:
-                location = self.geolocator.geocode(direccion)
-                if location:
-                    return location
-                else:
-                    raise ValueError("Geolocalización fallida")
-            except Exception as e:
-                print(
-                    f"⚠ Error al obtener geolocalización: {e}. Intento {intento+1} de {intentos_max}"
-                )
-                if intento < intentos_max - 1:
-                    time.sleep(espera)
-        return None
+        except ErrorGeolocalizacion:
+            raise
 
     def actualizar_ubicacion(self, longitud: float, latitud: float):
         try:
@@ -114,17 +109,3 @@ class Vehiculo(ABC):
         )
         return tiempo_recogida + tiempo_transporte
 
-    @abstractmethod
-    def ejecutar_transporte(
-        self,
-        centro_donante: CentroDeSalud,
-        centro_receptor: CentroDeSalud,
-        calculador_distancias: callable,
-    ):
-        pass
-
-    @abstractmethod
-    def puede_realizar_transporte(
-        self, centro_origen: CentroDeSalud, centro_destino: CentroDeSalud
-    ):
-        pass

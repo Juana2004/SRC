@@ -1,6 +1,7 @@
 from geopy.geocoders import Nominatim
-import time
+from .direccion import Direccion
 from excepciones import ErrorGeolocalizacion, ErrorTipoDatoInvalido
+from .geolocalizacion import ServicioGeolocalizacion
 
 
 class CentroDeSalud:
@@ -8,26 +9,24 @@ class CentroDeSalud:
     def __init__(
         self,
         nombre: str,
-        direccion: str,
-        partido: str,
-        provincia: str,
-        pais: str,
+        direccion: Direccion,
         incucai,
     ):
         self.nombre = nombre
-        self.direccion = direccion
-        self.partido = partido
-        self.provincia = provincia
-        self.pais = pais
+        self.direccion: Direccion = direccion
+        self.partido: str = direccion.partido
+        self.provincia: str = direccion.provincia
+        self.pais: str = direccion.pais
         self.receptores: list[object] = []
         self.donantes: list[object] = []
         self.vehiculos: list[object] = []
         self.cirujanos: list[object] = []
         self.geolocator = Nominatim(user_agent="incucai_app")
+        self.servicio_geo = ServicioGeolocalizacion(self.geolocator)
 
         try:
             if self.obtener_longlat():
-                print(f"\n✔'{self.nombre}' registrado en: {self.full_address}")
+                print(f"\n✔'{self.nombre}' registrado.")
                 incucai.registrar_centro(self)
         except (ErrorGeolocalizacion, ErrorTipoDatoInvalido) as e:
             print(e)
@@ -41,32 +40,15 @@ class CentroDeSalud:
         return hash((self.nombre, self.direccion))
 
     def obtener_longlat(self) -> bool:
-        self.full_address = (
-            f"{self.direccion}, {self.partido}, {self.provincia}, {self.pais}"
-        )
-        location = self.obtener_ubicacion(self.full_address)
-        if location:
-            self.latitud = location.latitude
-            self.longitud = location.longitude
+        try:
+            coordenadas = self.servicio_geo.obtener_coordenadas(
+                self.direccion.direccion,
+                self.direccion.partido,
+                self.direccion.provincia,
+                self.direccion.pais,
+            )
+            self.latitud = coordenadas.latitud
+            self.longitud = coordenadas.longitud
             return True
-        else:
-            raise ErrorGeolocalizacion(self.full_address)
-
-    def obtener_ubicacion(self, direccion, intentos_max=3, espera=2):
-        for intento in range(intentos_max):
-            try:
-                location = self.geolocator.geocode(direccion)
-                if location:
-                    return location
-                else:
-                    print(f"Geolocalización fallida")
-            except Exception as e:
-
-                print(
-                    f"⚠ Error al obtener geolocalización: {e}. Intento {intento+1} de {intentos_max}"
-                )
-
-            if intento < intentos_max - 1:
-                time.sleep(espera)
-
-        raise ValueError(f"No se pudo geolocalizar la dirección: {direccion}")
+        except ErrorGeolocalizacion:
+            raise

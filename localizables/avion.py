@@ -1,29 +1,16 @@
 from .vehiculos import Vehiculo
 from .centro_de_salud import CentroDeSalud
 from excepciones import ErrorGeolocalizacion
-import typing
 
 
 class Avion(Vehiculo):
-    def __init__(
-        self,
-        nombre: str,
-        velocidad: float,
-        direccion: str,
-        partido: str,
-        provincia: str,
-        pais: str,
-        centro: CentroDeSalud,
-        incucai,
-    ):
-        super().__init__(
-            nombre, velocidad, direccion, partido, provincia, pais, centro, incucai
-        )
+    def __init__(self, nombre, velocidad, direccion, centro, incucai):
+        super().__init__(nombre, velocidad, direccion, centro, incucai)
 
         try:
             if self.obtener_longlat():
                 print(
-                    f"\n✔ {self.nombre} localizado correctamente en: {self.full_address}"
+                    f"\n✔ {self.nombre}."
                 )
                 incucai.registrar_avion(self)
         except ErrorGeolocalizacion as e:

@@ -6,25 +6,12 @@ import typing
 
 class Helicoptero(Vehiculo):
 
-    def __init__(
-        self,
-        nombre: str,
-        velocidad: float,
-        direccion: str,
-        partido: str,
-        provincia: str,
-        pais: str,
-        centro: CentroDeSalud,
-        incucai,
-    ):
-        super().__init__(
-            nombre, velocidad, direccion, partido, provincia, pais, centro, incucai
-        )
+    def __init__(self, nombre, velocidad, direccion, centro, incucai):
+        super().__init__(nombre, velocidad, direccion, centro, incucai)
         try:
             if self.obtener_longlat():
                 print(
-                    f"\n✔{self.nombre} localizado correctamente en: {self.full_address}"
-                )
+                    f"\n✔{self.nombre} localizado ")
                 incucai.registrar_helicoptero(self)
         except ErrorGeolocalizacion as e:
             print(f"❌ No se pudo registrar el helicoptero: {e}")

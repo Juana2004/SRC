@@ -11,6 +11,7 @@ from localizables.centro_de_salud import CentroDeSalud
 from localizables.vehiculos_terrestres import VehiculoTerrestre
 from localizables.helicoptero import Helicoptero
 from localizables.avion import Avion
+from localizables.direccion import Direccion
 
 from tipos.tipo_especialidad import Especialidad
 from tipos.tipo_organo import TipoOrgano
@@ -37,82 +38,92 @@ class Registros:
 
         """Crear centros de salud"""
         print(f"\n{AZUL}── Centros de salud ──{RESET}")
-        Otamendi = CentroDeSalud(
-            "Otamendi",
-            "Azcuenaga 870",
+
+        direccion_otamendi = Direccion("Azcuenaga 870",
             "Ciudad Autonoma de Buenos Aires",
             "Buenos Aires",
-            "Argentina",
+            "Argentina",)
+        Otamendi = CentroDeSalud(
+            "Otamendi",
+            direccion_otamendi,
             incucai,
         )
 
-        Favaloro = CentroDeSalud(
-            "Favaloro",
-            "Av. Belgrano 1746",
+        direccion_favaloro = Direccion("Av. Belgrano 1746",
             "Ciudad Autonoma de Buenos Aires",
             "Buenos Aires",
-            "Argentina",
+            "Argentina")
+        Favaloro = CentroDeSalud(
+            "Favaloro",
+            direccion_favaloro,
             incucai,
         )
-        ItalianoCordoba = CentroDeSalud(
-            "Italiano de Cordoba",
-            "Roma 550",
+
+        direccion_italianocordoba = Direccion("Roma 550",
             "General paz",
             "Cordoba",
-            "Argentina",
+            "Argentina")
+        ItalianoCordoba = CentroDeSalud(
+            "Italiano de Cordoba",
+            direccion_italianocordoba,
             incucai,
         )
 
         """ Crear vehículos"""
         print(f"\n{AZUL}── Vehículos terrestres ──{RESET}")
+        direccion_ambulancia2 = Direccion("Corrientes 200",
+            "Ciudad Autonoma de Buenos Aires",
+            "Buenos Aires",
+            "Argentina")
         Ambulancia2 = VehiculoTerrestre(
             "Ambulancia",
             40,
-            "Corrientes 200",
-            "Ciudad Autonoma de Buenos Aires",
-            "Buenos Aires",
-            "Argentina",
+            direccion_ambulancia2,
             Favaloro,
             incucai,
         )
-
+    
         print(f"\n{AZUL}── Aviones ──{RESET}")
 
+        direccion_avion1 = Direccion("Chacabuco 2000",
+            "Carlos Paz",
+            "Cordoba",
+            "Argentina")
         Avion1 = Avion(
             "avion",
             700,
-            "Chacabuco 2000",
-            "Carlos Paz",
-            "Cordoba",
-            "Argentina",
+            direccion_avion1,
             ItalianoCordoba,
             incucai,
         )
-
+        direccion_avion2 = Direccion("Chacabuco 2000",
+            "Carlos Paz",
+            "Cordoba",
+            "Argentina",)
         Avion2 = Avion(
             "avion2",
             900,
-            "Chacabuco 2000",
-            "Carlos Paz",
-            "Cordoba",
-            "Argentina",
+            direccion_avion2,
             Favaloro,
             incucai,
         )
 
         print(f"\n{AZUL}── Helicópteros ──{RESET}")
 
+        direccion_helicoptero1 = Direccion("Roma 550",
+            "General paz",
+            "Cordoba",
+            "Argentina")
+        
         Helicoptero1 = Helicoptero(
             "helicoptero",
             300,
-            "Roma 550",
-            "General paz",
-            "Cordoba",
-            "Argentina",
+            direccion_helicoptero1
+            ,
             Favaloro,
             incucai,
         )
-
+        
         print(f"\n{AZUL}── Donantes ──{RESET}")
 
         fecha_nacimiento_carlos = datetime.strptime("14/05/2002", "%d/%m/%Y").date()
