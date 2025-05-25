@@ -95,7 +95,7 @@ class Match:
             )
             if not disponible:
                 print(
-                    f"⚠️ Sin vehículos disponibles de {donante.centro} a {receptor.centro}"
+                    f"⚠️ Sin vehículos disponibles de {donante.centro.nombre} a {receptor.centro.nombre}"
                 )
                 return False
         return True
