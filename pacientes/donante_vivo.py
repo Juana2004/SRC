@@ -23,8 +23,8 @@ class DonanteVivo(Paciente):
         super().__init__(
             nombre, dni, fecha_nacimiento, sexo, telefono, tipo_sangre, centro, incucai
         )
-        self.fecha_abl = None
-        self.hora_abl = None
+        self.fecha_ablacion = None
+        self.hora_ablacion = None
         self.organos_donante = [OrganoVivo(tipo, incucai) for tipo in organos_donante]
 
         today = date.today()

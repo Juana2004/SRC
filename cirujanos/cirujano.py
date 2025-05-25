@@ -13,3 +13,7 @@ class Cirujano:
         self.centro = centro
  
 
+    def __eq__(self, other):
+            if isinstance(other, Cirujano):
+                return self.cedula == other.cedula
+            return False

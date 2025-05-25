@@ -18,7 +18,6 @@ from tipos.tipo_organos_vivos import TipoOrganoVivo
 from tipos.tipo_sangre import TipoSangre
 from tipos.patologias import *
 
-
 class Registros:
     def __init__(self):
         pass
@@ -45,6 +44,7 @@ class Registros:
             "Argentina",
             incucai,
         )
+        
         Favaloro = CentroDeSalud(
             "Favaloro",
             "Av. Belgrano 1746",
@@ -71,7 +71,7 @@ class Registros:
             "Ciudad Autonoma de Buenos Aires",
             "Buenos Aires",
             "Argentina",
-            Otamendi,
+            Favaloro,
             incucai,
         )
 
@@ -161,7 +161,7 @@ class Registros:
         fecha_ingreso_zoe = datetime.strptime("11/10/2006 19:00", "%d/%m/%Y %H:%M")
         Zoe = Receptor(
             "Zoe",
-            46091127,
+            46091128,
             fecha_nacimiento_zoe,
             F,
             1158141032,
@@ -178,7 +178,7 @@ class Registros:
         fecha_ingreso_juana = datetime.strptime("11/10/2008 19:00", "%d/%m/%Y %H:%M")
         Juana = Receptor(
             "Juana",
-            46091128,
+            46091127,
             fecha_nacimiento_juana,
             F,
             1145367234,
@@ -191,21 +191,21 @@ class Registros:
             si
         )
 
-        '''Crear cirujanos'''
-        print(f"\n{AZUL}── Cirujanos ──{RESET}")
+       
 
         print(f"\n{AZUL}── Cirujanos ──{RESET}")
         Pepe = CirujanoGeneral(
-            "Pepe", 334, ItalianoCordoba, incucai
+            "Pepe", 334, Otamendi, incucai
         )
 
         Damian = CirujanoGeneral(
-            "Damian", 334, Otamendi, incucai
+            "Damian", 394, Otamendi, incucai
         )
 
         Juan = CirujanoEspecializado(
-            "Juan", 888, Especialidad.GASTROENTEROLOGO.value, Favaloro, incucai
+            "Juan", 887, Especialidad.GASTROENTEROLOGO.value, Favaloro, incucai
         )
+        Martin = CirujanoEspecializado("Martin", 888, Especialidad.TRAUMATOLOGO.value, ItalianoCordoba, incucai)
         print(
             f"\n{AZUL}═════════════════════════════════════════════════════════════════════{RESET}"
         )

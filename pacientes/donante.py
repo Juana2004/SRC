@@ -31,7 +31,7 @@ class Donante(Paciente):
             fecha_fallecimiento.time()  # Los organos se extraen cuando el donante fallece
         )
         self.organos_donante = [
-            Organo(tipo, fecha_fallecimiento, incucai) for tipo in organos_donante
+            Organo(tipo, self.fecha_ablacion, self.hora_ablacion, incucai) for tipo in organos_donante
         ]
 
         today = date.today()

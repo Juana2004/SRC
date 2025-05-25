@@ -1,4 +1,3 @@
-from enum import Enum
 class ErrorGeolocalizacion(Exception):
     """Excepción lanzada cuando falla la geolocalización."""
     def __init__(self, direccion, mensaje="No se pudo geolocalizar la dirección"):

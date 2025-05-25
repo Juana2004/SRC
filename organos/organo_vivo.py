@@ -9,5 +9,6 @@ class OrganoVivo:
         incucai
     ):
         self.nombre = nombre.lower()
-        self.ablacion: datetime = None
+        self.fecha_ablacion = None
+        self.hora_ablacion = None
         incucai.registrar_organo(self)

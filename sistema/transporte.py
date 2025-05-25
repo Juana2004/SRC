@@ -1,10 +1,20 @@
 from sistema.calculador_distancias import CalculadorDistancias
 from localizables.vehiculos_terrestres import VehiculoTerrestre
+from localizables.avion import Avion
+from localizables.helicoptero import Helicoptero
+
 class Transporte:
     def __init__(self, incucai):
         self.incucai = incucai
         self.calculador_distancias = CalculadorDistancias()
-    
+
+    def vehiculo_en_centro(self, centro_donante, centro_receptor)->bool:
+        vehiculos_candidatos = self._obtener_vehiculos_por_ubicacion(centro_donante, centro_receptor)
+        if vehiculos_candidatos == []:
+            return False
+        else:
+            return True
+
     def asignar_vehiculo(self, donante, receptor):
         """Asigna el mejor vehículo disponible para el transporte."""
         centro_donante = donante.centro
