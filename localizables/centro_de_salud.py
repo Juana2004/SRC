@@ -1,5 +1,5 @@
 from geopy.geocoders import Nominatim
-from .direccion import Direccion
+from clases_type.direccion import Direccion
 from excepciones import ErrorGeolocalizacion, ErrorTipoDatoInvalido
 from .geolocalizacion import ServicioGeolocalizacion
 

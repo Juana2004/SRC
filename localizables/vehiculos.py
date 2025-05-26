@@ -3,7 +3,7 @@ from geopy.geocoders import Nominatim
 from localizables.centro_de_salud import CentroDeSalud
 from abc import ABC, abstractmethod
 from localizables.geolocalizacion  import ServicioGeolocalizacion
-from .direccion import Direccion
+from clases_type.direccion import Direccion
 
 
 class Vehiculo(ABC):

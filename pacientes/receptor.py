@@ -1,28 +1,13 @@
 from pacientes.paciente import Paciente
 from datetime import datetime, date
 from excepciones import *
+from clases_type.datos_personales import DatosPersonales
+from localizables.centro_de_salud import CentroDeSalud
 
 
 class Receptor(Paciente):
-
-    def __init__(
-        self,
-        nombre: str,
-        dni: int,
-        fecha_nacimiento: datetime.date,
-        sexo: str,
-        telefono: int,
-        tipo_sangre: str,
-        centro: object,
-        incucai,
-        organo_receptor: str,
-        fecha_lista: datetime,
-        patologia: str,
-        urgencia: str,
-    ):
-        super().__init__(
-            nombre, dni, fecha_nacimiento, sexo, telefono, tipo_sangre, centro, incucai
-        )
+    def __init__(self, datos: DatosPersonales, tipo_sangre:str , centro:CentroDeSalud , incucai, organo_receptor: str, fecha_lista: datetime, patologia: str, urgencia: str):
+        super().__init__(datos, tipo_sangre, centro, incucai)
 
         self.organo_receptor = organo_receptor
         self.fecha_lista = fecha_lista
@@ -33,10 +18,10 @@ class Receptor(Paciente):
         today = date.today()
         self.edad = (
             today.year
-            - fecha_nacimiento.year
+            - datos.fecha_nacimiento.year
             - (
                 (today.month, today.day)
-                < (fecha_nacimiento.month, fecha_nacimiento.day)
+                < (datos.fecha_nacimiento.month, datos.fecha_nacimiento.day)
             )
         )
 

@@ -2,7 +2,7 @@ import time
 from dataclasses import dataclass
 from typing import Optional, Any
 from excepciones import ErrorGeolocalizacion
-from .direccion import Coordenadas
+from .coordenadas import Coordenadas
 
 
 class ServicioGeolocalizacion:
