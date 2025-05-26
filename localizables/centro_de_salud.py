@@ -4,6 +4,7 @@ from excepciones import ErrorGeolocalizacion, ErrorTipoDatoInvalido
 
 
 
+
 class CentroDeSalud:
 
     

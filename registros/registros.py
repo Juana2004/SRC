@@ -18,6 +18,7 @@ from tipos.tipo_organos_vivos import TipoOrganoVivo
 from tipos.tipo_sangre import TipoSangre
 from tipos.patologias import *
 
+from clases_type.datos_personales import DatosPersonales
 
 class Registros:
     def __init__(self):
@@ -113,7 +114,7 @@ class Registros:
         print(f"\n{AZUL}── Donantes ──{RESET}")
        
         fecha_nacimiento_carlos = datetime.strptime("14/05/2002", "%d/%m/%Y").date()
-        Carlos = DonanteVivo(
+        '''Carlos = DonanteVivo(
             "Carlos",
             409992,
             fecha_nacimiento_carlos,
@@ -124,15 +125,15 @@ class Registros:
             incucai,
             [TipoOrganoVivo.HIGADO.value, TipoOrganoVivo.INTESTINO.value],
         )
-
-        fecha_fallecimiento_tere = datetime.strptime("17/5/2025 13:30", "%d/%m/%Y %H:%M")
+'''
+        fecha_fallecimiento_tere = datetime.strptime("26/5/2025 13:30", "%d/%m/%Y %H:%M")
         fecha_nacimiento_tere = datetime.strptime("17/5/2003", "%d/%m/%Y").date()
-        Tere = Donante(
-            "Tere",
+        datostere= DatosPersonales( "Tere",
             409998,
             fecha_nacimiento_tere,
             M,
-            112324276,
+            112324276,)
+        Tere = Donante( datostere,
             TipoSangre.O_NEGATIVO.value,
             Otamendi,
             incucai,
@@ -140,7 +141,7 @@ class Registros:
             [TipoOrgano.HIGADO.value, TipoOrgano.INTESTINO.value],
         )
 
-        fecha_fallecimiento_maria = datetime.strptime("24/5/2025 11:30", "%d/%m/%Y %H:%M")
+        '''fecha_fallecimiento_maria = datetime.strptime("24/5/2025 11:30", "%d/%m/%Y %H:%M")
         fecha_nacimiento_maria = datetime.strptime("17/5/2003", "%d/%m/%Y").date()
         Maria = Donante(
             "Maria",
@@ -153,11 +154,11 @@ class Registros:
             incucai,
             fecha_fallecimiento_maria,
             [TipoOrgano.HIGADO.value, TipoOrgano.INTESTINO.value],
-        )
+        )'''
         '''Crear receptores'''
         print(f"\n{AZUL}── Receptores ──{RESET}")
 
-        fecha_nacimiento_zoe = datetime.strptime("14/08/2003", "%d/%m/%Y").date()
+        '''fecha_nacimiento_zoe = datetime.strptime("14/08/2003", "%d/%m/%Y").date()
         fecha_ingreso_zoe = datetime.strptime("11/10/2006 19:00", "%d/%m/%Y %H:%M")
         Zoe = Receptor(
             "Zoe",
@@ -189,7 +190,7 @@ class Registros:
             fecha_ingreso_juana,
             TipoPatologiaIntestino.OTRA.value,
             si
-        )
+        )'''
 
         '''Crear cirujanos'''
         print(f"\n{AZUL}── Cirujanos ──{RESET}")
