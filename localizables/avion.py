@@ -10,11 +10,11 @@ class Avion(Vehiculo):
         try:
             if self.obtener_longlat():
                 print(
-                    f"\n✔ {self.nombre}."
+                    f"\n✔{self.nombre}."
                 )
                 incucai.registrar_avion(self)
         except ErrorGeolocalizacion as e:
-            print(e)
+            print(f" No se pudo registrar el avion: {e}")
 
     def puede_realizar_transporte(
         self, centro_origen: CentroDeSalud, centro_destino: CentroDeSalud) -> bool:
@@ -31,7 +31,7 @@ class Avion(Vehiculo):
             and centro_origen.provincia != centro_destino.provincia
         )
 
-    def ejecutar_transporte(self,centro_donante: CentroDeSalud, centro_receptor: CentroDeSalud, calculador_distancias: callable,) -> float:
+    def ejecutar_transporte(self,centro_donante: CentroDeSalud, centro_receptor: CentroDeSalud) -> float:
         '''
         Ejecuta el transporte desde el centro donante hasta el centro del receptor.
         Actualiza la ubicacion del vehiculo en el transcurso del viaje e imprime su estado.
@@ -42,7 +42,7 @@ class Avion(Vehiculo):
             Float
         '''
         tiempo_total = self.calcular_tiempo_total_mision(
-            centro_donante, centro_receptor, calculador_distancias
+            centro_donante, centro_receptor
         )
         horas = int(tiempo_total)
         minutos = int(round((tiempo_total - horas) * 60))

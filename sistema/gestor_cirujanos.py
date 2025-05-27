@@ -169,7 +169,7 @@ class GestorCirujanos:
 
     def _registrar_ablacion_donante_vivo(
         self, donante: object, organo_requerido: str
-    ):  ##
+    ):  
         if isinstance(donante, DonanteVivo):
             fecha_actual = datetime.now()
             donante.fecha_ablacion = fecha_actual

@@ -12,11 +12,11 @@ class VehiculoTerrestre(Vehiculo):
         try:
             if self.obtener_longlat():
                 print(
-                    f"\n✔{self.nombre} localizado."
+                    f"\n✔{self.nombre} "
                 )
                 incucai.registrar_vehiculo_terrestre(self)
         except ErrorGeolocalizacion as e:
-            print(f"❌ No se pudo registrar el vehículo terrestre: {e}")
+            print(f" No se pudo registrar el vehículo terrestre: {e}")
 
     def puede_realizar_transporte(self, centro_origen: CentroDeSalud, centro_destino: CentroDeSalud) -> bool:
         '''
@@ -33,7 +33,7 @@ class VehiculoTerrestre(Vehiculo):
             and centro_origen.partido == centro_destino.partido
         )
 
-    def ejecutar_transporte(self,centro_donante: CentroDeSalud,centro_receptor: CentroDeSalud,calculador_distancias: callable,) -> float:
+    def ejecutar_transporte(self,centro_donante: CentroDeSalud,centro_receptor: CentroDeSalud) -> float:
         '''
         Ejecuta el transporte desde el centro donante hasta el centro del receptor.
         Actualiza la ubicacion del vehiculo en el transcurso del viaje e imprime su estado.
@@ -44,7 +44,7 @@ class VehiculoTerrestre(Vehiculo):
             Float
         '''
         tiempo_recorrido = self.calcular_tiempo_total_mision(
-            centro_donante, centro_receptor, calculador_distancias
+            centro_donante, centro_receptor
         )
         tiempo_trafico = random.randint(1, 30) / 60
         tiempo_total = tiempo_recorrido + tiempo_trafico

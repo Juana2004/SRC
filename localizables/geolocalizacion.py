@@ -29,16 +29,18 @@ class ServicioGeolocalizacion:
         else:
             raise ErrorGeolocalizacion(full_address)
 
-    def _obtener_ubicacion(self, direccion: str, intentos_max: int = 3, espera: int = 2) -> Optional[Any]:
+    def _obtener_ubicacion(self, direccion: str, intentos_max: int = 3, espera: int = 2) -> Optional[object]:
         '''
-        "intenta" obtener una direccion, probando hasta 3 veces y dejando 2 segundos de intervalo entre cada uno.
-        Imprime el erro y la cantidad de intentos correspondientes.
+        "Intenta" obtener una ubicación geográfica a partir de una dirección de texto.
+        Reintenta hasta 3 veces, con una espera de 2 segundos entre intentos.
+        Imprime el error correspondiente en cada intento fallido.
         Args:
             direccion: str
-            intentos_max: int
-            espera: int
+            intentos_max: int 
+            espera: int 
         Returns:
-        
+            Objeto de ubicación si se encuentra
+            None si todos los intentos fallan
         '''
         for intento in range(intentos_max):
             try:
@@ -46,12 +48,11 @@ class ServicioGeolocalizacion:
                 if location:
                     return location
                 else:
-                    raise ValueError("Geolocalización fallida")
+                    raise ValueError("Direccion ingresada no reconocida")
             except Exception as e:
                 print(
-                    f"⚠ Error al obtener geolocalización: {e}. Intento {intento+1} de {intentos_max}"
+                    f"⚠ Error encontrando ubicacion. Intento {intento+1} de {intentos_max}"
                 )
                 if intento < intentos_max - 1:
                     time.sleep(espera)
-
         return None

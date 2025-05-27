@@ -49,12 +49,12 @@ class GestorDonaciones:
         receptores_pendientes: list[Receptor],
     ) -> bool:
         for donante, indice_organo in donantes:
-            print(f"\nEvaluando donantes compatibles para {receptor.nombre}\n")
-            print(f"\nEvaluando donante {donante.nombre}\n")
+            print(f"\nEvaluando donantes compatibles en sangre, organos y edad para {receptor.nombre}")
+            print(f"Evaluando donante {donante.nombre}:")
 
             cirujanos = self.gestor_cirujanos.cirujanos_disponibles_ablacion(donante)
             if not cirujanos:
-                print(f"\n⚠️ No hay cirujanos para realizar la ablación.\n")
+                print(f"⚠️ No hay cirujanos para realizar la ablación.")
                 continue
 
             if donante.centro != receptor.centro:
@@ -63,7 +63,7 @@ class GestorDonaciones:
                 )
                 if not vehiculos:
                     print(
-                        f"\n⚠️ Sin vehículos disponibles de {donante.centro.nombre} a {receptor.centro.nombre}\n"
+                        f"⚠️ Sin vehículos disponibles de {donante.centro.nombre} a {receptor.centro.nombre}"
                     )
                     continue
 
@@ -99,7 +99,7 @@ class GestorDonaciones:
             Tupla de bool y float -> float puede ser 0
         '''
         if donante.centro == receptor.centro:
-            print("🚑 Donante y receptor en el mismo centro")
+            print("\n🚑 Donante y receptor en el mismo centro")
             return True, 0.0
         exito, tiempo = self.transporte.asignar_vehiculo(donante, receptor, vehiculos)
         return exito, tiempo

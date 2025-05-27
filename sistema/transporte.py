@@ -1,4 +1,4 @@
-from sistema.calculador_distancias import CalculadorDistancias
+from localizables.calculador_distancias import CalculadorDistancias
 from pacientes.paciente import Paciente
 from pacientes.receptor import Receptor
 from localizables.vehiculos import Vehiculo
@@ -23,12 +23,13 @@ class Transporte:
                 bool: Indica si la asignación y transporte se realizó con éxito (True)
                 float: Tiempo total del transporte
          """
+        print("\nAsignando vehiculo")
         centro_donante = donante.centro
         centro_receptor = receptor.centro
         self._informar_distancia(centro_donante, centro_receptor)
 
         vehiculo_optimo = self._seleccionar_mejor_vehiculo(vehiculos, centro_donante, centro_receptor)
-        tiempo_total = vehiculo_optimo.ejecutar_transporte(centro_donante, centro_receptor, self.calculador_distancias)
+        tiempo_total = vehiculo_optimo.ejecutar_transporte(centro_donante, centro_receptor)
 
         return True, tiempo_total
 
@@ -60,7 +61,7 @@ class Transporte:
         """
         return min(
             vehiculos,
-            key=lambda v: v.calcular_tiempo_total_mision(origen, destino, self.calculador_distancias)
+            key=lambda v: v.calcular_tiempo_total_mision(origen, destino)
             if hasattr(v, 'calcular_tiempo_total_mision') else float('inf')
         )
 
@@ -75,5 +76,5 @@ class Transporte:
             float: Distancia en km 
         """
         distancia = self.calculador_distancias.obtener_distancia(origen, destino)
-        print(f"\n📍 Distancia entre centros: {distancia:.2f} km")
+        print(f"📍 Distancia entre centros: {distancia:.2f} km")
         return distancia

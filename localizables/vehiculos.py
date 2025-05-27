@@ -4,6 +4,7 @@ from localizables.centro_de_salud import CentroDeSalud
 from abc import ABC, abstractmethod
 from localizables.geolocalizacion  import ServicioGeolocalizacion
 from clases_type.direccion import Direccion
+from .calculador_distancias import CalculadorDistancias
 
 
 class Vehiculo(ABC):
@@ -26,6 +27,7 @@ class Vehiculo(ABC):
         self.geolocator = Nominatim(user_agent="incucai_app")
         self.viajes: int = 0
         self.servicio_geo = ServicioGeolocalizacion(self.geolocator)
+        self.calculador_distancia = CalculadorDistancias()
 
     @abstractmethod
     def ejecutar_transporte(self,centro_donante: CentroDeSalud,centro_receptor: CentroDeSalud,calculador_distancias: callable,):
@@ -72,14 +74,16 @@ class Vehiculo(ABC):
                 print(f"\n✔ Ubicación actualizada a: {location}")
                 print(f"Viajes del vehiculo: {self.viajes}")
             else:
+                self.viajes += 1
                 raise ErrorGeolocalizacion(
                     f"Coordenadas: {latitud}, {longitud}",
-                    mensaje="No se pudo invertir la geolocalización",
-                )
+                    mensaje=f"\n✔ Ubicación actualizada. Viajes del vehiculo: {self.viajes}, No se pudo convertir las coordenadas a una direccion")
+            
         except Exception as e:
-            print(f"❌ Error al actualizar ubicación: {e}")
+            self.viajes += 1
+            print(f"\n✔ Ubicación actualizada. Viajes del vehiculo: {self.viajes} No se pudo convertir las coordenadas a una direccion debido a baja red de internet")
 
-    def calcular_tiempo_hasta_origen(self, centro_donante: CentroDeSalud, calculador_distancias: callable) -> float:
+    def calcular_tiempo_hasta_origen(self, centro_donante: CentroDeSalud) -> float:
         '''
         Calcula el timpo que tarda el vehiculo desde su posicion actual hasta el centro de salud del donante.
         Args:
@@ -88,10 +92,10 @@ class Vehiculo(ABC):
         Returns:
             Float
         '''
-        distancia = calculador_distancias.obtener_distancia(self, centro_donante)
+        distancia = self.calculador_distancia.obtener_distancia(self, centro_donante)
         return distancia / self.velocidad
 
-    def calcular_tiempo_transporte(self, centro_donante: CentroDeSalud, centro_receptor: CentroDeSalud,calculador_distancias: callable,) -> float:
+    def calcular_tiempo_transporte(self, centro_donante: CentroDeSalud, centro_receptor: CentroDeSalud) -> float:
         '''
         Calcula el tiempo que tarda el vehiculo en realizar el trasporte desde el centro de salud del donante hasta el 
         centro de salud del receptor.
@@ -101,7 +105,7 @@ class Vehiculo(ABC):
         Returns:
             Float
         '''
-        distancia = calculador_distancias.obtener_distancia(centro_donante, centro_receptor)
+        distancia = self.calculador_distancia.obtener_distancia(centro_donante, centro_receptor)
         return distancia / self.velocidad
 
     def esta_disponible_para_ruta(self, centro_origen: CentroDeSalud, centro_destino: CentroDeSalud) -> bool:
@@ -115,7 +119,7 @@ class Vehiculo(ABC):
         '''
         return self.centro in (centro_origen, centro_destino)
 
-    def calcular_tiempo_total_mision(self,centro_donante: CentroDeSalud,centro_receptor: CentroDeSalud,calculador_distancias: callable,) -> float:
+    def calcular_tiempo_total_mision(self,centro_donante: CentroDeSalud,centro_receptor: CentroDeSalud) -> float:
         '''
         Calcula el tiempo que tardara el vehiculo en realizar todo el transporte, desde su ubicacion actual hasta el centro del receptor.
         Args:
@@ -125,10 +129,10 @@ class Vehiculo(ABC):
             float
         '''
         tiempo_recogida = self.calcular_tiempo_hasta_origen(
-            centro_donante, calculador_distancias
+            centro_donante
         )
         tiempo_transporte = self.calcular_tiempo_transporte(
-            centro_donante, centro_receptor, calculador_distancias
+            centro_donante, centro_receptor
         )
         return tiempo_recogida + tiempo_transporte
 

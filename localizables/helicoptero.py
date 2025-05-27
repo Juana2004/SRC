@@ -1,7 +1,6 @@
 from .vehiculos import Vehiculo
 from excepciones import ErrorGeolocalizacion
 from .centro_de_salud import CentroDeSalud
-import typing
 
 
 class Helicoptero(Vehiculo):
@@ -11,10 +10,10 @@ class Helicoptero(Vehiculo):
         try:
             if self.obtener_longlat():
                 print(
-                    f"\n✔{self.nombre} localizado ")
+                    f"\n✔{self.nombre} ")
                 incucai.registrar_helicoptero(self)
         except ErrorGeolocalizacion as e:
-            print(f"❌ No se pudo registrar el helicoptero: {e}")
+            print(f" No se pudo registrar el helicoptero: {e}")
 
     def puede_realizar_transporte(self, centro_origen: CentroDeSalud, centro_destino: CentroDeSalud ) -> bool:
         '''
@@ -31,7 +30,7 @@ class Helicoptero(Vehiculo):
             and centro_origen.partido != centro_destino.partido
         )
 
-    def ejecutar_transporte(self,centro_donante: CentroDeSalud,centro_receptor: CentroDeSalud,calculador_distancias: callable,) -> float:
+    def ejecutar_transporte(self,centro_donante: CentroDeSalud,centro_receptor: CentroDeSalud) -> float:
         '''
         Ejecuta el transporte desde el centro donante hasta el centro del receptor.
         Actualiza la ubicacion del vehiculo en el transcurso del viaje.
@@ -42,7 +41,7 @@ class Helicoptero(Vehiculo):
             Float
         '''
         tiempo_total = self.calcular_tiempo_total_mision(
-            centro_donante, centro_receptor, calculador_distancias
+            centro_donante, centro_receptor
         )
         horas = int(tiempo_total)
         minutos = int(round((tiempo_total - horas) * 60))

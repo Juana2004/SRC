@@ -29,7 +29,7 @@ class CentroDeSalud:
                 print(f"\n✔'{self.nombre}' registrado.")
                 incucai.registrar_centro(self)
         except (ErrorGeolocalizacion, ErrorTipoDatoInvalido) as e:
-            print(e)
+            print(f"No se registrara el centro de salud: {e}")
 
     def __eq__(self, other):
         '''

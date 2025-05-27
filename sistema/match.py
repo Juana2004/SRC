@@ -36,7 +36,7 @@ class Match:
             donantes_compatibles = self.gestor_donaciones.compatibilidad(receptor)
 
             if not donantes_compatibles:
-                print(f"❌ No se encontró donante compatible para {receptor.nombre}")
+                print(f"No se encontró donante compatible en sangre, organos y edad para {receptor.nombre}\n")
                 continue
 
             if self.gestor_donaciones.procesar_donantes(
@@ -60,6 +60,6 @@ class Match:
             Bool 
         '''
         if not self.gestor_cirujanos.hay_cirujanos_en_centro(receptor.centro):
-            print(f"❌ No hay cirujanos disponibles en el centro de {receptor.nombre}")
+            print(f"No hay cirujanos disponibles en el centro de {receptor.nombre}\n")
             return False
         return True
