@@ -31,6 +31,11 @@ class Receptor(Paciente):
             print(e)
 
     def prioridad(self) -> int:
+        '''
+        Se asigna un valor basandose en la gravedad de la patologia y este aumenta si hay una urgencia.
+        Returns:
+            Entero
+        '''
         base = {"prioridad baja": 1, "prioridad media": 2, "prioridad alta": 3}.get(
             self.patologia.lower(), 1
         )
@@ -38,6 +43,13 @@ class Receptor(Paciente):
         return base + 3 if self.urgencia else base
 
     def __lt__(self, other) -> bool:
+        '''
+        Compara dos receptores para definir cual tiene mayor prioridad.
+        Args:
+            other: Receptor
+        Returns:
+            Bool
+        '''
         if self.estado == "inestable" and other.estado != "inestable":
             return True
         if self.estado != "inestable" and other.estado == "inestable":

@@ -28,21 +28,20 @@ class Vehiculo(ABC):
         self.servicio_geo = ServicioGeolocalizacion(self.geolocator)
 
     @abstractmethod
-    def ejecutar_transporte(
-        self,
-        centro_donante: CentroDeSalud,
-        centro_receptor: CentroDeSalud,
-        calculador_distancias: callable,
-    ):
+    def ejecutar_transporte(self,centro_donante: CentroDeSalud,centro_receptor: CentroDeSalud,calculador_distancias: callable,):
         pass
 
     @abstractmethod
-    def puede_realizar_transporte(
-        self, centro_origen: CentroDeSalud, centro_destino: CentroDeSalud
-    ):
+    def puede_realizar_transporte(self, centro_origen: CentroDeSalud, centro_destino: CentroDeSalud):
         pass
 
     def obtener_longlat(self) -> bool:
+        '''
+        Obtiene las coordenadas geograficas del centro de salud.
+        Si ocurre un error, lanza una excepcion.
+        Returns:
+            Bool
+        '''
         try:
             coordenadas = self.servicio_geo.obtener_coordenadas(
                 self.direccion.direccion,
@@ -57,6 +56,13 @@ class Vehiculo(ABC):
             raise
 
     def actualizar_ubicacion(self, longitud: float, latitud: float):
+        '''
+        Actualiza la ubicacion del vehiculo, (utilizando una libreria?).
+        Incrementa el contador de viajes en cada tramo del viaje.
+        Args:
+            longitud: float
+            latitud: float
+        '''
         try:
             self.latitud = latitud
             self.longitud = longitud
@@ -73,34 +79,51 @@ class Vehiculo(ABC):
         except Exception as e:
             print(f"❌ Error al actualizar ubicación: {e}")
 
-    def calcular_tiempo_hasta_origen(
-        self, centro_donante: CentroDeSalud, calculador_distancias: callable
-    ) -> float:
+    def calcular_tiempo_hasta_origen(self, centro_donante: CentroDeSalud, calculador_distancias: callable) -> float:
+        '''
+        Calcula el timpo que tarda el vehiculo desde su posicion actual hasta el centro de salud del donante.
+        Args:
+            centro_donante: CentroDeSalud
+
+        Returns:
+            Float
+        '''
         distancia = calculador_distancias.obtener_distancia(self, centro_donante)
         return distancia / self.velocidad
 
-    def calcular_tiempo_transporte(
-        self,
-        centro_donante: CentroDeSalud,
-        centro_receptor: CentroDeSalud,
-        calculador_distancias: callable,
-    ) -> float:
-        distancia = calculador_distancias.obtener_distancia(
-            centro_donante, centro_receptor
-        )
+    def calcular_tiempo_transporte(self, centro_donante: CentroDeSalud, centro_receptor: CentroDeSalud,calculador_distancias: callable,) -> float:
+        '''
+        Calcula el tiempo que tarda el vehiculo en realizar el trasporte desde el centro de salud del donante hasta el 
+        centro de salud del receptor.
+        Args:
+            centro_donante: CentroDeSalud
+            centro_receptor: CentroDeSalud
+        Returns:
+            Float
+        '''
+        distancia = calculador_distancias.obtener_distancia(centro_donante, centro_receptor)
         return distancia / self.velocidad
 
-    def esta_disponible_para_ruta(
-        self, centro_origen: CentroDeSalud, centro_destino: CentroDeSalud
-    ) -> bool:
+    def esta_disponible_para_ruta(self, centro_origen: CentroDeSalud, centro_destino: CentroDeSalud) -> bool:
+        '''
+        Verifica si el vehiculo esta disponible.
+        Args:
+            centro_origen: CentroDeSalud
+            centro_destino: CentroDeSalud
+        Returns:
+            Bool
+        '''
         return self.centro in (centro_origen, centro_destino)
 
-    def calcular_tiempo_total_mision(
-        self,
-        centro_donante: CentroDeSalud,
-        centro_receptor: CentroDeSalud,
-        calculador_distancias: callable,
-    ) -> float:
+    def calcular_tiempo_total_mision(self,centro_donante: CentroDeSalud,centro_receptor: CentroDeSalud,calculador_distancias: callable,) -> float:
+        '''
+        Calcula el tiempo que tardara el vehiculo en realizar todo el transporte, desde su ubicacion actual hasta el centro del receptor.
+        Args:
+            centro_donante: CentroDeSalud
+            centro_receptor:CentroDeSalud
+        Returns:
+            float
+        '''
         tiempo_recogida = self.calcular_tiempo_hasta_origen(
             centro_donante, calculador_distancias
         )

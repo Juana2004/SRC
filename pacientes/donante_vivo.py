@@ -7,7 +7,7 @@ from localizables.centro_de_salud import CentroDeSalud
 
 
 class DonanteVivo(Paciente):
- def __init__(self, datos, tipo_sangre, centro, incucai, organos_donante: list[OrganoVivo]):
+ def __init__(self, datos: DatosPersonales, tipo_sangre:str, centro:CentroDeSalud, incucai, organos_donante: list[OrganoVivo]):
     super().__init__(datos, tipo_sangre, centro, incucai)
     self.fecha_ablacion = None
     self.hora_ablacion = None
