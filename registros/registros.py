@@ -214,6 +214,24 @@ class Registros:
             TipoPatologiaIntestino.OTRA.value,
             si,
         )
+        fecha_nacimiento_juana = datetime.strptime("14/08/2004", "%d/%m/%Y").date()
+        fecha_ingreso_juana = datetime.strptime("11/10/2008 19:00", "%d/%m/%Y %H:%M")
+        datos_juana=DatosPersonales("Sam",
+            46091127,
+            fecha_nacimiento_juana,
+            F,
+            1145367234)
+        Juana = Receptor(
+            datos_juana,
+            TipoSangre.A_POSITIVO.value,
+            Favaloro,
+            incucai,
+            TipoOrgano.INTESTINO.value,
+            fecha_ingreso_juana,
+            TipoPatologiaIntestino.OTRA.value,
+            si,
+        )
+
 
         print(f"\n{AZUL}── Cirujanos ──{RESET}")
         Pepe = CirujanoGeneral("Pepe", 334, Otamendi, incucai)

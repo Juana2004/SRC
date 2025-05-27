@@ -5,6 +5,8 @@ class ErrorGeolocalizacion(Exception):
         self.mensaje = f"{mensaje}: {direccion}"
         super().__init__(self.mensaje)
 
+        ### agregar alcance de computadora, como primer parametro para q funcione el programa
+
 class ErrorDNIRepetido(Exception):
     """Excepción lanzada cuando un DNI ya está registrado en el sistema."""
     def __init__(self, nombre):
