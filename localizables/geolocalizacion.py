@@ -9,9 +9,18 @@ class ServicioGeolocalizacion:
     def __init__(self, geolocator):
         self.geolocator = geolocator
 
-    def obtener_coordenadas(
-        self, direccion: str, partido: str, provincia: str, pais: str
-    ) -> Coordenadas:
+    def obtener_coordenadas(self, direccion: str, partido: str, provincia: str, pais: str) -> Coordenadas:
+        '''
+        Obtiene las coordenadas geograficas a partir de una direccion.
+        Si no se puedeobtener la ubicacion, lanza una excepcion.
+        Args:
+            direccion: str
+            partido:str
+            provincia:str
+            pais: str
+        Returns:
+            Coordenadas:
+        '''
         full_address = f"{direccion}, {partido}, {provincia}, {pais}"
         location = self._obtener_ubicacion(full_address)
 
@@ -20,9 +29,17 @@ class ServicioGeolocalizacion:
         else:
             raise ErrorGeolocalizacion(full_address)
 
-    def _obtener_ubicacion(
-        self, direccion: str, intentos_max: int = 3, espera: int = 2
-    ) -> Optional[Any]:
+    def _obtener_ubicacion(self, direccion: str, intentos_max: int = 3, espera: int = 2) -> Optional[Any]:
+        '''
+        "intenta" obtener una direccion, probando hasta 3 veces y dejando 2 segundos de intervalo entre cada uno.
+        Imprime el erro y la cantidad de intentos correspondientes.
+        Args:
+            direccion: str
+            intentos_max: int
+            espera: int
+        Returns:
+        
+        '''
         for intento in range(intentos_max):
             try:
                 location = self.geolocator.geocode(direccion)

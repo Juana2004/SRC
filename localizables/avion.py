@@ -17,20 +17,30 @@ class Avion(Vehiculo):
             print(e)
 
     def puede_realizar_transporte(
-        self, centro_origen: CentroDeSalud, centro_destino: CentroDeSalud
-    ) -> bool:
-
+        self, centro_origen: CentroDeSalud, centro_destino: CentroDeSalud) -> bool:
+        '''
+        Verifica si el vehiculo esta disponible para realizar el viaje
+        Args:
+            centro_origen: CentroDeSalud
+            centro_destino: CentroDeSalud
+        Returns:
+            Bool
+        '''
         return (
             self.esta_disponible_para_ruta(centro_origen, centro_destino)
             and centro_origen.provincia != centro_destino.provincia
         )
 
-    def ejecutar_transporte(
-        self,
-        centro_donante: CentroDeSalud,
-        centro_receptor: CentroDeSalud,
-        calculador_distancias: callable,
-    ) -> float:
+    def ejecutar_transporte(self,centro_donante: CentroDeSalud, centro_receptor: CentroDeSalud, calculador_distancias: callable,) -> float:
+        '''
+        Ejecuta el transporte desde el centro donante hasta el centro del receptor.
+        Actualiza la ubicacion del vehiculo en el transcurso del viaje e imprime su estado.
+        Args:
+            centro_donante: CentroDeSalud
+            centro_receptor:CentroDeSalud
+        Returns:
+            Float
+        '''
         tiempo_total = self.calcular_tiempo_total_mision(
             centro_donante, centro_receptor, calculador_distancias
         )

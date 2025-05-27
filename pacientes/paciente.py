@@ -18,6 +18,13 @@ class Paciente:
 
 
     def __eq__(self, other):
+        '''
+        Utilizando un metodo magico compara si dos pacientes tienen igual dni
+        Args:
+            Other: Paciente
+        Returns:
+            Bool
+        '''
         if isinstance(other, Paciente):
             return self.datos.dni == other.datos.dni
         return False
