@@ -16,9 +16,9 @@ class GestorCirujanos:
         self.incucai = incucai
 
     def normalizar_especialidades(self):
-        '''Modifica las especialidades de los cirujanos especializados
-        Se reemplaza la especialidad de un cirujano: string, por una lista de órganos correspondiente a esta.
-        No recibe parámetros ni retorna ningún valor. Modifica los objetos cirujano directamente.
+        '''
+        Modifica el atributo especialidad de los cirujanos especializados por una lista de órganos correspondiente a esta.
+        No recibe parámetros ni retorna ningún valor.
         ''' 
     
         especialidad_map = {
@@ -37,16 +37,18 @@ class GestorCirujanos:
                 cirujano.especialidad = especialidad_map[cirujano.especialidad]
 
     def hay_cirujanos_en_centro(self, centro: CentroDeSalud) -> bool:
-        ''' Recibe un objeto del tipo CentroDeSalud.
+        '''
         Verifica si la lista de cirujanos del centro contiene al menos uno.
-        Retornando un tipo de dato booleano.
+        Args:
+            centro: CentroDeSalud.
+        Returns:
+            Bool
         '''
         if centro.cirujanos != []:
             return True
         else:
             return False
 
-    ####
 
     def evaluar_operacion(
         self,
@@ -91,11 +93,16 @@ class GestorCirujanos:
         return False
 
     def _realizar_operacion(self, cirujano: Cirujano, umbral_exito: int, receptor: Receptor) -> bool:
-        '''Recibe un objeto heredado de cirujano, un entero que representa el umbral de exito y un objeto de tipo receptor.
+        '''
         Imprime el cirujano encargado de la operacion, le registra a este que realizo una operacion.
         Modifico el estado de la variable cirujano_disponible, indicando que hay al menos un cirujano disponible.
         Verifica si el metodo _umbral_operacion se cumple.
-        Retorno un booleano.
+        Args:
+            cirujano: Objeto heredado de cirujano
+            umbral_exito: int 
+            receptor: Receptor
+        Returns:
+            Bool
         '''
         print(f"\nLa operación la realiza el cirujano {cirujano.nombre}")
         cirujano.operaciones_realizadas_hoy = 1
@@ -106,7 +113,8 @@ class GestorCirujanos:
             return False
 
     def _umbral_operacion(self, umbral_exito: int, receptor: Receptor) -> bool:
-        '''Recibe un entero que representa el umbral de exito y un objeto de tipo receptor.
+        '''
+        Recibe un entero que representa el umbral de exito y un objeto de tipo receptor.
         Genera un numero, utilizando la libreria random, entre 1 y 10.
         Define la variable de tipo booleano "exito", que sera verdadera cuando el resultado sea >= al umbral de exito.
         Si "exito" es verdadera retorna el bool True.

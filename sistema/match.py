@@ -1,5 +1,6 @@
 from sistema.gestor_cirujanos import GestorCirujanos
 from sistema.gestor_donaciones import GestorDonaciones
+from pacientes.receptor import Receptor
 
 
 class Match:
@@ -9,6 +10,14 @@ class Match:
         self.gestor_donaciones = GestorDonaciones(incucai)
 
     def match(self) -> bool:
+        """
+        Intenta realizar un match entre receptores y donantes disponibles.
+        Este método normaliza las especialidades de los cirujanos y recorre
+        la lista de receptores evaluando su compatibilidad con los donantes.
+        Si encuentra un donante compatible para un receptor, se coordina la operación.
+        Returns:
+            bool: True si se realizó al menos un match exitoso, False en caso contrario.
+        """
         self.gestor_cirujanos.normalizar_especialidades()
         receptores_pendientes = list(self.incucai.receptores)
         receptores_procesados = set()
@@ -30,7 +39,7 @@ class Match:
                 print(f"❌ No se encontró donante compatible para {receptor.nombre}")
                 continue
 
-            if self._procesar_donantes(
+            if self.gestor_donaciones.procesar_donantes(
                 donantes_compatibles, receptor, receptores_pendientes
             ):
                 se_realizo_match = True
@@ -40,18 +49,16 @@ class Match:
 
         return se_realizo_match
 
-    def _hay_cirujanos_en_centro(self, receptor: object) -> bool:
+    def _hay_cirujanos_en_centro(self, receptor: Receptor) -> bool:
+        '''
+        Invoca al metodo ya existente encargado de verficar si hay al menos un cirujano disponible en el centro del receptor e 
+            informa si no lo hay.
+        Args:
+            receptor: Receptor 
+        Returns:
+            Bool 
+        '''
         if not self.gestor_cirujanos.hay_cirujanos_en_centro(receptor.centro):
             print(f"❌ No hay cirujanos disponibles en el centro de {receptor.nombre}")
             return False
         return True
-
-    def _procesar_donantes(
-        self,
-        donantes: list[object],
-        receptor: object,
-        receptores_pendientes: list[object],
-    ) -> bool:
-        return self.gestor_donaciones.procesar_donantes(
-            donantes, receptor, receptores_pendientes
-        )

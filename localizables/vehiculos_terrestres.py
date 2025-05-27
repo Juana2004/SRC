@@ -2,7 +2,7 @@ from .vehiculos import Vehiculo
 from .centro_de_salud import CentroDeSalud
 from excepciones import ErrorGeolocalizacion
 import random
-import typing
+
 
 
 class VehiculoTerrestre(Vehiculo):
