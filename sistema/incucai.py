@@ -164,7 +164,7 @@ class INCUCAI:
         else:
             for i, donante in enumerate(self.donantes, 1):
                 organos_disponibles = (
-                    len(donante.organos_d) if hasattr(donante, "organos_d") else 0
+                    len(donante.organos_donante) if hasattr(donante, "organos_donante") else 0
                 )
                 salida += f"{i:2d}. {donante.nombre} ({organos_disponibles} órganos disponibles)\n"
         salida += f"{'-' * 60}\n"

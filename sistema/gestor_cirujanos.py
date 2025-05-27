@@ -4,9 +4,8 @@ from localizables.centro_de_salud import CentroDeSalud
 from pacientes.receptor import Receptor
 from typing import Optional
 from pacientes.donante_vivo import DonanteVivo
-from pacientes.donante import Donante
-from cirujanos.cirujano_general import CirujanoGeneral
-from cirujanos.cirujano_especializado import CirujanoEspecializado
+from pacientes.paciente import Paciente
+from pacientes.receptor import Receptor
 from cirujanos.cirujano import Cirujano
 
 
@@ -18,7 +17,6 @@ class GestorCirujanos:
     def normalizar_especialidades(self):
         '''
         Modifica el atributo especialidad de los cirujanos especializados por una lista de órganos correspondiente a esta.
-        No recibe parámetros ni retorna ningún valor.
         ''' 
     
         especialidad_map = {
@@ -38,11 +36,11 @@ class GestorCirujanos:
 
     def hay_cirujanos_en_centro(self, centro: CentroDeSalud) -> bool:
         '''
-        Verifica si la lista de cirujanos del centro contiene al menos uno.
+        Verifica si la lista de cirujanos del centro contiene al menos uno
         Args:
-            centro: CentroDeSalud.
+            centro: CentroDeSalud
         Returns:
-            Bool
+            bool
         '''
         if centro.cirujanos != []:
             return True
@@ -57,6 +55,18 @@ class GestorCirujanos:
         receptor: Receptor,
         tiempo_transporte: float,
     ) -> bool:
+        """
+        Evalúa si es posible realizar una operación de trasplante en un centro de salud,
+        considerando la disponibilidad de cirujanos, el tiempo desde la ablación del órgano,
+        y la probabilidad de éxito según la especialidad del cirujano.
+        Args:
+            centro: CentroDeSalud
+            organo: object
+            receptor: Receptor
+            tiempo_transporte: float
+        Returns:
+            bool: True si la operación se realizó con éxito, False en caso contrario
+        """
 
         self.cirujano_disponible = False
 
@@ -94,15 +104,16 @@ class GestorCirujanos:
 
     def _realizar_operacion(self, cirujano: Cirujano, umbral_exito: int, receptor: Receptor) -> bool:
         '''
+        Metodo privado
         Imprime el cirujano encargado de la operacion, le registra a este que realizo una operacion.
         Modifico el estado de la variable cirujano_disponible, indicando que hay al menos un cirujano disponible.
         Verifica si el metodo _umbral_operacion se cumple.
         Args:
-            cirujano: Objeto heredado de cirujano
+            cirujano: Objeto heredado de Cirujano
             umbral_exito: int 
             receptor: Receptor
         Returns:
-            Bool
+            bool
         '''
         print(f"\nLa operación la realiza el cirujano {cirujano.nombre}")
         cirujano.operaciones_realizadas_hoy = 1
@@ -114,6 +125,7 @@ class GestorCirujanos:
 
     def _umbral_operacion(self, umbral_exito: int, receptor: Receptor) -> bool:
         '''
+        Metodo privado
         Recibe un entero que representa el umbral de exito y un objeto de tipo receptor.
         Genera un numero, utilizando la libreria random, entre 1 y 10.
         Define la variable de tipo booleano "exito", que sera verdadera cuando el resultado sea >= al umbral de exito.

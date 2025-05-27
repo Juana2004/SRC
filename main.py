@@ -15,7 +15,7 @@ def main():
    # root.mainloop()
 
     match.match()
-    #print(incucai)
+    print(incucai)
     #incucai.mostrar_lista_espera()
 
 

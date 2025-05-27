@@ -19,7 +19,7 @@ class Match:
             bool: True si se realizó al menos un match exitoso, False en caso contrario.
         """
         self.gestor_cirujanos.normalizar_especialidades()
-        receptores_pendientes = list(self.incucai.receptores)
+        receptores_pendientes = self.incucai.receptores.copy()
         receptores_procesados = set()
         se_realizo_match = False
 
@@ -46,6 +46,7 @@ class Match:
                 receptores_procesados.add(id(receptor))
             else:
                 print(f"\n❌ No se pudo realizar match para {receptor.nombre}\n")
+                continue
 
         return se_realizo_match
 
