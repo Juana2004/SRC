@@ -126,6 +126,20 @@ class Registros:
             incucai,
         )
         
+        direccion_helicoptero2 = Direccion("Libertad 942",
+            "Capital Federal",
+            "Buenos Aires",
+            "Argentina")
+        
+        Helicoptero2 = Helicoptero(
+            "helicoptero2",
+            300,
+            direccion_helicoptero2
+            ,
+            Favaloro,
+            incucai,
+        )
+
         print(f"\n{AZUL}── Donantes ──{RESET}")
 
 
@@ -143,9 +157,23 @@ class Registros:
             [TipoOrganoVivo.HIGADO.value, TipoOrganoVivo.INTESTINO.value],
         )
 
-        fecha_fallecimiento_tere = datetime.strptime(
-            "17/5/2025 13:30", "%d/%m/%Y %H:%M"
+        
+        fecha_nacimiento_ramon = datetime.strptime("19/10/1999", "%d/%m/%Y").date()
+        datos_ramon=DatosPersonales("Ramon",
+            406662,
+            fecha_nacimiento_ramon,
+            M,
+            112324256)
+        Ramon = DonanteVivo(
+            datos_ramon,
+            TipoSangre.O_POSITIVO.value,
+            Otamendi,
+            incucai,
+            [TipoOrganoVivo.PIEL.value, TipoOrganoVivo.INTESTINO.value],
         )
+
+
+        fecha_fallecimiento_tere = datetime.strptime("27/5/2025 13:30", "%d/%m/%Y %H:%M")
         fecha_nacimiento_tere = datetime.strptime("17/5/2003", "%d/%m/%Y").date()
         datos_tere= DatosPersonales("Tere",
             409998,
@@ -157,7 +185,24 @@ class Registros:
             Otamendi,
             incucai,
             fecha_fallecimiento_tere,
-            [TipoOrgano.HIGADO.value, TipoOrgano.INTESTINO.value],
+            [TipoOrgano.CORAZON.value, TipoOrgano.INTESTINO.value],
+        )
+
+        fecha_fallecimiento_pedro = datetime.strptime(
+            "17/5/2025 13:30", "%d/%m/%Y %H:%M"
+        )
+        fecha_nacimiento_pedro = datetime.strptime("31/5/2025", "%d/%m/%Y").date()
+        datos_pedro= DatosPersonales("Pedro",
+            407778,
+            fecha_nacimiento_pedro,
+            M,
+            112324276)
+        Pedro = Donante(datos_pedro,
+            TipoSangre.O_NEGATIVO.value,
+            Otamendi,
+            incucai,
+            fecha_fallecimiento_pedro,
+            [TipoOrgano.CORAZON.value, TipoOrgano.INTESTINO.value,TipoOrgano.CORNEAS.value]
         )
 
         fecha_fallecimiento_maria = datetime.strptime(
@@ -191,9 +236,9 @@ class Registros:
             TipoSangre.A_POSITIVO.value,
             ItalianoCordoba,
             incucai,
-            TipoOrgano.HIGADO.value,
+            TipoOrgano.PIEL.value,
             fecha_ingreso_zoe,
-            TipoPatologiaHigado.CANCER.value,
+            TipoPatologiaPiel.INFECCION.value,
             no,
         )
 
@@ -209,25 +254,26 @@ class Registros:
             TipoSangre.A_POSITIVO.value,
             Favaloro,
             incucai,
-            TipoOrgano.INTESTINO.value,
+            TipoOrgano.CORNEAS.value,
             fecha_ingreso_juana,
-            TipoPatologiaIntestino.OTRA.value,
+            TipoPatologiaCorneas.CEGUERA.value,
             si,
         )
-        fecha_nacimiento_juana = datetime.strptime("14/08/2004", "%d/%m/%Y").date()
-        fecha_ingreso_juana = datetime.strptime("11/10/2008 19:00", "%d/%m/%Y %H:%M")
-        datos_juana=DatosPersonales("Sam",
-            46091127,
-            fecha_nacimiento_juana,
+
+        fecha_nacimiento_cami = datetime.strptime("14/08/2004", "%d/%m/%Y").date()
+        fecha_ingreso_cami = datetime.strptime("25/10/2002 19:00", "%d/%m/%Y %H:%M")
+        datos_cami=DatosPersonales("Cami",
+            46097857,
+            fecha_nacimiento_cami,
             F,
             1145367234)
-        Juana = Receptor(
-            datos_juana,
+        Cami = Receptor(
+            datos_cami,
             TipoSangre.A_POSITIVO.value,
             Favaloro,
             incucai,
             TipoOrgano.INTESTINO.value,
-            fecha_ingreso_juana,
+            fecha_ingreso_cami,
             TipoPatologiaIntestino.OTRA.value,
             si,
         )
