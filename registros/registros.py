@@ -129,7 +129,7 @@ class Registros:
         print(f"\n{AZUL}── Donantes ──{RESET}")
 
 
-        fecha_nacimiento_carlos = datetime.strptime("14/05/2002", "%d/%m/%Y").date()
+        '''fecha_nacimiento_carlos = datetime.strptime("14/05/2002", "%d/%m/%Y").date()
         datos_carlos=DatosPersonales("Carlos",
             409992,
             fecha_nacimiento_carlos,
@@ -178,7 +178,7 @@ class Registros:
         )
         """Crear receptores"""
         print(f"\n{AZUL}── Receptores ──{RESET}")
-
+'''
         fecha_nacimiento_zoe = datetime.strptime("14/08/2003", "%d/%m/%Y").date()
         fecha_ingreso_zoe = datetime.strptime("11/10/2006 19:00", "%d/%m/%Y %H:%M")
         datos_zoe=DatosPersonales("Zoe",
@@ -196,7 +196,7 @@ class Registros:
             TipoPatologiaHigado.CANCER.value,
             no,
         )
-
+        
         fecha_nacimiento_juana = datetime.strptime("14/08/2004", "%d/%m/%Y").date()
         fecha_ingreso_juana = datetime.strptime("11/10/2008 19:00", "%d/%m/%Y %H:%M")
         datos_juana=DatosPersonales("Juana",

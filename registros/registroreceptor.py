@@ -1,4 +1,4 @@
-'''from registros.paparegistro import RegistroBaseApp
+from registros.registrointerfaz import RegistroBaseApp
 import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import datetime
@@ -8,15 +8,7 @@ from pacientes.receptor import Receptor
 
 # Importaciones de tipos
 from tipos.tipo_organo import TipoOrgano
-from tipos.tipo_patologia_corazon import TipoPatologiaCorazon
-from tipos.tipo_patologia_higado import TipoPatologiaHigado
-from tipos.tipo_patologia_corneas import TipoPatologiaCorneas
-from tipos.tipo_patologia_piel import Tipo_Patologia_Piel
-from tipos.tipo_patologia_rinion import TipoPatologiaRinion
-from tipos.tipo_patologia_pancreas import TipoPatologiaPancreas
-from tipos.tipo_patologia_huesos import TipoPatologiaHuesos
-from tipos.tipo_patologia_pulmon import TipoPatologiaPulmon
-from tipos.tipo_patologia_intestino import TipoPatologiaIntestino
+from tipos.patologias import *
 
 
 class RegistroReceptorApp(RegistroBaseApp):
@@ -65,7 +57,7 @@ class RegistroReceptorApp(RegistroBaseApp):
             TipoOrgano.CORAZON.value: TipoPatologiaCorazon,
             TipoOrgano.CORNEAS.value: TipoPatologiaCorneas,
             TipoOrgano.HIGADO.value: TipoPatologiaHigado,
-            TipoOrgano.PIEL.value: Tipo_Patologia_Piel,
+            TipoOrgano.PIEL.value: TipoPatologiaPiel,
             TipoOrgano.RINION.value: TipoPatologiaRinion,
             TipoOrgano.PANCREAS.value: TipoPatologiaPancreas,
             TipoOrgano.HUESOS.value: TipoPatologiaHuesos,
@@ -123,7 +115,7 @@ class RegistroReceptorApp(RegistroBaseApp):
                 messagebox.showerror("Error", f"Centro de salud '{self.centro_var.get()}' no encontrado.")
                 return
             
-            # Obtener el órgano
+            # Obtener el órganoo
             organo = self.organo_var.get()
             
             # Obtener el nombre de la patología seleccionada
@@ -148,12 +140,15 @@ class RegistroReceptorApp(RegistroBaseApp):
                 return
             
             # Crear el receptor con patologia_obj en lugar de patologia
+            from clases_type.datos_personales import DatosPersonales
+
+            datos = DatosPersonales(nombre, dni, fecha_nacimiento, sexo, telefono)
+
             receptor = Receptor(
-                nombre, dni, fecha_nacimiento, sexo, telefono,
-                tipo_sangre, centro, self.incucai, organo,
-                fecha_ingreso, patologia_obj.value, urgencia
+                datos, tipo_sangre, centro, self.incucai,
+                organo, fecha_ingreso, patologia_obj.value, urgencia
             )
-            
+
             messagebox.showinfo("Éxito", f"Receptor {nombre} registrado exitosamente.")
             self.clear_fields()
             
@@ -170,4 +165,4 @@ class RegistroReceptorApp(RegistroBaseApp):
         self.hora_var.set("00")
         self.minuto_var.set("00")
         self.update_patologia_options(None)
-        self.urgencia_var.set("no")'''
+        self.urgencia_var.set("no")

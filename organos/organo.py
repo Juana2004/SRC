@@ -8,7 +8,7 @@ class Organo:
         hora_ablacion,
         incucai
     ):
-        self.nombre = nombre.lower()
+        self.nombre = nombre
         self.fecha_ablacion = fecha_ablacion
         self.hora_ablacion = hora_ablacion
         incucai.registrar_organo(self)

@@ -40,7 +40,7 @@ class Match:
                 continue
 
             if self.gestor_donaciones.procesar_donantes(
-                donantes_compatibles, receptor, receptores_pendientes
+                donantes_compatibles, receptor
             ):
                 se_realizo_match = True
                 receptores_procesados.add(id(receptor))
@@ -53,7 +53,7 @@ class Match:
     def _hay_cirujanos_en_centro(self, receptor: Receptor) -> bool:
         '''
         Invoca al metodo ya existente encargado de verficar si hay al menos un cirujano disponible en el centro del receptor e 
-            informa si no lo hay.
+        informa si no lo hay.
         Args:
             receptor: Receptor 
         Returns:

@@ -1,10 +1,11 @@
-'''import tkinter as tk
+import tkinter as tk
 from tkinter import ttk
-
-#importacion subclases
+from sistema.match import Match
 from registros.registroreceptor import RegistroReceptorApp
-from registros.registrodonante import RegistroDonantesApp
+from registros.registrodonante import RegistroDonanteApp
 from registros.registrodonantevivo import RegistroDonanteVivoApp
+import io
+import sys
  
 class IncucaiApp:
     def __init__(self, root, incucai):
@@ -60,6 +61,15 @@ class IncucaiApp:
             command=self.open_donante_vivo_form,
             width=25
         ).pack(pady=10)
+
+        # Botón para Realizar Match
+        ttk.Button(
+            button_frame,
+            text="Realizar Match",
+            command=self.realizar_match,
+            width=25
+        ).pack(pady=10)
+
     
     def setup_styles(self):
         style = ttk.Style()
@@ -90,11 +100,37 @@ class IncucaiApp:
     def open_donante_form(self):
         # Crear una nueva ventana para el formulario de donante
         donante_window = tk.Toplevel(self.root)
-        donante_app = RegistroDonantesApp(donante_window, self.incucai)
+        donante_app = RegistroDonanteApp(donante_window, self.incucai)
         donante_window.transient(self.root)  # Hacer que la ventana sea dependiente de la principal
     
     def open_donante_vivo_form(self):
         # Crear una nueva ventana para el formulario de donante vivo
         donante_vivo_window = tk.Toplevel(self.root)
         donante_vivo_app = RegistroDonanteVivoApp(donante_vivo_window, self.incucai)
-        donante_vivo_window.transient(self.root)'''
+        donante_vivo_window.transient(self.root)
+
+
+    def realizar_match(self):
+        buffer = io.StringIO()
+        sys_stdout_original = sys.stdout
+        sys.stdout = buffer
+
+        try:
+            match_instance = Match(self.incucai)
+            match_instance.match()
+        finally:
+            sys.stdout = sys_stdout_original
+
+        resultado = buffer.getvalue()
+
+        resultado_ventana = tk.Toplevel(self.root)
+        resultado_ventana.title("Resultado del Match")
+        resultado_ventana.geometry("500x400")
+        resultado_ventana.transient(self.root)
+
+        ttk.Label(resultado_ventana, text="Resultado del Match", style="Header.TLabel").pack(pady=(10, 5))
+
+        text_box = tk.Text(resultado_ventana, wrap="word", font=("Courier", 10))
+        text_box.pack(expand=True, fill="both", padx=10, pady=10)
+        text_box.insert("1.0", resultado)
+        text_box.configure(state="disabled")

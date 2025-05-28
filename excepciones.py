@@ -16,7 +16,7 @@ class ErrorDNIRepetido(Exception):
 class ErrorCentroNoRegistrado(Exception):
     """Excepción lanzada cuando el centro de salud no está registrado en el sistema."""
     def __init__(self, nombre_receptor, centro):
-        self.mensaje = f"❌ Centro de salud '{centro}' de {nombre_receptor} no está registrado en el sistema, no se registrara."
+        self.mensaje = f"❌ Centro de salud '{centro.nombre}' de {nombre_receptor} no está registrado en el sistema, no se registrara."
         super().__init__(self.mensaje)
 
 class ErrorCedulaRepetido(Exception):

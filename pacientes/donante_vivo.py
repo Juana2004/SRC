@@ -1,6 +1,6 @@
 from .paciente import Paciente
 from organos.organo_vivo import OrganoVivo
-from datetime import datetime, date
+from datetime import date
 from excepciones import *
 from clases_type.datos_personales import DatosPersonales
 from localizables.centro_de_salud import CentroDeSalud

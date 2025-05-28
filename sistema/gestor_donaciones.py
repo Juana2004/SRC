@@ -45,8 +45,7 @@ class GestorDonaciones:
     def procesar_donantes(
         self,
         donantes: list[Paciente],
-        receptor: object,
-        receptores_pendientes: list[Receptor],
+        receptor: object
     ) -> bool:
         for donante, indice_organo in donantes:
             print(f"\nEvaluando donantes compatibles en sangre, organos y edad para {receptor.nombre}")
@@ -82,7 +81,7 @@ class GestorDonaciones:
                 return True
 
             self._manejar_operacion_fallida(
-                donante, receptor, indice_organo, receptores_pendientes
+                donante, receptor, indice_organo
             )
 
         return False
@@ -130,8 +129,7 @@ class GestorDonaciones:
         donante: Paciente,
         receptor: Receptor,
         indice_organo: int,
-        receptores_pendientes: list[Receptor],
-    ):
+    ) -> None:
         '''
         Metodo privado
         Es implementado en caso de que la operacion falle, elimina el organo de la lista de organos del donante, 
