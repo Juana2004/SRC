@@ -12,8 +12,6 @@ def main():
     app = IncucaiApp(root, incucai)
     root.mainloop()
 
-    print(incucai)
-
 
 if __name__ == "__main__":
     main()

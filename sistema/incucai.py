@@ -147,7 +147,6 @@ class INCUCAI:
             f" Vehículos terrestres: {len(self.vehiculos_terrestres)}\n"
             f" Aviones disponibles: {len(self.aviones)}\n"
             f" Helicópteros disponibles: {len(self.helicopteros)}\n"
-            f"\n{'-' * 60}\n"
         )
         salida += f"{'-' * 60}\nLISTA DE DONANTES\n"
         if not self.donantes:
@@ -158,21 +157,19 @@ class INCUCAI:
                     len(donante.organos_donante) if hasattr(donante, "organos_donante") else 0
                 )
                 salida += f"{i:2d}. {donante.nombre} ({organos_disponibles} órganos disponibles)\n"
-        salida += f"{'-' * 60}\n"
-        return salida
-    
-    def mostrar_lista_de_espera(self):
+        salida += f"{'-' * 60}\nLISTA DE RECEPTORES\n"
         if not self.receptores:
-            print("No hay receptores en lista de espera.")
+            salida += "No hay receptores en lista de espera.\n"
         else:
             for i, receptor in enumerate(self.receptores, 1):
-                print(
+                salida += (
                     f"{i:2d}. {receptor.nombre:<20} | Órgano: {receptor.organo_receptor:<15} "
                     f"| Fecha: {receptor.fecha_lista}\n"
                 )
-
+        return salida
     
-    def obtener_receptores_por_centro(self, centro: CentroDeSalud) -> list:
+    
+    def _obtener_receptores_por_centro(self, centro: CentroDeSalud) -> list:
         centro_encontrado = self._encontrar_centro_por_nombre(centro.nombre)
         if centro_encontrado:
             return [receptor.nombre for receptor in centro_encontrado.receptores]
@@ -187,7 +184,7 @@ class INCUCAI:
         else:
             print("No hay receptores en este centro.")
 
-    def obtener_prioridad_receptor(self, receptor: object) -> Optional[int]:
+    def _obtener_prioridad_receptor(self, receptor: object) -> Optional[int]:
         try:
             posicion = self.receptores.index(receptor)
             return posicion + 1
