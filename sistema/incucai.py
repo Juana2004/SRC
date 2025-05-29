@@ -148,16 +148,7 @@ class INCUCAI:
             f" Aviones disponibles: {len(self.aviones)}\n"
             f" Helicópteros disponibles: {len(self.helicopteros)}\n"
             f"\n{'-' * 60}\n"
-            f"LISTA DE ESPERA\n"
         )
-        if not self.receptores:
-            salida += "No hay receptores en lista de espera.\n"
-        else:
-            for i, receptor in enumerate(self.receptores, 1):
-                salida += (
-                    f"{i:2d}. {receptor.nombre:<20} | Órgano: {receptor.organo_receptor:<15} "
-                    f"| Fecha: {receptor.fecha_lista}\n"
-                )
         salida += f"{'-' * 60}\nLISTA DE DONANTES\n"
         if not self.donantes:
             salida += "No hay donantes registrados.\n"
@@ -169,7 +160,18 @@ class INCUCAI:
                 salida += f"{i:2d}. {donante.nombre} ({organos_disponibles} órganos disponibles)\n"
         salida += f"{'-' * 60}\n"
         return salida
+    
+    def mostrar_lista_de_espera(self):
+        if not self.receptores:
+            print("No hay receptores en lista de espera.")
+        else:
+            for i, receptor in enumerate(self.receptores, 1):
+                print(
+                    f"{i:2d}. {receptor.nombre:<20} | Órgano: {receptor.organo_receptor:<15} "
+                    f"| Fecha: {receptor.fecha_lista}\n"
+                )
 
+    
     def obtener_receptores_por_centro(self, centro: CentroDeSalud) -> list:
         centro_encontrado = self._encontrar_centro_por_nombre(centro.nombre)
         if centro_encontrado:
