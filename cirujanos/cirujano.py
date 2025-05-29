@@ -5,12 +5,12 @@ class Cirujano:
         self, 
         nombre: str, 
         cedula: int, 
-        centro: object, 
-        incucai
+        centro: object
     ):
         self.nombre = nombre
         self.cedula = cedula
         self.centro = centro
+        self.incucai = centro.incucai
  
 
     def __eq__(self, other):

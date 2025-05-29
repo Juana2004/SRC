@@ -15,14 +15,13 @@ class RegistroDonanteApp(RegistroBaseApp):
         self.agregar_botones(11, self.register_donante, self.clear_fields)
 
     def crear_campos_donante(self):
-        # Etiqueta de órganos
         ttk.Label(self.main_frame, text="Órganos a donar:").grid(row=8, column=0, sticky=tk.W, pady=5)
 
-        # Frame para centrar los checkboxes
+
         organo_frame = ttk.Frame(self.main_frame)
         organo_frame.grid(row=8, column=1, columnspan=2, sticky="nsew", padx=5)
 
-        # Crear checkboxes en 2 columnas
+
         self.organo_vars = {}
         for i, tipo in enumerate(TipoOrgano):
             var = tk.BooleanVar()
@@ -30,11 +29,9 @@ class RegistroDonanteApp(RegistroBaseApp):
             chk.grid(row=i // 2, column=i % 2, sticky=tk.W, padx=10, pady=2)
             self.organo_vars[tipo] = var
 
-        # Ajustar expansión para distribuir bien las columnas
         organo_frame.columnconfigure(0, weight=1)
         organo_frame.columnconfigure(1, weight=1)
 
-        # Fecha y hora de fallecimiento
         self.fecha_fallecimiento, self.hora_var, self.minuto_var = self.crear_frame_fecha_hora(
             self.main_frame, "Fecha de Fallecimiento:", 10
         )
@@ -75,7 +72,7 @@ class RegistroDonanteApp(RegistroBaseApp):
 
             datos = DatosPersonales(nombre, dni, fecha_nacimiento, sexo, telefono)
 
-            donante = Donante(datos, tipo_sangre, centro, self.incucai, fecha_fallecimiento, organos_seleccionados)
+            donante = Donante(datos, tipo_sangre, centro, fecha_fallecimiento, organos_seleccionados)
 
             messagebox.showinfo("Éxito", f"Donante {nombre} registrado exitosamente.")
             self.clear_fields()

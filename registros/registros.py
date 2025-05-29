@@ -48,7 +48,7 @@ class Registros:
         Otamendi = CentroDeSalud(
             "Otamendi",
             direccion_otamendi,
-            incucai,
+            incucai
         )
 
         direccion_favaloro = Direccion("Av. Belgrano 1746",
@@ -58,7 +58,7 @@ class Registros:
         Favaloro = CentroDeSalud(
             "Favaloro",
             direccion_favaloro,
-            incucai,
+            incucai
         )
 
         direccion_italianocordoba = Direccion("Roma 550",
@@ -68,7 +68,7 @@ class Registros:
         ItalianoCordoba = CentroDeSalud(
             "Italiano de Cordoba",
             direccion_italianocordoba,
-            incucai,
+            incucai
         )
 
         """ Crear vehículos"""
@@ -81,8 +81,7 @@ class Registros:
             "Ambulancia",
             40,
             direccion_ambulancia2,
-            Favaloro,
-            incucai,
+            Favaloro
         )
     
         print(f"\n{AZUL}── Aviones ──{RESET}")
@@ -95,8 +94,7 @@ class Registros:
             "avion",
             700,
             direccion_avion1,
-            ItalianoCordoba,
-            incucai,
+            ItalianoCordoba
         )
         direccion_avion2 = Direccion("Chacabuco 2000",
             "Carlos Paz",
@@ -106,8 +104,7 @@ class Registros:
             "avion2",
             900,
             direccion_avion2,
-            Favaloro,
-            incucai,
+            Favaloro
         )
 
         print(f"\n{AZUL}── Helicópteros ──{RESET}")
@@ -122,14 +119,13 @@ class Registros:
             300,
             direccion_helicoptero1
             ,
-            Favaloro,
-            incucai,
+            Favaloro
         )
         
         print(f"\n{AZUL}── Donantes ──{RESET}")
 
 
-        '''fecha_nacimiento_carlos = datetime.strptime("14/05/2002", "%d/%m/%Y").date()
+        fecha_nacimiento_carlos = datetime.strptime("14/05/2002", "%d/%m/%Y").date()
         datos_carlos=DatosPersonales("Carlos",
             409992,
             fecha_nacimiento_carlos,
@@ -139,7 +135,6 @@ class Registros:
             datos_carlos,
             TipoSangre.O_NEGATIVO.value,
             Otamendi,
-            incucai,
             [TipoOrganoVivo.HIGADO.value, TipoOrganoVivo.INTESTINO.value],
         )
 
@@ -155,7 +150,6 @@ class Registros:
         Tere = Donante(datos_tere,
             TipoSangre.O_NEGATIVO.value,
             Otamendi,
-            incucai,
             fecha_fallecimiento_tere,
             [TipoOrgano.HIGADO.value, TipoOrgano.INTESTINO.value],
         )
@@ -172,13 +166,12 @@ class Registros:
         Maria = Donante( datos_maria,
             TipoSangre.O_POSITIVO.value,
             Otamendi,
-            incucai,
             fecha_fallecimiento_maria,
             [TipoOrgano.HIGADO.value, TipoOrgano.INTESTINO.value],
         )
         """Crear receptores"""
         print(f"\n{AZUL}── Receptores ──{RESET}")
-'''
+
         fecha_nacimiento_zoe = datetime.strptime("14/08/2003", "%d/%m/%Y").date()
         fecha_ingreso_zoe = datetime.strptime("11/10/2006 19:00", "%d/%m/%Y %H:%M")
         datos_zoe=DatosPersonales("Zoe",
@@ -190,7 +183,6 @@ class Registros:
             datos_zoe,
             TipoSangre.A_POSITIVO.value,
             ItalianoCordoba,
-            incucai,
             TipoOrgano.HIGADO.value,
             fecha_ingreso_zoe,
             TipoPatologiaHigado.CANCER.value,
@@ -208,7 +200,6 @@ class Registros:
             datos_juana,
             TipoSangre.A_POSITIVO.value,
             Favaloro,
-            incucai,
             TipoOrgano.INTESTINO.value,
             fecha_ingreso_juana,
             TipoPatologiaIntestino.OTRA.value,
@@ -225,7 +216,6 @@ class Registros:
             datos_juana,
             TipoSangre.A_POSITIVO.value,
             Favaloro,
-            incucai,
             TipoOrgano.INTESTINO.value,
             fecha_ingreso_juana,
             TipoPatologiaIntestino.OTRA.value,
@@ -234,15 +224,15 @@ class Registros:
 
 
         print(f"\n{AZUL}── Cirujanos ──{RESET}")
-        Pepe = CirujanoGeneral("Pepe", 334, Otamendi, incucai)
+        Pepe = CirujanoGeneral("Pepe", 334, Otamendi)
 
-        Damian = CirujanoGeneral("Damian", 394, Otamendi, incucai)
+        Damian = CirujanoGeneral("Damian", 394, Otamendi)
 
         Juan = CirujanoEspecializado(
-            "Juan", 887, Especialidad.GASTROENTEROLOGO.value, Favaloro, incucai
+            "Juan", 887, Especialidad.GASTROENTEROLOGO.value, Favaloro
         )
         Martin = CirujanoEspecializado(
-            "Martin", 888, Especialidad.TRAUMATOLOGO.value, ItalianoCordoba, incucai
+            "Martin", 888, Especialidad.TRAUMATOLOGO.value, ItalianoCordoba
         )
         print(
             f"\n{AZUL}═════════════════════════════════════════════════════════════════════{RESET}"

@@ -6,8 +6,8 @@ from localizables.centro_de_salud import CentroDeSalud
 
 
 class Receptor(Paciente):
-    def __init__(self, datos: DatosPersonales, tipo_sangre:str , centro:CentroDeSalud , incucai, organo_receptor: str, fecha_lista: datetime, patologia: str, urgencia: str):
-        super().__init__(datos, tipo_sangre, centro, incucai)
+    def __init__(self, datos: DatosPersonales, tipo_sangre:str , centro:CentroDeSalud , organo_receptor: str, fecha_lista: datetime, patologia: str, urgencia: str):
+        super().__init__(datos, tipo_sangre, centro)
 
         self.organo_receptor = organo_receptor
         self.fecha_lista = fecha_lista
@@ -26,7 +26,7 @@ class Receptor(Paciente):
         )
 
         try:
-            incucai.registrar_receptor(self)
+            self.incucai.registrar_receptor(self)
         except (ErrorDNIRepetido, ErrorCentroNoRegistrado, ErrorTipoDatoInvalido) as e:
             print(e)
 

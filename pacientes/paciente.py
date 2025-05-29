@@ -5,7 +5,7 @@ from localizables.centro_de_salud import CentroDeSalud
 
 
 class Paciente:
-    def __init__(self, datos: DatosPersonales, tipo_sangre: str, centro:CentroDeSalud ,incucai):
+    def __init__(self, datos: DatosPersonales, tipo_sangre: str, centro:CentroDeSalud ):
         self.nombre= datos.nombre
         self.dni= datos.dni
         self.sexo= datos.sexo
@@ -14,7 +14,7 @@ class Paciente:
         self.datos= datos
         self.centro = centro
         self.tipo_sangre = tipo_sangre
-        self.incucai = incucai
+        self.incucai = centro.incucai
 
 
     def __eq__(self, other):

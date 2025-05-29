@@ -4,15 +4,15 @@ from excepciones import ErrorGeolocalizacion
 
 
 class Avion(Vehiculo):
-    def __init__(self, nombre, velocidad, direccion, centro, incucai):
-        super().__init__(nombre, velocidad, direccion, centro, incucai)
+    def __init__(self, nombre, velocidad, direccion, centro):
+        super().__init__(nombre, velocidad, direccion, centro)
 
         try:
             if self.obtener_longlat():
                 print(
                     f"\n✔{self.nombre}."
                 )
-                incucai.registrar_avion(self)
+                self.incucai.registrar_avion(self)
         except ErrorGeolocalizacion as e:
             print(f" No se pudo registrar el avion: {e}")
 

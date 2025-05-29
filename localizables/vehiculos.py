@@ -14,8 +14,7 @@ class Vehiculo(ABC):
         nombre: str,
         velocidad: float,
         direccion: Direccion,
-        centro: CentroDeSalud,
-        incucai,
+        centro: CentroDeSalud
     ):
         if type(self) is Vehiculo:
             raise TypeError("Vehiculo es una clase abstracta y no puede ser instanciada directamente.")
@@ -28,9 +27,10 @@ class Vehiculo(ABC):
         self.viajes: int = 0
         self.servicio_geo = ServicioGeolocalizacion(self.geolocator)
         self.calculador_distancia = CalculadorDistancias()
+        self.incucai = centro.incucai
 
     @abstractmethod
-    def ejecutar_transporte(self,centro_donante: CentroDeSalud,centro_receptor: CentroDeSalud,calculador_distancias: callable,):
+    def ejecutar_transporte(self,centro_donante: CentroDeSalud,centro_receptor: CentroDeSalud):
         pass
 
     @abstractmethod

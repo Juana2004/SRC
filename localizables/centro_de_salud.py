@@ -23,11 +23,12 @@ class CentroDeSalud:
         self.cirujanos: list[object] = []
         self.geolocator = Nominatim(user_agent="incucai_app")
         self.servicio_geo = ServicioGeolocalizacion(self.geolocator)
+        self.incucai = incucai
 
         try:
             if self.obtener_longlat():
                 print(f"\n✔'{self.nombre}' registrado.")
-                incucai.registrar_centro(self)
+                self.incucai.registrar_centro(self)
         except (ErrorGeolocalizacion, ErrorTipoDatoInvalido) as e:
             print(f"No se registrara el centro de salud: {e}")
 

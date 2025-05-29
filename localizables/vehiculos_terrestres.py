@@ -6,15 +6,15 @@ import random
 
 
 class VehiculoTerrestre(Vehiculo):
-    def __init__(self, nombre, velocidad, direccion, centro, incucai):
-        super().__init__(nombre, velocidad, direccion, centro, incucai)
+    def __init__(self, nombre, velocidad, direccion, centro):
+        super().__init__(nombre, velocidad, direccion, centro)
 
         try:
             if self.obtener_longlat():
                 print(
                     f"\n✔{self.nombre} "
                 )
-                incucai.registrar_vehiculo_terrestre(self)
+                self.incucai.registrar_vehiculo_terrestre(self)
         except ErrorGeolocalizacion as e:
             print(f" No se pudo registrar el vehículo terrestre: {e}")
 
