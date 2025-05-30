@@ -1,6 +1,5 @@
 class ContentFormatter:
     """Formateador de contenido para la lista de espera"""
-    
     @staticmethod
     def format_wait_list(content):
         """Mejora el formato visual del contenido de la lista de espera"""
@@ -24,7 +23,7 @@ class ContentFormatter:
     def _format_line(line):
         """Formatea una línea individual según su contenido"""
         line_lower = line.lower()
-        
+
         if line.startswith('='):
             return "=" * 70
         elif line.startswith('-'):
