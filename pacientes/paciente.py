@@ -1,11 +1,14 @@
 from datetime import datetime
 from clases_type.datos_personales import DatosPersonales
 from localizables.centro_de_salud import CentroDeSalud
+from abc import ABC
 
 
 
-class Paciente:
+class Paciente(ABC):
     def __init__(self, datos: DatosPersonales, tipo_sangre: str, centro:CentroDeSalud ):
+        if type(self) is Paciente:
+            raise TypeError("Vehiculo es una clase abstracta y no puede ser instanciada directamente.")
         self.nombre= datos.nombre
         self.dni= datos.dni
         self.sexo= datos.sexo

@@ -1,33 +1,25 @@
-"""
-Sistema INCUCAI - Aplicación Principal
-Gestión de donantes, receptores y lista de espera para trasplantes de órganos.
-"""
-
 import tkinter as tk
-from tkinter import ttk, filedialog, messagebox
+from tkinter import ttk, messagebox
 from datetime import datetime
 import io
 import sys
 from io import StringIO
 
 from sistema.match import Match
-from registros.registroreceptor import RegistroReceptorApp
-from registros.registrodonante import RegistroDonanteApp
-from registros.registrodonantevivo import RegistroDonanteVivoApp
-from .stylemanager import StyleManager
+from .registroreceptor import RegistroReceptorApp
+from .registrodonante import RegistroDonanteApp
+from .registrodonantevivo import RegistroDonanteVivoApp
 from .uiconstants import UIConstants
 from .contentformater import ContentFormatter
 from .file import FileExporter
-from .jj import OutputCapture
+from .salida_metodos import OutputCapture
 from .windowmanager import WindowManager
 
 class IncucaiApp:
-    """Aplicación principal del Sistema INCUCAI"""
-    
+
     def __init__(self, root, incucai):
         self.root = root
         self.incucai = incucai
-        self.style_manager = StyleManager()
         
         self._setup_main_window()
         self._create_main_interface()

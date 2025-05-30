@@ -1,5 +1,5 @@
 from registros.registros import Registros
-from registros.registrosmanuales import IncucaiApp
+from interfaz.registrosmanuales import IncucaiApp
 from sistema.incucai import INCUCAI
 import tkinter as tk
 

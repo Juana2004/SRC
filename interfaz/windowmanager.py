@@ -1,10 +1,8 @@
 import tkinter as tk
 class WindowManager:
-    """Gestor de ventanas de la aplicación"""
     
     @staticmethod
     def center_window(window, width, height):
-        """Centra una ventana en la pantalla"""
         window.update_idletasks()
         screen_width = window.winfo_screenwidth()
         screen_height = window.winfo_screenheight()
@@ -16,7 +14,6 @@ class WindowManager:
     
     @staticmethod
     def create_modal_window(parent, title, size):
-        """Crea una ventana modal"""
         window = tk.Toplevel(parent)
         window.title(title)
         window.transient(parent)

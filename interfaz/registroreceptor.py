@@ -1,4 +1,4 @@
-from registros.registrointerfaz import RegistroBaseApp
+from .registrointerfaz import RegistroBaseApp
 import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import datetime

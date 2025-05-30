@@ -176,7 +176,7 @@ class INCUCAI:
         return []
 
     def mostrar_receptores_por_centro(self, centro: CentroDeSalud):
-        receptores = self.obtener_receptores_por_centro(centro)
+        receptores = self._obtener_receptores_por_centro(centro)
         print(f"\n--- Receptores en {centro.nombre} ---")
         if receptores:
             for i, nombre in enumerate(receptores, 1):
@@ -192,7 +192,7 @@ class INCUCAI:
             return None
 
     def mostrar_prioridad_receptor(self, receptor: object):
-        prioridad = self.obtener_prioridad_receptor(receptor)
+        prioridad = self._obtener_prioridad_receptor(receptor)
         if prioridad:
             print(
                 f"📍 El receptor {receptor.nombre} está en el lugar {prioridad} de la lista de espera."

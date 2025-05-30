@@ -1,15 +1,12 @@
 class UIConstants:
-    """Constantes de la interfaz de usuario"""
-    # Dimensiones principales
     MAIN_WINDOW_SIZE = "600x600"
     WAIT_LIST_WINDOW_SIZE = "900x700"
     MATCH_WINDOW_SIZE = "500x400"
-    
-    # Colores del tema
+
     COLORS = {
         'primary': '#2c3e50',
         'secondary': '#3498db', 
-        'success': '#27ae60',
+        'success': "#1414b7",
         'warning': '#f39c12',
         'danger': '#e74c3c',
         'light': '#ecf0f1',
@@ -17,8 +14,7 @@ class UIConstants:
         'background': '#ffffff',
         'text_secondary': '#7f8c8d'
     }
-    
-    # Fuentes
+
     FONTS = {
         'default': ("Segoe UI", 11),
         'header': ("Segoe UI", 20, "bold"),

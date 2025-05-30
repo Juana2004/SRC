@@ -2,7 +2,6 @@ import sys
 from io import StringIO
 import io
 class OutputCapture:
-    """Capturador de salida estándar"""
     
     def __init__(self):
         self.buffer = io.StringIO()
