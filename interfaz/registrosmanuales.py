@@ -9,11 +9,9 @@ from sistema.match import Match
 from .registroreceptor import RegistroReceptorApp
 from .registrodonante import RegistroDonanteApp
 from .registrodonantevivo import RegistroDonanteVivoApp
-from .uiconstants import UIConstants
-from .contentformater import ContentFormatter
-from .file import FileExporter
-from .salida_metodos import OutputCapture
-from .windowmanager import WindowManager
+from .formato_lista import FormatoListaDeEspera
+from .salida_metodos import SalidaMetodos
+from .ventana import Ventana
 
 class IncucaiApp:
 
@@ -27,13 +25,13 @@ class IncucaiApp:
     def _setup_main_window(self):
         """Configura la ventana principal"""
         self.root.title("🏥 Sistema INCUCAI - Gestión de Trasplantes")
-        self.root.geometry(UIConstants.MAIN_WINDOW_SIZE)
+        self.root.geometry("600x600")
         self.root.resizable(False, False)
-        self.root.configure(bg=UIConstants.COLORS['light'])
+        self.root.configure(bg= '#ecf0f1')
         
         # Centrar ventana
-        width, height = map(int, UIConstants.MAIN_WINDOW_SIZE.split('x'))
-        WindowManager.center_window(self.root, width, height)
+        width, height = map(int, "900x700".split('x'))
+        Ventana.centrar_ventana(self.root, width, height)
     
     def _create_main_interface(self):
         """Crea la interfaz principal"""
@@ -635,7 +633,7 @@ class IncucaiApp:
     
     def realizar_match(self):
         """Ejecuta el algoritmo de matching y muestra resultados"""
-        with OutputCapture() as capture:
+        with SalidaMetodos() as capture:
             try:
                 match_instance = Match(self.incucai)
                 match_instance.match()
@@ -647,10 +645,10 @@ class IncucaiApp:
     
     def _show_match_results(self, resultado):
         """Muestra los resultados del matching en una ventana"""
-        window = WindowManager.create_modal_window(
+        window = Ventana.crear_ventana_modal(
             self.root,
             "🔗 Resultado del Match",
-            UIConstants.MATCH_WINDOW_SIZE
+            "500x400"
         )
         
         # Header
@@ -664,9 +662,9 @@ class IncucaiApp:
         text_box = tk.Text(
             window,
             wrap="word",
-            font=UIConstants.FONTS['mono'],
-            bg=UIConstants.COLORS['background'],
-            fg=UIConstants.COLORS['primary'],
+            font=("Consolas", 11),
+            bg= '#ffffff',
+            fg='#2c3e50',
             padx=15,
             pady=15
         )
@@ -682,7 +680,7 @@ class IncucaiApp:
     
     def mostrar_lista_de_espera(self):
         """Muestra la lista de espera en una ventana dedicada"""
-        with OutputCapture() as capture:
+        with SalidaMetodos() as capture:
             try:
                 self.incucai.mostrar_lista_de_espera()
             except Exception as e:
@@ -693,10 +691,10 @@ class IncucaiApp:
     
     def _create_wait_list_window(self, content):
         """Crea la ventana de lista de espera"""
-        window = WindowManager.create_modal_window(
+        window = Ventana.crear_ventana_modal(
             self.root,
             "📋 Lista de Espera - INCUCAI",
-            UIConstants.WAIT_LIST_WINDOW_SIZE
+            "900x700"
         )
         
         main_frame = ttk.Frame(window, padding=25)
@@ -728,7 +726,7 @@ class IncucaiApp:
         info_frame = ttk.Frame(parent)
         info_frame.pack(fill="x", pady=(0, 15))
         
-        patient_count = ContentFormatter.count_patients(content)
+        patient_count = FormatoListaDeEspera.count_patients(content)
         timestamp = datetime.now().strftime("%d/%m/%Y - %H:%M:%S")
         
         ttk.Label(
@@ -752,10 +750,10 @@ class IncucaiApp:
         text_box = tk.Text(
             text_frame,
             wrap="none",
-            font=UIConstants.FONTS['mono'],
-            bg=UIConstants.COLORS['background'],
-            fg=UIConstants.COLORS['primary'],
-            selectbackground=UIConstants.COLORS['secondary'],
+            font=("Consolas", 11),
+            bg='#ffffff',
+            fg='#2c3e50',
+            selectbackground="white",
             selectforeground="white",
             relief="flat",
             borderwidth=1,
@@ -780,7 +778,7 @@ class IncucaiApp:
         text_frame.grid_columnconfigure(0, weight=1)
         
         # Insertar contenido formateado
-        formatted_content = ContentFormatter.format_wait_list(content)
+        formatted_content = FormatoListaDeEspera.format_wait_list(content)
         text_box.insert("1.0", formatted_content)
         text_box.configure(state="disabled")
     
@@ -803,6 +801,4 @@ class IncucaiApp:
             command=window.destroy
         ).pack(side="right")
     
-    def _export_wait_list(self, parent_window, content):
-        """Exporta la lista de espera"""
-        FileExporter.export_wait_list(parent_window, content)
+   
