@@ -7,6 +7,8 @@
     Teresa Moraiz Magadan 
     GitHub: teremoraiz
 ### Comision: Lunes
+### Coach: Camila Zavidowski
+### Profesor: Fernando Mario Romero Munoz
 
 
 ![UML](UML.png)
