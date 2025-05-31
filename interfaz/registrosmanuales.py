@@ -1,15 +1,10 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from datetime import datetime
-import io
-import sys
-from io import StringIO
 
 from sistema.match import Match
 from .registroreceptor import RegistroReceptorApp
 from .registrodonante import RegistroDonanteApp
 from .registrodonantevivo import RegistroDonanteVivoApp
-from .formato_lista import FormatoListaDeEspera
 from .salida_metodos import SalidaMetodos
 from .ventana import Ventana
 from .estado_incucai import EstadoIncucai
@@ -23,37 +18,34 @@ class IncucaiApp:
     def __init__(self, root, incucai):
         self.root = root
         self.incucai = incucai
+        self._ventana_principal()
+        self._interfaz_principal()
 
-        self._setup_main_window()
-        self._create_main_interface()
-
-    def _setup_main_window(self):
+    def _ventana_principal(self):
         """Configura la ventana principal"""
         self.root.title("🏥 Sistema INCUCAI - Gestión de Trasplantes")
         self.root.geometry("600x600")
         self.root.resizable(False, False)
         self.root.configure(bg="#ecf0f1")
-
-        # Centrar ventana
         width, height = map(int, "900x700".split("x"))
         Ventana.centrar_ventana(self.root, width, height)
 
-    def _create_main_interface(self):
+    def _interfaz_principal(self):
         """Crea la interfaz principal"""
         main_frame = ttk.Frame(self.root, padding=30, style="Card.TFrame")
         main_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
 
-        self._create_header(main_frame)
-        self._create_description(main_frame)
-        self._create_action_buttons(main_frame)
+        self._encabezado(main_frame)
+        self._descripcion(main_frame)
+        self._botones(main_frame)
 
-    def _create_header(self, parent):
+    def _encabezado(self, parent):
         """Crea el encabezado de la aplicación"""
         ttk.Label(
             parent, text="🏥 Sistema de Gestión INCUCAI", style="Header.TLabel"
         ).pack(pady=(0, 20))
 
-    def _create_description(self, parent):
+    def _descripcion(self, parent):
         """Crea la descripción de la aplicación"""
         description = (
             "Sistema integral para la gestión de donantes, receptores\n"
@@ -68,25 +60,25 @@ class IncucaiApp:
             style="Info.TLabel",
         ).pack(pady=(0, 30))
 
-    def _create_action_buttons(self, parent):
+    def _botones(self, parent):
         """Crea los botones de acción principales"""
         button_frame = ttk.Frame(parent)
         button_frame.pack(fill=tk.X, expand=True)
 
         buttons_config = [
-            (" Estado Actual", self.mostrar_str_incucai, "Primary.TButton"),
-            (" Registrar Receptor", self.open_receptor_form, "TButton"),
-            (" Registrar Donante", self.open_donante_form, "TButton"),
-            (" Registrar Donante Vivo", self.open_donante_vivo_form, "TButton"),
-            (" Realizar Match", self.realizar_match, "TButton"),
+            (" Estado Actual", self._mostrar_str_incucai, "Primary.TButton"),
+            (" Registrar Receptor", self._registro_receptor, "TButton"),
+            (" Registrar Donante", self._registro_donante, "TButton"),
+            (" Registrar Donante Vivo", self._registro_donante_vivo, "TButton"),
+            (" Realizar Match", self._realizar_match, "TButton"),
             (
                 " Ver lista de espera de un centro",
-                self.mostrar_lista_espera_centro,
+                self._mostrar_lista_espera_centro,
                 "TButton",
             ),
             (
                 " Ver posicion de receptor en lista de espera",
-                self.mostrar_posicion_receptor_espera,
+                self._mostrar_posicion_receptor_espera,
                 "TButton",
             ),
         ]
@@ -98,7 +90,7 @@ class IncucaiApp:
 
     # Métodos para abrir formularios
 
-    def mostrar_str_incucai(self):  # boton 1
+    def _mostrar_str_incucai(self):  # boton 1
         """
         Método para mostrar el __str__ de INCUCAI en una ventana emergente
         """
@@ -110,7 +102,7 @@ class IncucaiApp:
                 "Error", f"Error al mostrar información de INCUCAI: {e}"
             )
 
-    def mostrar_posicion_receptor_espera(self):
+    def _mostrar_posicion_receptor_espera(self):
         """
         Método para manejar el botón 'Ver posición de receptor en lista de espera'
         Permite seleccionar un receptor y ver su posición en la lista de espera
@@ -142,7 +134,7 @@ class IncucaiApp:
                 "Error", f"Error al consultar posición del receptor: {e}"
             )
 
-    def mostrar_lista_espera_centro(self):
+    def _mostrar_lista_espera_centro(self):
         """
         Método para manejar el botón 'Mostrar lista de espera de un centro'
         Muestra ventanas emergentes para seleccionar centro y ver receptores
@@ -172,7 +164,7 @@ class IncucaiApp:
         except Exception as e:
             messagebox.showerror("Error", f"Error al mostrar la lista de espera: {e}")
 
-    def realizar_match(self):
+    def _realizar_match(self):
         """Ejecuta el algoritmo de matching y muestra resultados"""
         with SalidaMetodos() as capture:
             try:
@@ -184,19 +176,19 @@ class IncucaiApp:
         resultado = capture.get_output()
         MostrarMatch.mostrar_match(self, resultado)
 
-    def open_receptor_form(self):
+    def _registro_receptor(self):
         """Abre el formulario de registro de receptor"""
         receptor_window = tk.Toplevel(self.root)
         RegistroReceptorApp(receptor_window, self.incucai)
         receptor_window.transient(self.root)
 
-    def open_donante_form(self):
+    def _registro_donante(self):
         """Abre el formulario de registro de donante"""
         donante_window = tk.Toplevel(self.root)
         RegistroDonanteApp(donante_window, self.incucai)
         donante_window.transient(self.root)
 
-    def open_donante_vivo_form(self):
+    def _registro_donante_vivo(self):
         """Abre el formulario de registro de donante vivo"""
         donante_vivo_window = tk.Toplevel(self.root)
         RegistroDonanteVivoApp(donante_vivo_window, self.incucai)
