@@ -11,7 +11,7 @@ class Paciente(ABC):
     def __init__(self, datos: DatosPersonales, tipo_sangre: str, centro: CentroDeSalud):
         if type(self) is Paciente:
             raise TypeError(
-                "Vehiculo es una clase abstracta y no puede ser instanciada directamente."
+                "Paciente es una clase abstracta y no puede ser instanciada directamente."
             )
         self.nombre = datos.nombre
         self.dni = datos.dni

@@ -48,7 +48,8 @@ class CentroDeSalud:
 
     def __hash__(self):
         """
-        no entiendo bien que hace ;))))
+        devuelve un número entero que representa de manera única
+        a un objeto, Python primero compara los hashes para ver si puede evitar usar __eq__ que es menos eficiente.
         """
         return hash((self.nombre, self.direccion))
 
