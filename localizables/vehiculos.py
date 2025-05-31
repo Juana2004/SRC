@@ -7,7 +7,9 @@ from clases_type.direccion import Direccion
 from .calculador_distancias import CalculadorDistancias
 
 
+
 class Vehiculo(ABC):
+    
 
     def __init__(
         self,

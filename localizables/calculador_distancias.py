@@ -2,7 +2,10 @@ from geopy.distance import distance
 from localizables.centro_de_salud import CentroDeSalud
 
 
+
 class CalculadorDistancias:
+
+    
     def __init__(self):
         self._cache = {}
 

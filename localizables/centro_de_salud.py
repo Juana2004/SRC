@@ -4,7 +4,9 @@ from excepciones import ErrorGeolocalizacion, ErrorTipoDatoInvalido
 from .geolocalizacion import ServicioGeolocalizacion
 
 
+
 class CentroDeSalud:
+    
 
     def __init__(
         self,
@@ -33,30 +35,30 @@ class CentroDeSalud:
             print(f"No se registrara el centro de salud: {e}")
 
     def __eq__(self, other):
-        '''
+        """
         Utilizando un metodo magico comparo si dos centros de salud tiene el mismo nombre y direccion.
-        Args: 
+        Args:
             other: CentroDeSalud
         Returns:
             Bool
-        '''
+        """
         if isinstance(other, CentroDeSalud):
             return self.nombre == other.nombre and self.direccion == other.direccion
         return False
 
     def __hash__(self):
-        '''
+        """
         no entiendo bien que hace ;))))
-        '''
+        """
         return hash((self.nombre, self.direccion))
 
     def obtener_longlat(self) -> bool:
-        '''
+        """
         Obtiene las coordenadas geograficas del centro de salud.
         Si ocurre un error, lanza una excepcion.
         Returns:
             Bool
-        '''
+        """
         try:
             coordenadas = self.servicio_geo.obtener_coordenadas(
                 self.direccion.direccion,

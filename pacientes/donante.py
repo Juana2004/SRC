@@ -6,9 +6,18 @@ from clases_type.datos_personales import DatosPersonales
 from localizables.centro_de_salud import CentroDeSalud
 
 
+
 class Donante(Paciente):
 
-    def __init__(self, datos:DatosPersonales, tipo_sangre: str , centro: CentroDeSalud, fecha_fallecimiento, organos_donante: list[Organo]):
+
+    def __init__(
+        self,
+        datos: DatosPersonales,
+        tipo_sangre: str,
+        centro: CentroDeSalud,
+        fecha_fallecimiento,
+        organos_donante: list[Organo],
+    ):
         super().__init__(datos, tipo_sangre, centro)
         self.fecha_fallecimiento = fecha_fallecimiento.date()
         self.hora_fallecimiento = fecha_fallecimiento.time()

@@ -13,7 +13,9 @@ from .ventanas.lista_centros import ListaCentros
 from .ventanas.posicion_lista import PosicionLista
 
 
+
 class IncucaiApp:
+    
 
     def __init__(self, root, incucai):
         self.root = root
@@ -88,9 +90,7 @@ class IncucaiApp:
                 button_frame, text=text, command=command, width=30, style=style
             ).pack(pady=8)
 
-    # Métodos para abrir formularios
-
-    def _mostrar_str_incucai(self):  # boton 1
+    def _mostrar_str_incucai(self):
         """
         Método para mostrar el __str__ de INCUCAI en una ventana emergente
         """
@@ -108,8 +108,8 @@ class IncucaiApp:
         Permite seleccionar un receptor y ver su posición en la lista de espera
         """
         try:
-            # Obtener lista de receptores disponibles
-            receptores = self.incucai.receptores  # Asumiendo que existe este método
+
+            receptores = self.incucai.receptores
 
             if not receptores:
                 messagebox.showwarning(
@@ -117,16 +117,14 @@ class IncucaiApp:
                 )
                 return
 
-            # Crear ventana para seleccionar receptor
             receptor_seleccionado = PosicionLista.seleccionar_receptor(self, receptores)
 
             if receptor_seleccionado:
-                # Capturar la salida del método de INCUCAI
-                salida_capturada = PosicionLista.capturar_salida_prioridad(self,
-                    receptor_seleccionado
+
+                salida_capturada = PosicionLista.capturar_salida_prioridad(
+                    self, receptor_seleccionado
                 )
 
-                # Mostrar la salida en ventana emergente
                 PosicionLista.mostrar_posicion(self, salida_capturada)
 
         except Exception as e:
@@ -140,7 +138,7 @@ class IncucaiApp:
         Muestra ventanas emergentes para seleccionar centro y ver receptores
         """
         try:
-            # Obtener lista de centros disponibles
+
             centros = self.incucai.centros_salud
 
             if not centros:
@@ -149,16 +147,14 @@ class IncucaiApp:
                 )
                 return
 
-            # Crear ventana para seleccionar centro
             centro_seleccionado = ListaCentros.seleccionar_centro(self, centros)
 
             if centro_seleccionado:
-                # Capturar la salida del método de INCUCAI
-                salida_capturada = ListaCentros.capturar_salida_incucai(self,
-                    centro_seleccionado
+
+                salida_capturada = ListaCentros.capturar_salida_incucai(
+                    self, centro_seleccionado
                 )
 
-                # Mostrar la salida en ventana emergente
                 ListaCentros.mostrar_salida(self, salida_capturada)
 
         except Exception as e:

@@ -1,7 +1,9 @@
 from typing import Optional
 
 
+
 class Compatibilidad:
+    
 
     @staticmethod
     def edad_es_compatible(edad_donante: int, edad_receptor: int) -> bool:

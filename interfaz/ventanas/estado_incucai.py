@@ -1,9 +1,12 @@
 from abc import ABC
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import messagebox
+
 
 
 class EstadoIncucai(ABC):
+
+    
     def __init__(self):
         if type(self) is EstadoIncucai:
             raise TypeError(

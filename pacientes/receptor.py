@@ -5,8 +5,20 @@ from clases_type.datos_personales import DatosPersonales
 from localizables.centro_de_salud import CentroDeSalud
 
 
+
 class Receptor(Paciente):
-    def __init__(self, datos: DatosPersonales, tipo_sangre:str , centro:CentroDeSalud , organo_receptor: str, fecha_lista: datetime, patologia: str, urgencia: str):
+
+    
+    def __init__(
+        self,
+        datos: DatosPersonales,
+        tipo_sangre: str,
+        centro: CentroDeSalud,
+        organo_receptor: str,
+        fecha_lista: datetime,
+        patologia: str,
+        urgencia: str,
+    ):
         super().__init__(datos, tipo_sangre, centro)
 
         self.organo_receptor = organo_receptor
@@ -31,11 +43,11 @@ class Receptor(Paciente):
             print(e)
 
     def prioridad(self) -> int:
-        '''
+        """
         Se asigna un valor basandose en la gravedad de la patologia y este aumenta si hay una urgencia.
         Returns:
             Entero
-        '''
+        """
         base = {"prioridad baja": 1, "prioridad media": 2, "prioridad alta": 3}.get(
             self.patologia.lower(), 1
         )
@@ -43,13 +55,13 @@ class Receptor(Paciente):
         return base + 3 if self.urgencia else base
 
     def __lt__(self, other) -> bool:
-        '''
+        """
         Compara dos receptores para definir cual tiene mayor prioridad.
         Args:
             other: Receptor
         Returns:
             Bool
-        '''
+        """
         if self.estado == "inestable" and other.estado != "inestable":
             return True
         if self.estado != "inestable" and other.estado == "inestable":

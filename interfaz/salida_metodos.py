@@ -1,17 +1,20 @@
 import sys  # Módulo que permite acceder a la salida estándar del sistema
-import io   # Módulo que permite trabajar con flujos de texto en memoria
+import io  # Módulo que permite trabajar con flujos de texto en memoria
+
+
 
 class SalidaMetodos:
     """
     Clase que permite capturar todo lo que se imprime en la consola
     """
 
+
     def __init__(self):
         """
         Inicializa el buffer donde se va a guardar el texto y
         guarda una referencia al stdout original para poder restaurarlo después.
         """
-        self.buffer = io.StringIO()         # Buffer de texto en memoria
+        self.buffer = io.StringIO()  # Buffer de texto en memoria
         self.original_stdout = sys.stdout  # Guarda el stdout original
 
     def __enter__(self):

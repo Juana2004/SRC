@@ -9,16 +9,18 @@ from pacientes.receptor import Receptor
 from cirujanos.cirujano import Cirujano
 
 
+
 class GestorCirujanos:
+    
 
     def __init__(self, incucai):
         self.incucai = incucai
 
     def normalizar_especialidades(self):
-        '''
+        """
         Modifica el atributo especialidad de los cirujanos especializados por una lista de órganos correspondiente a esta.
-        ''' 
-    
+        """
+
         especialidad_map = {
             "cardiovascular": ["corazon"],
             "pulmonar": ["pulmon"],
@@ -35,18 +37,17 @@ class GestorCirujanos:
                 cirujano.especialidad = especialidad_map[cirujano.especialidad]
 
     def hay_cirujanos_en_centro(self, centro: CentroDeSalud) -> bool:
-        '''
+        """
         Verifica si la lista de cirujanos del centro contiene al menos uno
         Args:
             centro: CentroDeSalud
         Returns:
             bool
-        '''
+        """
         if centro.cirujanos != []:
             return True
         else:
             return False
-
 
     def evaluar_operacion(
         self,
@@ -102,36 +103,38 @@ class GestorCirujanos:
 
         return False
 
-    def _realizar_operacion(self, cirujano: Cirujano, umbral_exito: int, receptor: Receptor) -> bool:
-        '''
+    def _realizar_operacion(
+        self, cirujano: Cirujano, umbral_exito: int, receptor: Receptor
+    ) -> bool:
+        """
         Metodo privado
         Imprime el cirujano encargado de la operacion, le registra a este que realizo una operacion.
         Modifico el estado de la variable cirujano_disponible, indicando que hay al menos un cirujano disponible.
         Verifica si el metodo _umbral_operacion se cumple.
         Args:
             cirujano: Objeto heredado de Cirujano
-            umbral_exito: int 
+            umbral_exito: int
             receptor: Receptor
         Returns:
             bool
-        '''
+        """
         print(f"\nLa operación la realiza el cirujano {cirujano.nombre}")
         cirujano.operaciones_realizadas_hoy = 1
         self.cirujano_disponible = True
         if self._umbral_operacion(umbral_exito, receptor):
             return True
-        else: 
+        else:
             return False
 
     def _umbral_operacion(self, umbral_exito: int, receptor: Receptor) -> bool:
-        '''
+        """
         Metodo privado
         Recibe un entero que representa el umbral de exito y un objeto de tipo receptor.
         Genera un numero, utilizando la libreria random, entre 1 y 10.
         Define la variable de tipo booleano "exito", que sera verdadera cuando el resultado sea >= al umbral de exito.
         Si "exito" es verdadera retorna el bool True.
         Si "exito" es falsa imprime que la operacion fallo, cambia el estado del receptor a inestable y retorna el bool False.
-        '''
+        """
         resultado = random.randint(1, 10)
         exito = resultado >= umbral_exito
         if exito:
@@ -141,7 +144,15 @@ class GestorCirujanos:
             receptor.estado = "inestable"
             return False
 
-    def _horas_desde_ablacion(self, tiempo_transporte, organo):
+    def _horas_desde_ablacion(self, tiempo_transporte, organo: object) -> float:
+        """
+        Calcula cuantas horas pasaron desde la ablacion
+        Args:
+            tiempo_transporte
+            organo: objeto del tipo Organo
+        returns:
+            float: representa las horas
+        """
         ahora = datetime.now()
         fecha_hora_ablacion = datetime.combine(
             organo.fecha_ablacion, organo.hora_ablacion
@@ -155,21 +166,35 @@ class GestorCirujanos:
     ##a partir de aca pertence a operacion donante
 
     def cirujanos_disponibles_ablacion(self, donante: object) -> Optional[list[object]]:
+        """
+        Busca los cirujanos del centro del donante que no hayan operado hoy
+        Args:
+            donante: objeto del tipo Donante
+        Returns:
+            Lista con los cirujanos o None
+        """
         centro = donante.centro
         cirujanos_disponibles = [
             c for c in centro.cirujanos if c.operaciones_realizadas_hoy == 0
         ]
         return cirujanos_disponibles
 
-    def realizar_operacion_ablacion(self, cirujano: object, donante, receptor):
+    def realizar_operacion_ablacion(
+        self, cirujano: object, donante: object, receptor: object
+    ):
+        """
+        Marca al cirujano con que opero hoy y le registra una hora de ablacion al organo del donante en caso que este vivo
+        Args:
+        cirujano: objeto del tipo cirujano
+        donante: objeto del tipo donante
+        receptor: objeto del tipo receptor
+        """
         print(f"El cirujano {cirujano.nombre} realiza la ablación")
         cirujano.operaciones_realizadas_hoy = 1
         organo_requerido = receptor.organo_receptor
         self._registrar_ablacion_donante_vivo(donante, organo_requerido)
 
-    def _registrar_ablacion_donante_vivo(
-        self, donante: object, organo_requerido: str
-    ):  
+    def _registrar_ablacion_donante_vivo(self, donante: object, organo_requerido: str):
         if isinstance(donante, DonanteVivo):
             fecha_actual = datetime.now()
             donante.fecha_ablacion = fecha_actual

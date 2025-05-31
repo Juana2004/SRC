@@ -3,7 +3,10 @@ from sistema.gestor_donaciones import GestorDonaciones
 from pacientes.receptor import Receptor
 
 
+
 class Match:
+
+    
     def __init__(self, incucai):
         self.incucai = incucai
         self.gestor_cirujanos = GestorCirujanos(incucai)
@@ -36,12 +39,12 @@ class Match:
             donantes_compatibles = self.gestor_donaciones.compatibilidad(receptor)
 
             if not donantes_compatibles:
-                print(f"No se encontró donante compatible en sangre, organos y edad para {receptor.nombre}\n")
+                print(
+                    f"No se encontró donante compatible en sangre, organos y edad para {receptor.nombre}\n"
+                )
                 continue
 
-            if self.gestor_donaciones.procesar_donantes(
-                donantes_compatibles, receptor
-            ):
+            if self.gestor_donaciones.procesar_donantes(donantes_compatibles, receptor):
                 se_realizo_match = True
                 receptores_procesados.add(id(receptor))
             else:
@@ -51,14 +54,14 @@ class Match:
         return se_realizo_match
 
     def _hay_cirujanos_en_centro(self, receptor: Receptor) -> bool:
-        '''
-        Invoca al metodo ya existente encargado de verficar si hay al menos un cirujano disponible en el centro del receptor e 
+        """
+        Invoca al metodo ya existente encargado de verficar si hay al menos un cirujano disponible en el centro del receptor e
         informa si no lo hay.
         Args:
-            receptor: Receptor 
+            receptor: Receptor
         Returns:
-            Bool 
-        '''
+            Bool
+        """
         if not self.gestor_cirujanos.hay_cirujanos_en_centro(receptor.centro):
             print(f"No hay cirujanos disponibles en el centro de {receptor.nombre}\n")
             return False

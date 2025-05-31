@@ -3,36 +3,40 @@ from .centro_de_salud import CentroDeSalud
 from excepciones import ErrorGeolocalizacion
 
 
+
 class Avion(Vehiculo):
+
+    
     def __init__(self, nombre, velocidad, direccion, centro):
         super().__init__(nombre, velocidad, direccion, centro)
 
         try:
             if self.obtener_longlat():
-                print(
-                    f"\n✔{self.nombre}."
-                )
+                print(f"\n✔{self.nombre}.")
                 self.incucai.registrar_avion(self)
         except ErrorGeolocalizacion as e:
             print(f" No se pudo registrar el avion: {e}")
 
     def puede_realizar_transporte(
-        self, centro_origen: CentroDeSalud, centro_destino: CentroDeSalud) -> bool:
-        '''
+        self, centro_origen: CentroDeSalud, centro_destino: CentroDeSalud
+    ) -> bool:
+        """
         Verifica si el vehiculo esta disponible para realizar el viaje
         Args:
             centro_origen: CentroDeSalud
             centro_destino: CentroDeSalud
         Returns:
             Bool
-        '''
+        """
         return (
             self.esta_disponible_para_ruta(centro_origen, centro_destino)
             and centro_origen.provincia != centro_destino.provincia
         )
 
-    def ejecutar_transporte(self,centro_donante: CentroDeSalud, centro_receptor: CentroDeSalud) -> float:
-        '''
+    def ejecutar_transporte(
+        self, centro_donante: CentroDeSalud, centro_receptor: CentroDeSalud
+    ) -> float:
+        """
         Ejecuta el transporte desde el centro donante hasta el centro del receptor.
         Actualiza la ubicacion del vehiculo en el transcurso del viaje e imprime su estado.
         Args:
@@ -40,7 +44,7 @@ class Avion(Vehiculo):
             centro_receptor:CentroDeSalud
         Returns:
             Float
-        '''
+        """
         tiempo_total = self.calcular_tiempo_total_mision(
             centro_donante, centro_receptor
         )

@@ -5,7 +5,10 @@ from .validaciones import Validaciones
 from typing import Optional
 
 
+
 class INCUCAI:
+    
+
     def __init__(self):
         self.donantes: list[object] = []
         self.receptores: list[object] = []
@@ -22,6 +25,13 @@ class INCUCAI:
     def _encontrar_centro_por_nombre(
         self, nombre_centro: str
     ) -> Optional[CentroDeSalud]:
+        """
+        Encuentra el objeto centro a partir de su nombre
+        Args:
+        nombre_centro: string
+        Return:
+        objeto del tipo CentroDeSalud
+        """
         if nombre_centro in self._centros_por_nombre:
             return self._centros_por_nombre[nombre_centro]
         for centro in self.centros_salud:
@@ -31,6 +41,12 @@ class INCUCAI:
         return None
 
     def _agregar_persona_a_centro(self, persona: object, lista_centro_attr: str):
+        """
+        Agrega una persona a la lista del centro
+        Args:
+        persona: objeto
+        lista_centro_attr: str
+        """
         centro = self._encontrar_centro_por_nombre(persona.centro.nombre)
         if centro:
             getattr(centro, lista_centro_attr).append(persona)
@@ -39,8 +55,13 @@ class INCUCAI:
                 f"Centro '{persona.centro.nombre}' no encontrado para la persona '{persona.nombre}'"
             )
 
-    def registrar_donante(self, donante: object):
+    """
+    A partir de aca todos los metodos registran a su respectivo argumento en las listas de incucai y si corresponde del centro
+    Args:
+        object
+    """
 
+    def registrar_donante(self, donante: object):
         self.validaciones.validar_centro_registrado(donante)
         self.validaciones.validar_dni_unico(donante)
         self.validaciones.validar_datos(
@@ -154,7 +175,9 @@ class INCUCAI:
         else:
             for i, donante in enumerate(self.donantes, 1):
                 organos_disponibles = (
-                    len(donante.organos_donante) if hasattr(donante, "organos_donante") else 0
+                    len(donante.organos_donante)
+                    if hasattr(donante, "organos_donante")
+                    else 0
                 )
                 salida += f"{i:2d}. {donante.nombre} ({organos_disponibles} órganos disponibles)\n"
         salida += f"{'-' * 60}\nLISTA DE RECEPTORES\n"
@@ -167,15 +190,26 @@ class INCUCAI:
                     f"| Fecha: {receptor.fecha_lista}\n"
                 )
         return salida
-    
-    
+
     def _obtener_receptores_por_centro(self, centro: CentroDeSalud) -> list:
+        """
+        Obtiene la lista de receptores de un centro
+        Args:
+        centro: object
+        Return:
+        lista
+        """
         centro_encontrado = self._encontrar_centro_por_nombre(centro.nombre)
         if centro_encontrado:
             return [receptor.nombre for receptor in centro_encontrado.receptores]
         return []
 
     def mostrar_receptores_por_centro(self, centro: CentroDeSalud):
+        """
+        Muestra los receptores de un centro
+        Args:
+        centro: object
+        """
         receptores = self._obtener_receptores_por_centro(centro)
         print(f"\n--- Receptores en {centro.nombre} ---")
         if receptores:
@@ -185,6 +219,13 @@ class INCUCAI:
             print("No hay receptores en este centro.")
 
     def _obtener_prioridad_receptor(self, receptor: object) -> Optional[int]:
+        """
+        Obtiene la posicion de un receptor en lista de espera
+        Args:
+        receptor: object
+        Return:
+        int o NOne
+        """
         try:
             posicion = self.receptores.index(receptor)
             return posicion + 1
@@ -192,6 +233,9 @@ class INCUCAI:
             return None
 
     def mostrar_prioridad_receptor(self, receptor: object):
+        """
+        Muestra la prioridad del receptor
+        """
         prioridad = self._obtener_prioridad_receptor(receptor)
         if prioridad:
             print(
