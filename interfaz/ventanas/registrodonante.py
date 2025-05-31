@@ -3,7 +3,6 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import datetime
 
-from organos.organo import Organo
 from tipos.tipo_organo import TipoOrgano
 from pacientes.donante import Donante
 from clases_type.datos_personales import DatosPersonales
@@ -16,7 +15,7 @@ class RegistroDonanteApp(RegistroBaseApp):
     def __init__(self, root, incucai):
         super().__init__(root, incucai, "Registro de Donante")
         self.crear_campos_donante()
-        self.agregar_botones(11, self.register_donante, self.clear_fields)
+        self.agregar_botones(11, self.registrar_donante, self.limpiar_celdas)
 
     def crear_campos_donante(self):
         ttk.Label(self.main_frame, text="Órganos a donar:").grid(
@@ -40,7 +39,7 @@ class RegistroDonanteApp(RegistroBaseApp):
             self.crear_frame_fecha_hora(self.main_frame, "Fecha de Fallecimiento:", 10)
         )
 
-    def validate_fields(self):
+    def validar_celdas(self):
         if not self.validar_campos():
             return False
         if not any(var.get() for var in self.organo_vars.values()):
@@ -50,8 +49,8 @@ class RegistroDonanteApp(RegistroBaseApp):
             return False
         return True
 
-    def register_donante(self):
-        if not self.validate_fields():
+    def registrar_donante(self):
+        if not self.validar_celdas():
             return
 
         try:
@@ -91,13 +90,13 @@ class RegistroDonanteApp(RegistroBaseApp):
             )
 
             messagebox.showinfo("Éxito", f"Donante {nombre} registrado exitosamente.")
-            self.clear_fields()
+            self.limpiar_celdas()
 
         except Exception as e:
             messagebox.showerror("Error", f"Error al registrar donante: {str(e)}")
 
-    def clear_fields(self):
-        self.clear_fields_base()
+    def limpiar_celdas(self):
+        self.limpiar_celdas_base()
         for var in self.organo_vars.values():
             var.set(False)
         self.fecha_fallecimiento.set_date(datetime.now().date())

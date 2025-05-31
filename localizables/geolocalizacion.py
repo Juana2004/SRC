@@ -24,7 +24,7 @@ class ServicioGeolocalizacion:
             provincia:str
             pais: str
         Returns:
-            Coordenadas:
+            Coordenadas: object
         """
         full_address = f"{direccion}, {partido}, {provincia}, {pais}"
         location = self._obtener_ubicacion(full_address)

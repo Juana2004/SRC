@@ -20,7 +20,7 @@ class RegistroReceptorApp(RegistroBaseApp):
 
         self.crear_campos_receptor()
 
-        self.agregar_botones(12, self.register_receptor, self.clear_fields)
+        self.agregar_botones(12, self.registrar_receptor, self.limpiar_celdas)
 
     def crear_campos_receptor(self):
         ttk.Label(self.main_frame, text="Órgano que necesita:").grid(
@@ -33,7 +33,7 @@ class RegistroReceptorApp(RegistroBaseApp):
         organo_combo["values"] = [tipo.value for tipo in TipoOrgano]
         organo_combo.grid(row=8, column=1, sticky=tk.W, pady=5)
         organo_combo.current(0)
-        organo_combo.bind("<<ComboboxSelected>>", self.update_patologia_options)
+        organo_combo.bind("<<ComboboxSelected>>", self.actualizar_patologia)
 
         self.fecha_ingreso, self.hora_var, self.minuto_var = (
             self.crear_frame_fecha_hora(self.main_frame, "Fecha de Ingreso:", 9)
@@ -46,7 +46,7 @@ class RegistroReceptorApp(RegistroBaseApp):
         self.patologia_combo = ttk.Combobox(
             self.main_frame, textvariable=self.patologia_var, width=27
         )
-        self.update_patologia_options(None)
+        self.actualizar_patologia(None)
         self.patologia_combo.grid(row=10, column=1, sticky=tk.W, pady=5)
 
         ttk.Label(self.main_frame, text="Urgencia:").grid(
@@ -60,7 +60,7 @@ class RegistroReceptorApp(RegistroBaseApp):
         urgencia_combo.grid(row=11, column=1, sticky=tk.W, pady=5)
         urgencia_combo.current(1)
 
-    def get_tipo_patologia_por_organo(self, organo):
+    def obtener_tipo_patologia_por_organo(self, organo):
         patologias_por_organo = {
             TipoOrgano.CORAZON.value: TipoPatologiaCorazon,
             TipoOrgano.CORNEAS.value: TipoPatologiaCorneas,
@@ -78,9 +78,9 @@ class RegistroReceptorApp(RegistroBaseApp):
         else:
             return []
 
-    def update_patologia_options(self, event):
+    def actualizar_patologia(self, event):
         organo = self.organo_var.get()
-        tipo_patologia = self.get_tipo_patologia_por_organo(organo)
+        tipo_patologia = self.obtener_tipo_patologia_por_organo(organo)
 
         nombres_patologias = [p.name for p in tipo_patologia]
 
@@ -88,7 +88,7 @@ class RegistroReceptorApp(RegistroBaseApp):
         if nombres_patologias:
             self.patologia_var.set(nombres_patologias[0])
 
-    def validate_fields(self):
+    def validar_celdas(self):
         if not self.validar_campos():
             return False
 
@@ -98,8 +98,8 @@ class RegistroReceptorApp(RegistroBaseApp):
 
         return True
 
-    def register_receptor(self):
-        if not self.validate_fields():
+    def registrar_receptor(self):
+        if not self.validar_celdas():
             return
 
         try:
@@ -123,7 +123,7 @@ class RegistroReceptorApp(RegistroBaseApp):
 
             nombre_patologia = self.patologia_var.get()
 
-            tipo_patologia = self.get_tipo_patologia_por_organo(organo)
+            tipo_patologia = self.obtener_tipo_patologia_por_organo(organo)
             patologia_obj = None
             for p in tipo_patologia:
                 if p.name == nombre_patologia:
@@ -156,16 +156,16 @@ class RegistroReceptorApp(RegistroBaseApp):
             )
 
             messagebox.showinfo("Éxito", f"Receptor {nombre} registrado exitosamente.")
-            self.clear_fields()
+            self.limpiar_celdas()
 
         except Exception as e:
             messagebox.showerror("Error", f"Error al registrar receptor: {str(e)}")
 
-    def clear_fields(self):
-        self.clear_fields_base()
+    def limpiar_celdas(self):
+        self.limpiar_celdas_base()
         self.organo_var.set(TipoOrgano.CORAZON.value)
         self.fecha_ingreso.set_date(datetime.now().date())
         self.hora_var.set("00")
         self.minuto_var.set("00")
-        self.update_patologia_options(None)
+        self.actualizar_patologia(None)
         self.urgencia_var.set("no")

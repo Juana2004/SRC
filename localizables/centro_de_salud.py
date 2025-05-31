@@ -34,7 +34,7 @@ class CentroDeSalud:
         except (ErrorGeolocalizacion, ErrorTipoDatoInvalido) as e:
             print(f"No se registrara el centro de salud: {e}")
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Utilizando un metodo magico comparo si dos centros de salud tiene el mismo nombre y direccion.
         Args:
@@ -46,7 +46,7 @@ class CentroDeSalud:
             return self.nombre == other.nombre and self.direccion == other.direccion
         return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         devuelve un número entero que representa de manera única
         a un objeto, Python primero compara los hashes para ver si puede evitar usar __eq__ que es menos eficiente.

@@ -7,7 +7,7 @@ from .centro_de_salud import CentroDeSalud
 class Helicoptero(Vehiculo):
     
 
-    def __init__(self, nombre, velocidad, direccion, centro):
+    def __init__(self, nombre: str, velocidad: float, direccion: object, centro: CentroDeSalud):
         super().__init__(nombre, velocidad, direccion, centro)
         try:
             if self.obtener_longlat():

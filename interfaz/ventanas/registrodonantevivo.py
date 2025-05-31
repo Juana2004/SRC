@@ -16,7 +16,7 @@ class RegistroDonanteVivoApp(RegistroBaseApp):
     def __init__(self, root, incucai):
         super().__init__(root, incucai, "Registro de Donante Vivo")
         self.crear_campos_donante_vivo()
-        self.agregar_botones(11, self.registrar_donante_vivo, self.clear_fields)
+        self.agregar_botones(11, self.registrar_donante_vivo, self.limpiar_celdas)
 
     def crear_campos_donante_vivo(self):
         ttk.Label(self.main_frame, text="Órganos a donar:").grid(
@@ -36,7 +36,7 @@ class RegistroDonanteVivoApp(RegistroBaseApp):
         organo_frame.columnconfigure(0, weight=1)
         organo_frame.columnconfigure(1, weight=1)
 
-    def validate_fields(self):
+    def validar_celdas(self):
         if not self.validar_campos():
             return False
         if not any(var.get() for var in self.organo_vars.values()):
@@ -47,7 +47,7 @@ class RegistroDonanteVivoApp(RegistroBaseApp):
         return True
 
     def registrar_donante_vivo(self):
-        if not self.validate_fields():
+        if not self.validar_celdas():
             return
 
         try:
@@ -82,12 +82,12 @@ class RegistroDonanteVivoApp(RegistroBaseApp):
             messagebox.showinfo(
                 "Éxito", f"Donante vivo {nombre} registrado exitosamente."
             )
-            self.clear_fields()
+            self.limpiar_celdas()
 
         except Exception as e:
             messagebox.showerror("Error", f"Error al registrar donante vivo: {str(e)}")
 
-    def clear_fields(self):
-        self.clear_fields_base()
+    def limpiar_celdas(self):
+        self.limpiar_celdas_base()
         for var in self.organo_vars.values():
             var.set(False)

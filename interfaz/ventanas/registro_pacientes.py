@@ -230,10 +230,19 @@ class RegistroBaseApp:
         self.centro_combo = ttk.Combobox(
             med_frame, textvariable=self.centro_var, width=27, state="readonly"
         )
-        self.update_centro_combo()
+        self.actualizar_centro_combo()
         self.centro_combo.grid(row=1, column=1, sticky=tk.W, pady=5)
 
-    def update_centro_combo(self):
+    def actualizar_centro_combo(self):
+        """
+    Actualiza el combo box de centros de salud con los nombres disponibles en el sistema INCUCAI.
+
+    Args:
+        self: Referencia a la instancia actual de la clase que contiene el combo box y el objeto incucai.
+
+    Returns:
+        None
+    """
         centros = [centro.nombre for centro in self.incucai.centros_salud]
         self.centro_combo["values"] = centros
         if centros:
@@ -299,7 +308,16 @@ class RegistroBaseApp:
                 return centro
         return None
 
-    def clear_fields_base(self):
+    def limpiar_celdas_base(self):
+        """
+    Limpia los campos básicos del formulario, restableciendo sus valores por defecto.
+
+    Args:
+        self: Referencia a la instancia de la clase que contiene las variables del formulario.
+
+    Returns:
+        None
+    """
         self.nombre_var.set("")
         self.dni_var.set("")
         self.fecha_nac.set_date(datetime.now().date())
@@ -320,7 +338,7 @@ class RegistroBaseApp:
             command_cancelar: Función a ejecutar al presionar el botón de cancelar (opcional)
         """
         if command_limpiar is None:
-            command_limpiar = self.clear_fields_base
+            command_limpiar = self.limpiar_celdas_base
 
         button_frame = ttk.Frame(self.main_frame)
         button_frame.grid(row=row, column=0, columnspan=2, pady=20, sticky="ew")
@@ -356,6 +374,22 @@ class RegistroBaseApp:
     def crear_frame_fecha_hora(
         self, parent, label_text, row, var_hora=None, var_minuto=None
     ):
+        """
+    Crea un frame que contiene un selector de fecha (`DateEntry`) y dos campos tipo spinbox para hora y minutos.
+
+    Args:
+        parent (tk.Widget): El widget contenedor donde se colocará el frame.
+        label_text (str): El texto de la etiqueta que acompaña al campo de fecha y hora.
+        row (int): La fila del grid en la que se colocará el contenido.
+        var_hora (tk.StringVar, optional): Variable para el valor de la hora. Si no se proporciona, se inicializa con "00".
+        var_minuto (tk.StringVar, optional): Variable para el valor de los minutos. Si no se proporciona, se inicializa con "00".
+
+    Returns:
+        tuple: Una tupla que contiene:
+            - date_entry (DateEntry): El widget para seleccionar la fecha.
+            - var_hora (tk.StringVar): Variable asociada al spinbox de hora.
+            - var_minuto (tk.StringVar): Variable asociada al spinbox de minutos.
+    """
         ttk.Label(parent, text=label_text).grid(row=row, column=0, sticky=tk.W, pady=5)
 
         fecha_frame = ttk.Frame(parent)
@@ -407,6 +441,19 @@ class RegistroBaseApp:
         titulo="Órganos para Donar:",
         organs_per_column=4,
     ):
+        """
+    Crea un conjunto de checkbuttons para seleccionar órganos, organizados en varias columnas dentro de un frame.
+
+    Args:
+        parent (tk.Widget): El widget contenedor donde se colocará el conjunto de checkbuttons.
+        row (int): La fila del grid en la que se ubicará el frame principal.
+        tipos_organo (list[str]): Lista con los nombres de los órganos que se podrán seleccionar.
+        titulo (str, optional): Título a mostrar sobre los checkbuttons. Por defecto es "Órganos para Donar:".
+        organs_per_column (int, optional): Cantidad de checkbuttons por columna. Por defecto es 4.
+
+    Returns:
+        dict: Un diccionario que asocia el nombre de cada órgano con su variable `tk.BooleanVar`.
+    """
 
         organos_container = ttk.Frame(parent)
         organos_container.grid(row=row, column=0, columnspan=2, sticky="ew", pady=5)
@@ -438,6 +485,17 @@ class RegistroBaseApp:
         return organ_vars
 
     def widgets_hora(self, date_entry, hora_var, minuto_var):
+        """
+    Combina los valores de fecha, hora y minuto obtenidos desde widgets para formar un objeto datetime.
+
+    Args:
+        date_entry (DateEntry): Widget de selección de fecha del cual se obtiene la fecha como string.
+        hora_var (tk.StringVar): Variable que contiene la hora seleccionada como string.
+        minuto_var (tk.StringVar): Variable que contiene los minutos seleccionados como string.
+
+    Returns:
+        datetime: Objeto datetime construido a partir de la fecha y la hora proporcionadas.
+    """
         fecha_str = date_entry.get()
         hora = int(hora_var.get())
         minuto = int(minuto_var.get())
@@ -446,4 +504,14 @@ class RegistroBaseApp:
         )
 
     def mostrar_mensaje_exito(self, mensaje="Registro completado con éxito"):
+        """
+    Muestra un cuadro de diálogo informativo indicando que la operación fue exitosa.
+
+    Args:
+        mensaje (str, optional): Mensaje a mostrar en el cuadro de diálogo. 
+                                 Por defecto es "Registro completado con éxito".
+
+    Returns:
+        None
+    """
         messagebox.showinfo("Operación Exitosa", mensaje)
