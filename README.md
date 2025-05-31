@@ -46,6 +46,9 @@ Desde la interfaz se puede:
 - Ejecutar el algoritmo de matching, que muestra el resultado del proceso completo: desde la asignación del órgano hasta la operación.
 Esta interfaz está diseñada para facilitar la pruebay la visualización del sistema sin necesidad de conocimiento.
 
+#Tener en cuenta:
+Por cada ejecucion del codigo se entiende que es un nuevo dia, una vez hecho el match los cirujanos utilizados se marcan como que operaron hoy, si se vuelve a correr el match no estaran disponibles esos cirujanos.
+
 # FUNCIONAMIENTO
 -Ingreso de datos iniciales:
     -Receptores con grupo sanguíneo, edad y órganos necesarios.
