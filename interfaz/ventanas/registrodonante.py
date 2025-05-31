@@ -1,4 +1,4 @@
-from .registrointerfaz import RegistroBaseApp
+from .registro_pacientes import RegistroBaseApp
 import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import datetime
@@ -38,7 +38,7 @@ class RegistroDonanteApp(RegistroBaseApp):
 
 
     def validate_fields(self):
-        if not self.validate_fields_base():
+        if not self.validar_campos():
             return False
         if not any(var.get() for var in self.organo_vars.values()):
             messagebox.showerror("Error", "Debe seleccionar al menos un órgano para donar.")
@@ -57,12 +57,12 @@ class RegistroDonanteApp(RegistroBaseApp):
             telefono = int(self.telefono_var.get().strip())
             tipo_sangre = self.sangre_var.get()
 
-            centro = self.get_centro_salud()
+            centro = self.obtener_centro_salud()
             if not centro:
                 messagebox.showerror("Error", f"Centro de salud '{self.centro_var.get()}' no encontrado.")
                 return
 
-            fecha_fallecimiento = self.get_datetime_from_widgets(
+            fecha_fallecimiento = self.widgets_hora(
                 self.fecha_fallecimiento, self.hora_var, self.minuto_var)
 
             organos_seleccionados = [tipo.value for tipo, var in self.organo_vars.items() if var.get()]

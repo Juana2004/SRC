@@ -10,6 +10,15 @@ class Validaciones:
     def validar_dni_unico(self, persona: object):
         if persona in self.incucai.donantes + self.incucai.receptores:
             raise ErrorDNIRepetido(persona.nombre)
+        
+    def validar_dni_unico_por_int(self, dni: int):
+        """
+        Verifica si el DNI ya está registrado entre donantes o receptores.
+        Lanza ErrorDNIRepetido si encuentra duplicado.
+        """
+        for persona in self.incucai.donantes + self.incucai.receptores:
+            if persona.datos.dni == dni:
+                raise ErrorDNIRepetido(persona.datos.nombre)
 
     def validar_cedula_unica(self, persona: object):
         if persona in self.incucai.cirujanos_especializados + self.incucai.cirujanos_generales:

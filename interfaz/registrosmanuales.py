@@ -2,15 +2,15 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 
 from sistema.match import Match
-from .registroreceptor import RegistroReceptorApp
-from .registrodonante import RegistroDonanteApp
-from .registrodonantevivo import RegistroDonanteVivoApp
+from .ventanas.registroreceptor import RegistroReceptorApp
+from .ventanas.registrodonante import RegistroDonanteApp
+from .ventanas.registrodonantevivo import RegistroDonanteVivoApp
 from .salida_metodos import SalidaMetodos
-from .ventana import Ventana
-from .estado_incucai import EstadoIncucai
-from .mostrar_match import MostrarMatch
-from .lista_centros import ListaCentros
-from .posicion_lista import PosicionLista
+from .ventanas.ventana import Ventana
+from .ventanas.estado_incucai import EstadoIncucai
+from .ventanas.mostrar_match import MostrarMatch
+from .ventanas.lista_centros import ListaCentros
+from .ventanas.posicion_lista import PosicionLista
 
 
 class IncucaiApp:

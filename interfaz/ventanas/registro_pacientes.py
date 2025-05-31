@@ -3,6 +3,8 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from tkcalendar import DateEntry
 from tipos.tipo_sangre import TipoSangre
+from sistema.validaciones import Validaciones
+from excepciones import ErrorDNIRepetido
 
 
 
@@ -154,7 +156,7 @@ class RegistroBaseApp:
         else:
             self.centro_var.set('')  # Si no hay centro limpio el combo
     
-    def validate_fields_base(self):
+    def validar_campos(self):
         """Valida los campos comunes a todos los registros
         
         Returns:
@@ -168,6 +170,10 @@ class RegistroBaseApp:
             dni = int(self.dni_var.get().strip())
             if dni <= 0:
                 raise ValueError
+            Validaciones.validar_dni_unico_por_int(self,dni)
+        except ErrorDNIRepetido:
+            messagebox.showerror("Error", f"El DNI {dni} ya está registrado.")
+            return False
         except ValueError:
             messagebox.showerror("Error de Validación", "Por favor, ingrese un DNI válido (número entero positivo).")
             return False
@@ -186,7 +192,7 @@ class RegistroBaseApp:
         
         return True
     
-    def get_centro_salud(self):
+    def obtener_centro_salud(self):
         """Obtiene el objeto centro de salud seleccionado
         
         Returns:
@@ -293,7 +299,7 @@ class RegistroBaseApp:
             
         return organ_vars
     
-    def get_datetime_from_widgets(self, date_entry, hora_var, minuto_var):
+    def widgets_hora(self, date_entry, hora_var, minuto_var):
         fecha_str = date_entry.get()
         hora = int(hora_var.get())
         minuto = int(minuto_var.get())

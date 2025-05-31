@@ -1,4 +1,4 @@
-from .registrointerfaz import RegistroBaseApp
+from .registro_pacientes import RegistroBaseApp
 import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import datetime
@@ -9,6 +9,8 @@ from tipos.tipo_organo import TipoOrgano
 from tipos.patologias import *
 
 from clases_type.datos_personales import DatosPersonales
+
+from excepciones import ErrorDNIRepetido
 
 
 class RegistroReceptorApp(RegistroBaseApp):
@@ -73,7 +75,7 @@ class RegistroReceptorApp(RegistroBaseApp):
             self.patologia_var.set(nombres_patologias[0])
     
     def validate_fields(self):
-        if not self.validate_fields_base():
+        if not self.validar_campos():
             return False
         
         if not self.patologia_var.get():
@@ -94,7 +96,7 @@ class RegistroReceptorApp(RegistroBaseApp):
             telefono = int(self.telefono_var.get().strip())
             tipo_sangre = self.sangre_var.get()
             
-            centro = self.get_centro_salud()
+            centro = self.obtener_centro_salud()
             if not centro:
                 messagebox.showerror("Error", f"Centro de salud '{self.centro_var.get()}' no encontrado.")
                 return
@@ -110,7 +112,7 @@ class RegistroReceptorApp(RegistroBaseApp):
                     patologia_obj = p
                     break
 
-            fecha_ingreso = self.get_datetime_from_widgets(
+            fecha_ingreso = self.widgets_hora(
                 self.fecha_ingreso, self.hora_var, self.minuto_var)
             
             urgencia = self.urgencia_var.get() == "si"
@@ -128,6 +130,7 @@ class RegistroReceptorApp(RegistroBaseApp):
 
             messagebox.showinfo("Éxito", f"Receptor {nombre} registrado exitosamente.")
             self.clear_fields()
+        
             
         except Exception as e:
             messagebox.showerror("Error", f"Error al registrar receptor: {str(e)}")
